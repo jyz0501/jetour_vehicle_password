@@ -1,0 +1,80 @@
+<view class="container">
+  <!-- 进入页弹窗提醒 -->
+  <view wx:if="{{showPopup}}" class="popup-overlay">
+    <view class="popup-content">
+      <text class="popup-title">使用说明</text>
+      <view class="popup-message">
+        <rich-text nodes="<p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他车机内容，否则后果自负。</p><p><strong>重要说明：</strong>本内容仅在车机原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p><p><strong>适用范围：</strong>本内容仅适用于旅行者部分车型，已知适配旅行者CDM(T2)、7DCT、8AT、7座加长款。</p><p><strong>特别提醒：</strong>自由者、L9、大圣、风云、瑞虎、艾瑞泽等车型请自测。</p><p><strong>不支持：</strong>【银龙之翼】不支持。</p>"></rich-text>
+      </view>
+      <button bindtap="closePopup" class="popup-button">我知道了</button>
+    </view>
+  </view>
+  
+  <view class="header">
+    <text class="title">捷途旅行者CDM/山海T2车机密码</text>
+  </view>
+  
+  <view class="douyin-info">
+    交流反馈：抖音@大伦哥的CDM
+  </view>
+  
+  <view class="version-switcher">
+    <text class="section-title">选择车机版本：</text>
+    <view class="version-buttons">
+      <button 
+        wx:for="{{versionList}}" 
+        wx:key="version"
+        class="version-button {{currentVersion === item.version ? 'active' : ''}}"
+        bindtap="switchVersion"
+        data-version="{{item.version}}"
+      >
+        {{item.label}}
+      </button>
+    </view>
+  </view>
+  
+  <view class="hour-password-group">
+    <view class="hour-indicator">
+      下次变更时间：<text class="highlight">{{nextUpdateTime}}</text>
+    </view>
+    
+    <view class="password-group">
+      <view class="password-card">
+        <text class="card-title">1. 工程模式密码</text>
+        <text class="password-value">{{carPassword}}</text>
+        <text class="instructions">{{carInstructions}}</text>
+      </view>
+      
+      <view class="password-card">
+        <text class="card-title">2. ADB权限密码</text>
+        
+        <view wx:if="{{currentVersion === 'other'}}" class="serial-number-input">
+          <input 
+            type="text" 
+            placeholder="请输入序列号后六位" 
+            bindinput="inputSerialNumber"
+            maxlength="6"
+          />
+          <button class="calculate-button" bindtap="calculateAdbPassword">计算密码</button>
+        </view>
+        
+        <view class="password-container">
+          <text class="password-value">{{adbPassword}}</text>
+          <button 
+            wx:if="{{currentVersion !== '04.06' && currentVersion !== 'other'}}"
+            class="toggle-button"
+            bindtap="toggleAdbPassword"
+          >
+            {{adbPasswordVisible ? '隐藏密码' : '显示密码'}}
+          </button>
+        </view>
+        
+        <text class="instructions">{{adbInstructions}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="update-info">
+    <text>最后更新时间：{{updateTime}}</text>
+  </view>
+</view>

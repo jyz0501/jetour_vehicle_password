@@ -1,0 +1,296 @@
+body {
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    background: #f5f7fa;
+    font-family: '微软雅黑', Arial, sans-serif;
+}
+
+/* 弹窗样式 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.popup-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.popup-message {
+    margin-bottom: 30px;
+    text-align: justify;
+    line-height: 1.6;
+}
+
+.popup-message p {
+    margin-bottom: 15px;
+    color: #34495e;
+    font-size: 14px;
+}
+
+.popup-button {
+    padding: 12px 30px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.popup-button:hover {
+    background-color: #2980b9;
+}
+
+.popup-button:active {
+    background-color: #1f618d;
+}
+
+.container {
+    max-width: 1080px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.douyin-info {
+    background-color: #e74c3c;
+    color: white;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 14px;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.version-switcher {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.version-switcher h3 {
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+.version-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.version-button {
+    padding: 10px 20px;
+    border: 1px solid #3498db;
+    border-radius: 20px;
+    background-color: white;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.version-button:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+.version-button.active {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+}
+
+.hour-password-group {
+    border: 2px solid #3498db;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.hour-indicator {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #34495e;
+}
+
+.password-group {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.password-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 20px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s;
+}
+
+.password-card:hover {
+    transform: translateY(-2px);
+}
+
+.password-card h2 {
+    color: #34495e;
+    margin: 0 0 20px 0;
+    font-size: 20px;
+}
+
+.password-value {
+    font-size: 32px;
+    color: #e74c3c;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-family: 'DS-DIGI ITC', monospace; 
+}
+
+.password-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+#serialNumberInput {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#serialNumberInput input {
+    width: 100%;
+    max-width: 200px;
+}
+
+#serialNumberInput input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    width: 100%;
+    max-width: 200px;
+    font-size: 16px;
+    text-align: center;
+    height: 44px;
+    box-sizing: border-box;
+}
+
+#calculateAdbButton {
+    margin-top: 10px;
+    padding: 6px 8px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+    width: 100%;
+    max-width: 200px;
+    height: 28px;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 16px;
+}
+
+#calculateAdbButton:hover {
+    background-color: #2980b9;
+}
+
+#calculateAdbButton:active {
+    background-color: #1f618d;
+}
+
+.toggle-button {
+    margin-top: 10px;
+    padding: 6px 8px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+    min-width: 70px;
+    max-width: 100px;
+    height: 28px;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 16px;
+}
+
+.toggle-button:hover {
+    background-color: #2980b9;
+}
+
+.toggle-button:active {
+    background-color: #1f618d;
+}
+
+.update-info {
+    color: #7f8c8d;
+    font-size: 16px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    display: inline-block;
+}
+#nextUpdateTime {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+#carInstructions {
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #e74c3c;
+    font-weight: bold;
+    padding-left: 20px;
+}
+
+#adbInstructions {
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #666;
+    padding-left: 20px;
+}
+#notes {
+    font-size: 0.9em;
+    color:  #e74c3c;
+}

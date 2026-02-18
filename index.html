@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>捷途旅行者CDM/山海T2车机密码——抖音@大伦哥的CDM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 进入页弹窗提醒 -->
+    <div id="usagePopup" class="popup-overlay">
+        <div class="popup-content">
+            <h3>使用说明</h3>
+            <div class="popup-message">
+                <p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他车机内容，否则后果自负。</p>
+                <p><strong>重要说明：</strong>本内容仅在车机原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p>
+                <p><strong>适用范围：</strong>本内容仅适用于旅行者部分车型，已知适配旅行者CDM(T2)、7DCT、8AT、7 座加长款。</p>
+                <p><strong>特别提醒：</strong>自由者、L9、大圣、风云、瑞虎、艾瑞泽等车型请自测。</p>
+                <p><strong>不支持：</strong>【银龙之翼】不支持。</p>
+            </div>
+            <button id="closePopup" class="popup-button">我知道了</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>捷途旅行者CDM/山海T2车机密码</h1>
+        <div class="douyin-info">交流反馈：抖音@大伦哥的CDM</div>
+        <div class="version-switcher">
+            <h3>选择车机版本：</h3>
+            <div class="version-buttons">
+<<<<<<< HEAD
+                <button class="version-button" data-version="04.06">4.06及以下</button>
+                <button class="version-button" data-version="00x">00.00.x</button>
+                <button class="version-button active" data-version="04.11">4.07及以上</button>
+=======
+                <button class="version-button" data-version="04.06">v04.06</button>
+                <button class="version-button" data-version="04.07">v04.07</button>
+                <button class="version-button" data-version="3.0">8AT</button>
+                <button class="version-button active" data-version="04.11">v04.11</button>
+>>>>>>> 753d31a (更新前端显示)
+                <button class="version-button" data-version="04.12">v04.12</button>
+                <button class="version-button" data-version="other">其他</button>
+            </div>
+        </div>
+        <div class="hour-password-group">
+            <div class="hour-indicator">
+                下次变更时间：<span id="nextUpdateTime">--</span>
+            </div>
+            <div class="password-group">
+                <div class="password-card">
+                    <h2>1. 工程模式密码</h2>
+                    <div class="password-value" id="carPassword">--</div>
+                    <div id="carInstructions">应用中心——蓝牙电话，输入上方密码</div>
+                </div>
+                <div class="password-card">
+                    <h2>2. ADB权限密码</h2>
+                    <div id="serialNumberInput" style="display: none; margin-bottom: 15px;">
+                        <input type="text" id="serialNumber" maxlength="6" placeholder="请输入序列号后六位">
+                        <button id="calculateAdbButton" class="toggle-button">计算密码</button>
+                    </div>
+                    <div class="password-container">
+                        <div class="password-value" id="adbPassword">--</div>
+                        <button id="toggleAdbPassword" class="toggle-button">显示密码</button>
+                    </div>
+                    <div id="adbInstructions">进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码</div>
+                </div>
+            </div>
+        </div>
+        <div class="update-info">
+            最后更新时间：<span id="updateTime">--</span>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+name: 每小时生成截图并上传抖音
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # 每小时整点触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: |
+          pip install -r requirements.txt
+
+      - name: 生成页面截图
+        run: python screenshot.py
+
+      - name: 上传截图到抖音
+        env:
+          DOUYIN_COOKIE: ${{ secrets.DOUYIN_COOKIE }}
+        run: python upload_to_douyin.py

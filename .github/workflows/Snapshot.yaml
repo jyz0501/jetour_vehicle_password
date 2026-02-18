@@ -1,0 +1,20 @@
+# GitHub Action 配置 (main.yml)
+name: Generate & Upload Snapshot
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # 每小时整点触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run build  # 构建页面（如有必要）
+      - run: npm install puppeteer
+      - run: node screenshot.js  # 生成截图并保存到./snapshot.png
