@@ -1,0 +1,66 @@
+/* 全局样式 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: '微软雅黑', Arial, sans-serif;
+  background-color: #f5f7fa;
+}
+
+/* 通用样式类 */
+.text-center {
+  text-align: center;
+}
+
+.text-red {
+  color: #e74c3c;
+}
+
+.text-blue {
+  color: #3498db;
+}
+
+.text-gray {
+  color: #7f8c8d;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.p-10 {
+  padding: 10px;
+}
+
+/* 按钮通用样式 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  border: none;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+}
+
+.btn-default {
+  background-color: white;
+  color: #34495e;
+  border: 1px solid #ddd;
+}
