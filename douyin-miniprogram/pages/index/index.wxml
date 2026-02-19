@@ -4,14 +4,14 @@
     <view class="popup-content">
       <text class="popup-title">使用说明</text>
       <view class="popup-message">
-        <rich-text nodes="<p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他车机内容，否则后果自负。</p><p><strong>重要说明：</strong>本内容仅在车机原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p><p><strong>适用范围：</strong>本内容仅适用于旅行者部分车型，已知适配旅行者CDM(T2)、7DCT、8AT、7座加长款。</p><p><strong>特别提醒：</strong>自由者、L9、大圣、风云、瑞虎、艾瑞泽等车型请自测。</p><p><strong>不支持：</strong>【银龙之翼】不支持。</p>"></rich-text>
+        <rich-text nodes="<p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他系统内容，否则后果自负。</p><p><strong>重要说明：</strong>本内容仅在原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p><p><strong>适用范围：</strong>本内容仅适用于旅行者部分车型，已知适配旅行者CDM(T2)、7DCT、8AT、7座加长款。</p><p><strong>特别提醒：</strong>自由者、L9、大圣、风云、瑞虎、艾瑞泽等车型请自测。</p><p><strong>不支持：</strong>【银龙之翼】不支持。</p>"></rich-text>
       </view>
       <button bindtap="closePopup" class="popup-button">我知道了</button>
     </view>
   </view>
   
   <view class="header">
-    <text class="title">捷途旅行者CDM/山海T2车机密码</text>
+    <text class="title">捷途旅行者CDM/山海T2系统口令</text>
   </view>
   
   <view class="douyin-info">
@@ -19,7 +19,7 @@
   </view>
   
   <view class="version-switcher">
-    <text class="section-title">选择车机版本：</text>
+    <text class="section-title">选择系统版本：</text>
     <view class="version-buttons">
       <button 
         wx:for="{{versionList}}" 
@@ -40,13 +40,13 @@
     
     <view class="password-group">
       <view class="password-card">
-        <text class="card-title">1. 工程模式密码</text>
-        <text class="password-value">{{carPassword}}</text>
-        <text class="instructions">{{carInstructions}}</text>
+        <text class="card-title">1. 工程模式口令</text>
+        <text class="password-value">{{systemPassword}}</text>
+        <text class="instructions">{{systemInstructions}}</text>
       </view>
       
       <view class="password-card">
-        <text class="card-title">2. ADB权限密码</text>
+        <text class="card-title">2. 加密项口令</text>
         
         <view wx:if="{{currentVersion === 'other'}}" class="serial-number-input">
           <input 
@@ -55,21 +55,21 @@
             bindinput="inputSerialNumber"
             maxlength="6"
           />
-          <button class="calculate-button" bindtap="calculateAdbPassword">计算密码</button>
+          <button class="calculate-button" bindtap="calculateEncryptionPassword">计算口令</button>
         </view>
         
         <view class="password-container">
-          <text class="password-value">{{adbPassword}}</text>
+          <text class="password-value">{{encryptionPassword}}</text>
           <button 
             wx:if="{{currentVersion !== '04.06' && currentVersion !== 'other'}}"
             class="toggle-button"
-            bindtap="toggleAdbPassword"
+            bindtap="toggleEncryptionPassword"
           >
-            {{adbPasswordVisible ? '隐藏密码' : '显示密码'}}
+            {{encryptionPasswordVisible ? '隐藏口令' : '显示口令'}}
           </button>
         </view>
         
-        <text class="instructions">{{adbInstructions}}</text>
+        <text class="instructions">{{encryptionInstructions}}</text>
       </view>
     </view>
   </view>
