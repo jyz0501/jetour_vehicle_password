@@ -150,16 +150,9 @@ Page({
     
     // 版本列表
     versionList: [
-<<<<<<< HEAD
       { label: '4.06及以下', version: '04.06' },
       { label: '00.00.x', version: '00x' },
       { label: '4.07及以上', version: '04.11' },
-=======
-      { label: 'v04.06', version: '04.06' },
-      { label: 'v04.07', version: '04.07' },
-      { label: '8AT', version: '3.0' },
-      { label: 'v04.11', version: '04.11' },
->>>>>>> 753d31a (更新前端显示)
       { label: 'v04.12', version: '04.12' },
       { label: '其他', version: 'other' }
     ],
