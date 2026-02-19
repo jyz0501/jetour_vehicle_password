@@ -3,7 +3,7 @@ function formatTimeUnit(unit) {
   return String(unit).padStart(2, '0');
 }
 
-// 计算密码的核心函数
+// 计算口令的核心函数
 function calculatePasswords(version, now, serialNumber = '') {
   // 提取月日时（忽略分钟）
   const month = formatTimeUnit(now.getMonth() + 1);
@@ -15,13 +15,13 @@ function calculatePasswords(version, now, serialNumber = '') {
   const dateTimeKey = `${month}${date}${hours}`;
   const dateTimeNum = parseInt(dateTimeKey, 10);
 
-  let adbPassword, carPassword, nextUpdateTime;
+  let adbPassword, systemPassword, nextUpdateTime;
   let isFixedPassword = false;
 
-  // 根据不同版本计算密码
+  // 根据不同版本计算口令
   switch(version) {
     case '00x':
-      // 00x版本的ADB密码计算逻辑
+      // 00x版本的ADB口令计算逻辑
       const yymmdd = `${now.getFullYear().toString().slice(-2)}${month}${date}`;
       const lastDigit = parseInt(yymmdd.slice(-1), 10);
       let baseValue;
@@ -59,7 +59,7 @@ function calculatePasswords(version, now, serialNumber = '') {
       }
       const adbFull30 = parseInt(yymmdd, 10) + baseValue;
       adbPassword = adbFull30.toString().padStart(6, '0');
-      carPassword = `*#20230730#*`;
+      systemPassword = `*#20230730#*`;
       
       // 00x版本的下次变更时间为下一天
       const tomorrow = new Date();
@@ -72,13 +72,13 @@ function calculatePasswords(version, now, serialNumber = '') {
     
     case '04.11':
     case '04.12':
-      // 计算ADB密码（20250110 × 日期时间）
+      // 计算ADB口令（20250110 × 日期时间）
       const adbFull = 20250110 * dateTimeNum;
       adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
 
-      // 计算车机动态密码（ADB密码 - 当前小时数）
-      const carFull = adbFull - now.getHours();
-      carPassword = `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`;
+      // 计算系统动态口令（ADB口令 - 当前小时数）
+      const systemFull = adbFull - now.getHours();
+      systemPassword = `*#${(systemFull % 1000000).toString().padStart(6, '0')}#*`;
       
       // 下次变更时间为下一个整点
       const nextHour = (now.getHours() + 1) % 24;
@@ -86,20 +86,20 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     case '04.06':
-      // 04.06版本使用固定工程模式密码
+      // 04.06版本使用固定工程模式口令
       isFixedPassword = true;
-      carPassword = `*#20230730#*`;
+      systemPassword = `*#20230730#*`;
       adbPassword = '无';
-      nextUpdateTime = '无（固定密码）';
+      nextUpdateTime = '无（固定口令）';
       break;
     
     case 'other':
-      // 其他版本使用固定工程模式密码，ADB密码基于序列号计算
+      // 其他版本使用固定工程模式口令，ADB口令基于序列号计算
       isFixedPassword = true;
-      carPassword = `*#20230730#*`;
+      systemPassword = `*#20230730#*`;
       
       if (serialNumber && serialNumber.length === 6) {
-        // 计算ADB密码：序列号后六位 * 802018，取后六位
+        // 计算ADB口令：序列号后六位 * 802018，取后六位
         const serialNum = parseInt(serialNumber, 10);
         const adbFull = serialNum * 802018;
         adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
@@ -122,8 +122,8 @@ function calculatePasswords(version, now, serialNumber = '') {
       // 默认使用04.11版本的逻辑
       const adbFullDefault = 20250110 * dateTimeNum;
       adbPassword = (adbFullDefault % 1000000).toString().padStart(6, '0');
-      const carFullDefault = adbFullDefault - now.getHours();
-      carPassword = `*#${(carFullDefault % 1000000).toString().padStart(6, '0')}#*`;
+      const systemFullDefault = adbFullDefault - now.getHours();
+      systemPassword = `*#${(systemFullDefault % 1000000).toString().padStart(6, '0')}#*`;
       
       // 下次变更时间为下一个整点
       const nextHourDefault = (now.getHours() + 1) % 24;
@@ -134,7 +134,7 @@ function calculatePasswords(version, now, serialNumber = '') {
   const updateTime = `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`;
 
   return {
-    carPassword,
+    systemPassword,
     adbPassword,
     nextUpdateTime,
     updateTime,
@@ -160,17 +160,17 @@ Page({
     // 当前选择的版本
     currentVersion: '04.11',
     
-    // 密码相关
-    carPassword: '--',
-    adbPassword: '******',
-    actualAdbPassword: '',
-    adbPasswordVisible: false,
+    // 口令相关
+    systemPassword: '--',
+    encryptionPassword: '******',
+    actualEncryptionPassword: '',
+    encryptionPasswordVisible: false,
     nextUpdateTime: '--',
     updateTime: '--',
     
     // 说明文本
-    carInstructions: '应用中心——蓝牙电话，输入上方密码',
-    adbInstructions: '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码',
+    systemInstructions: '应用中心——蓝牙电话，输入上方口令',
+    encryptionInstructions: '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方口令',
     
     // 序列号输入
     serialNumber: '',
@@ -183,7 +183,7 @@ Page({
   onLoad() {
     this.updatePasswords();
     
-    // 每分钟更新一次密码
+    // 每分钟更新一次口令
     this.data.updateTimer = setInterval(() => {
       this.updatePasswords();
     }, 60000);
@@ -197,37 +197,37 @@ Page({
     }
   },
 
-  // 更新密码
+  // 更新口令
   updatePasswords() {
     const now = new Date();
     const { currentVersion, serialNumber } = this.data;
     
     const result = calculatePasswords(currentVersion, now, serialNumber);
     
-    let adbPasswordDisplay = '******';
-    let actualAdbPassword = result.adbPassword;
-    let carInstructions = '应用中心——蓝牙电话，输入上方密码';
-    let adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+    let encryptionPasswordDisplay = '******';
+    let actualEncryptionPassword = result.adbPassword;
+    let systemInstructions = '应用中心——蓝牙电话，输入上方口令';
+    let encryptionInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方口令';
     
-    // 对于固定密码版本，直接显示
+    // 对于固定口令版本，直接显示
     if (currentVersion === '04.06') {
-      adbPasswordDisplay = result.adbPassword;
+      encryptionPasswordDisplay = result.adbPassword;
     } else if (currentVersion === 'other') {
-      adbPasswordDisplay = result.adbPassword;
-      adbInstructions = '进入工程模式后，点加密项，输入产品序列号后六位';
+      encryptionPasswordDisplay = result.adbPassword;
+      encryptionInstructions = '进入工程模式后，点加密项，输入产品序列号后六位';
     } else if (currentVersion === '00x') {
-      carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
-      adbInstructions = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
+      systemInstructions = '应用中心——蓝牙电话，输入上方口令 或者 通用—系统—右侧空白处连点10下';
+      encryptionInstructions = '进入加密项输入上方计算后的口令。同样适用：瑞虎8、风云车型';
     }
     
     this.setData({
-      carPassword: result.carPassword,
-      adbPassword: adbPasswordDisplay,
-      actualAdbPassword: actualAdbPassword,
+      systemPassword: result.systemPassword,
+      encryptionPassword: encryptionPasswordDisplay,
+      actualEncryptionPassword: actualEncryptionPassword,
       nextUpdateTime: result.nextUpdateTime,
       updateTime: result.updateTime,
-      carInstructions: carInstructions,
-      adbInstructions: adbInstructions
+      systemInstructions: systemInstructions,
+      encryptionInstructions: encryptionInstructions
     });
   },
 
@@ -249,15 +249,15 @@ Page({
     });
   },
 
-  // 计算ADB密码（其他版本）
-  calculateAdbPassword() {
+  // 计算加密项口令（其他版本）
+  calculateEncryptionPassword() {
     const { serialNumber, currentVersion } = this.data;
     
     if (currentVersion !== 'other') return;
     
     if (serialNumber.length !== 6) {
       wx.showToast({
-        title: '请输入车机序列号后六位',
+        title: '请输入系统序列号后六位',
         icon: 'none'
       });
       return;
@@ -266,13 +266,13 @@ Page({
     this.updatePasswords();
   },
 
-  // 切换ADB密码显示/隐藏
-  toggleAdbPassword() {
-    const { adbPasswordVisible, adbPassword, actualAdbPassword } = this.data;
+  // 切换加密项口令显示/隐藏
+  toggleEncryptionPassword() {
+    const { encryptionPasswordVisible, encryptionPassword, actualEncryptionPassword } = this.data;
     
     this.setData({
-      adbPasswordVisible: !adbPasswordVisible,
-      adbPassword: adbPasswordVisible ? '******' : actualAdbPassword
+      encryptionPasswordVisible: !encryptionPasswordVisible,
+      encryptionPassword: encryptionPasswordVisible ? '******' : actualEncryptionPassword
     });
   },
   
