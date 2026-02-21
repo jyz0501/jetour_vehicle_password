@@ -1,30 +1,28 @@
-name: 截图上传抖音
-
-on:
+version: '1.0'
+name: douyin-workflow
+displayName: 截图上传抖音
+triggers:
+  trigger: auto
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    cron: '0 * * * *'
+  push:
+    branches:
+      - main
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout 代码
-        uses: actions/checkout@v4
+stages:
+  - stage: build
+    name: 构建
+    jobs:
+      - job: run
+        name: 执行脚本
+        runs-on: ubuntu
+        steps:
+          - name: 安装依赖
+            shell: bash
+            command: |
+              pip install -r requirements.txt
 
-      - name: 设置 Python 环境
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: 安装依赖
-        run: |
-          pip install -r requirements.txt
-
-      - name: 生成页面截图
-        run: python douyin/screenshot.py
-
-      - name: 上传截图到抖音
-        env:
-          DOUYIN_COOKIE: ${{ secrets.DOUYIN_COOKIE }}
-        run: python douyin/upload_to_douyin.py
+          - name: 生成截图并上传
+            shell: bash
+            command: |
+              python3 douyin/main.py
