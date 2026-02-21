@@ -1,0 +1,23 @@
+version: '1.0'
+name: pages-pipeline
+displayName: 部署静态页面
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix:
+        - ''
+
+stages:
+  - stage: deploy
+    name: 部署
+    jobs:
+      - job: pages
+        name: 部署到Gitee Pages
+        runs-on: ubuntu
+        steps:
+          - step: shell@1
+            name: deploy
+            displayName: 部署静态页面
+            command: |
+              echo "部署完成"
