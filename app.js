@@ -206,6 +206,13 @@ document.querySelectorAll('.version-button').forEach(button => {
         this.classList.add('active');
         // 更新当前版本
         currentVersion = this.dataset.version;
+        // 重置密码显示状态
+        const adbPasswordElement = document.getElementById('adbPassword');
+        const toggleAdbButton = document.getElementById('toggleAdbPassword');
+        adbPasswordElement.textContent = '******';
+        if (toggleAdbButton) {
+            toggleAdbButton.textContent = '显示密码';
+        }
         // 重新计算密码
         updatePasswords();
     });
