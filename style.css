@@ -171,10 +171,10 @@ h1 {
 }
 
 .password-value {
-    font-size: 64px;
+    font-size: 32px;
     color: #e74c3c;
     font-weight: bold;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
     font-family: 'DS-DIGI ITC', monospace; 
 }
 
@@ -247,8 +247,8 @@ h1 {
     font-size: 11px;
     transition: background-color 0.3s;
     white-space: nowrap;
-    min-width: 70px;
-    max-width: 100px;
+    min-width: 140px;
+    max-width: 200px;
     height: 28px;
     box-sizing: border-box;
     text-align: center;
