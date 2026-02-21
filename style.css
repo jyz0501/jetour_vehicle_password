@@ -220,7 +220,7 @@ h1 {
     font-size: 11px;
     transition: background-color 0.3s;
     white-space: nowrap;
-    width: 100%;
+    min-width: 140px;
     max-width: 200px;
     height: 28px;
     box-sizing: border-box;
