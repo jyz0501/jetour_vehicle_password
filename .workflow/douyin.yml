@@ -1,0 +1,31 @@
+version: '1.0'
+name: douyin-pipeline
+displayName: 截图上传抖音
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix:
+        - ''
+  schedule:
+    cron: '0 * * * *'
+
+stages:
+  - stage: build
+    name: 构建
+    jobs:
+      - job: run
+        name: 执行脚本
+        runs-on: ubuntu
+        steps:
+          - step: shell@1
+            name: install
+            displayName: 安装依赖
+            command: |
+              pip install -r requirements.txt
+
+          - step: shell@1
+            name: run
+            displayName: 运行主程序
+            command: |
+              python3 douyin/main.py
