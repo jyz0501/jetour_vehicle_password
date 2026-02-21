@@ -247,8 +247,8 @@ h1 {
     font-size: 11px;
     transition: background-color 0.3s;
     white-space: nowrap;
-    min-width: 140px;
-    max-width: 200px;
+    min-width: 100px;
+    max-width: 140px;
     height: 28px;
     box-sizing: border-box;
     text-align: center;
