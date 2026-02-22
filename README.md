@@ -16,7 +16,6 @@
 
 演示地址：
 [ **GitHub Pages** ](https://jyz0501.github.io/jetour_vehicle_password/)
-[ **Vercel** ](https://jetour-dynamic-password.vercel.app/)
 [ **Gitee Pages** ](https://gitee.com/jinyz501/jetour_vehicle_password)
 
 
