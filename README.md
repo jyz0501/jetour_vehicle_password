@@ -15,8 +15,9 @@
 - ❌ 银龙之翼/2025款车型不适用  
 
 演示地址：
-[ **地址 1** ](https://jetour-dynamic-password.vercel.app/) 
-[ **地址 2** ]( https://jyz0501.github.io/jetour_dynamic-password/)
+[ **GitHub Pages** ](https://jyz0501.github.io/jetour_vehicle_password/)
+[ **Vercel** ](https://jetour-dynamic-password.vercel.app/)
+[ **Gitee Pages** ](https://gitee.com/jinyz501/jetour_vehicle_password)
 
 
 ## 💻 使用方法
