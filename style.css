@@ -135,7 +135,7 @@ h1 {
 .version-button {
     padding: 10px 20px;
     border: 1px solid #3498db;
-    border-radius: 20px;
+    border-radius: 4px;
     background-color: white;
     color: #3498db;
     cursor: pointer;
