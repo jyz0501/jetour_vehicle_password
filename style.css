@@ -91,6 +91,30 @@ h1 {
     font-size: 20px;
 }
 
+.link-buttons {
+    margin-bottom: 20px;
+}
+
+.link-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.link-button:hover {
+    background-color: #2980b9;
+}
+
+.link-button:active {
+    background-color: #1f618d;
+}
+
 .version-switcher {
     margin-bottom: 20px;
     text-align: center;
