@@ -242,7 +242,7 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.getElementById('nextUpdateTime').textContent = 
-                `${tomorrow.getFullYear()}-${formatTimeUnit(tomorrow.getMonth() + 1)}-${formatTimeUnit(tomorrow.getDate())}`;
+                `${tomorrow.getFullYear()}-${formatTimeUnit(tomorrow.getMonth() + 1)}-${formatTimeUnit(tomorrow.getDate())} 24:00`;
             document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
             document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
             break;
@@ -270,8 +270,6 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             const carFull = carBase - now.getHours();
             carPassword = `*#`+ (carFull % 1000000).toString().padStart(6, '0')+`#*`;
             
-            const nextHour = (now.getHours() + 1) % 24;
-            document.getElementById('nextUpdateTime').textContent = `${nextHour.toString().padStart(2, '0')}:00`;
             document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
             document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
             
@@ -321,9 +319,6 @@ function updateOtherCarPasswords(dateTimeNum) {
             el.textContent = passwords[i - 1];
         }
     }
-    
-    const nextHour = (now.getHours() + 1) % 24;
-    document.getElementById('nextUpdateTime').textContent = `${nextHour.toString().padStart(2, '0')}:00`;
 }
 
 document.getElementById('carModel').addEventListener('change', function() {
