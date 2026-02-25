@@ -245,6 +245,13 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
                 `${tomorrow.getFullYear()}-${formatTimeUnit(tomorrow.getMonth() + 1)}-${formatTimeUnit(tomorrow.getDate())} 24:00`;
             document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
             document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
+            
+            const snInput00x = document.getElementById('serialNumberInput');
+            const toggleBtn00x = document.getElementById('toggleAdbPassword');
+            const adbInst00x = document.getElementById('adbInstructions');
+            if (snInput00x) snInput00x.style.display = 'block';
+            if (toggleBtn00x) toggleBtn00x.style.display = 'inline-block';
+            if (adbInst00x) adbInst00x.style.display = 'block';
             break;
             
         case '04.06':
