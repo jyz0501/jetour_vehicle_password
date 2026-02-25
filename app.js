@@ -28,11 +28,12 @@ let currentVersion = '04.11';
 const carModels = {
     traveler: {
         name: '捷途旅行者/山海T2',
-        versions: ['00x', '04.06', '04.11', 'other'],
+        versions: ['00x', '04.06', '04.11', '8AT', 'other'],
         versionNames: {
             '00x': '00.07及以下',
             '04.06': '4.05以下',
             '04.11': '4.06-4.12',
+            '8AT': '8AT/7DCT',
             'other': '其他'
         }
     },
@@ -268,6 +269,7 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             if (adbInstructions) adbInstructions.style.display = 'none';
             break;
             
+        case '8AT':
         case '04.11':
         case 'other':
             const adbFull = 20230830 * dateTimeNum;
@@ -312,7 +314,7 @@ function updateOtherCarPasswords(dateTimeNum) {
     
     const passwords = [];
     
-    const p1 = `*#20201030#*`;
+    const p1 = currentCarModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
     passwords.push(p1);
     
     const p2 = `*#20230730#*`;
