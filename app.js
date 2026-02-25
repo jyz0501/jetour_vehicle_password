@@ -101,11 +101,12 @@ const carModels = {
     },
     zizhe: {
         name: '自由者/山海T1',
-        versions: ['pwd1', 'pwd2', 'pwd3'],
+        versions: ['pwd1', 'pwd2', 'pwd3', '110104'],
         versionNames: {
             'pwd1': '密码1',
             'pwd2': '密码2',
-            'pwd3': '密码3'
+            'pwd3': '密码3',
+            '110104': '11.01.04-11.01.08'
         }
     }
 };
