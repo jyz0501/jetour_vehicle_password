@@ -89,7 +89,7 @@ const carModels = {
         name: 'X70plus',
         versions: ['unknown'],
         versionNames: {
-            'unknown': '未知版本'
+            'unknown': '00.01.0x'
         }
     },
     zizhe: {
