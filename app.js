@@ -350,6 +350,11 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             adbPasswordElement.textContent = '******';
         }
     }
+    
+    const toggleAdbButton = document.getElementById('toggleAdbPassword');
+    if (toggleAdbButton) {
+        toggleAdbButton.textContent = '显示密码';
+    }
 }
 
 function updateOtherCarPasswords(dateTimeNum) {
