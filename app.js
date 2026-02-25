@@ -23,56 +23,56 @@ const carModels = {
     },
     ruhui8: {
         name: '瑞虎8/Pro',
-        versions: ['ver1', 'ver2', 'ver3'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'ver1': '算法1',
-            'ver2': '算法2',
-            'ver3': '算法3'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     fengyunA9: {
         name: '风云A9',
-        versions: ['ver1', 'ver2', 'ver3'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'ver1': '算法1',
-            'ver2': '算法2',
-            'ver3': '算法3'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     shanhal7: {
         name: '山海L7',
-        versions: ['ver1', 'ver2', 'ver3'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'ver1': '算法1',
-            'ver2': '算法2',
-            'ver3': '算法3'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     shanhal9: {
         name: '山海L9',
-        versions: ['ver1', 'ver2', 'ver3'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'ver1': '算法1',
-            'ver2': '算法2',
-            'ver3': '算法3'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     x70plus: {
         name: 'X70plus',
-        versions: ['ver1', 'ver2', 'ver3'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'ver1': '算法1',
-            'ver2': '算法2',
-            'ver3': '算法3'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     zizhe: {
         name: '自由者/山海T1',
-        versions: ['ver1', 'ver2', 'ver3'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'ver1': '算法1',
-            'ver2': '算法2',
-            'ver3': '算法3'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     }
 };
@@ -286,16 +286,19 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
 }
 
 function updateOtherCarPasswords(dateTimeNum) {
+    const now = new Date();
+    const mmddhh = parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10);
+    const p3 = (20231030 * mmddhh) - now.getHours();
+    
     const passwords = [];
     
-    const p1 = (20230830 * dateTimeNum) % 1000000;
-    passwords.push(`*#${p1.toString().padStart(6, '0')}#*`);
+    const p1 = `*#20201030#*`;
+    passwords.push(p1);
     
-    const p2 = (20230730 * dateTimeNum) % 1000000;
-    passwords.push(`*#${p2.toString().padStart(6, '0')}#*`);
+    const p2 = `*#20230730#*`;
+    passwords.push(p2);
     
-    const p3 = (802018 * dateTimeNum) % 1000000;
-    passwords.push(`*#${p3.toString().padStart(6, '0')}#*`);
+    passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
     
     for (let i = 1; i <= 3; i++) {
         const el = document.getElementById(`password${i}`);
@@ -304,7 +307,6 @@ function updateOtherCarPasswords(dateTimeNum) {
         }
     }
     
-    const now = new Date();
     const nextHour = (now.getHours() + 1) % 24;
     document.getElementById('nextUpdateTime').textContent = `${nextHour.toString().padStart(2, '0')}:00`;
 }
