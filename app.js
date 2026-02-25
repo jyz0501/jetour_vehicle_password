@@ -7,6 +7,21 @@ function formatTimeUnit(unit) {
     return String(unit).padStart(2, '0');
 }
 
+function updateCountdown() {
+    const now = new Date();
+    const nextHour = new Date(now);
+    nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+    const diff = nextHour - now;
+    
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    
+    const countdownEl = document.getElementById('nextUpdateTime');
+    if (countdownEl && countdownEl.textContent !== '无（固定密码）') {
+        countdownEl.textContent = `${minutes}分${seconds.toString().padStart(2, '0')}秒`;
+    }
+}
+
 let currentCarModel = 'traveler';
 let currentVersion = '04.11';
 
@@ -339,4 +354,5 @@ window.onload = function() {
     updatePasswords();
 };
 
+setInterval(updateCountdown, 1000);
 setInterval(updatePasswords, 60000);
