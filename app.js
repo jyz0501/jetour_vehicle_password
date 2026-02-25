@@ -154,11 +154,11 @@ function renderPasswordGroup() {
         if (currentCarModel === 'zizhe' && currentVersion === '110104') {
             html = `
                 <div class="password-card">
-                    <h2>1. ADB权限密码</h2>
+                    <h2>1. 工程模式密码</h2>
                     <div class="password-value" id="password1">--</div>
                 </div>
                 <div class="password-card">
-                    <h2>2. 工程模式密码</h2>
+                    <h2>2. ADB权限密码</h2>
                     <div class="password-value" id="password2">--</div>
                 </div>
             `;
@@ -361,8 +361,8 @@ function updateOtherCarPasswords(dateTimeNum) {
     if (currentCarModel === 'zizhe' && currentVersion === '110104') {
         const adbPwd = (240910 * mmddhh) % 1000000;
         const carPwd = ((240910 * mmddhh) - now.getHours()) % 1000000;
-        passwords.push(adbPwd.toString().padStart(6, '0'));
         passwords.push(`*#${carPwd.toString().padStart(6, '0')}#*`);
+        passwords.push(adbPwd.toString().padStart(6, '0'));
         passwords.push('--');
     } else {
         const p3 = (20231030 * mmddhh) - now.getHours();
