@@ -102,11 +102,8 @@ const carModels = {
     },
     zizhe: {
         name: '自由者/山海T1',
-        versions: ['pwd1', 'pwd2', 'pwd3', '110104'],
+        versions: ['110104'],
         versionNames: {
-            'pwd1': '密码1',
-            'pwd2': '密码2',
-            'pwd3': '密码3',
             '110104': '11.01.04-11.01.08'
         }
     }
@@ -162,13 +159,26 @@ function renderPasswordGroup() {
         `;
     } else {
         let html = '';
-        for (let i = 1; i <= 3; i++) {
-            html += `
+        if (currentCarModel === 'zizhe' && currentVersion === '110104') {
+            html = `
                 <div class="password-card">
-                    <h2>密码${i}</h2>
-                    <div class="password-value" id="password${i}">--</div>
+                    <h2>1. ADB权限密码</h2>
+                    <div class="password-value" id="password1">--</div>
+                </div>
+                <div class="password-card">
+                    <h2>2. 工程密码</h2>
+                    <div class="password-value" id="password2">--</div>
                 </div>
             `;
+        } else {
+            for (let i = 1; i <= 3; i++) {
+                html += `
+                    <div class="password-card">
+                        <h2>密码${i}</h2>
+                        <div class="password-value" id="password${i}">--</div>
+                    </div>
+                `;
+            }
         }
         passwordGroup.innerHTML = html;
     }
