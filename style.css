@@ -95,6 +95,34 @@ h1 {
     margin-bottom: 20px;
 }
 
+.car-selector {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.car-selector label {
+    font-size: 16px;
+    color: #2c3e50;
+    margin-right: 10px;
+}
+
+.car-selector select {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: 1px solid #3498db;
+    border-radius: 4px;
+    background-color: white;
+    color: #2c3e50;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.car-selector select:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
 .link-button {
     display: inline-block;
     padding: 10px 20px;
