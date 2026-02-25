@@ -76,8 +76,8 @@ function updatePasswords() {
             break;
         case '04.11':
         case '04.12':
-            // 计算ADB密码（20250110 × 日期时间）
-            const adbFull = 20250110 * dateTimeNum;
+            // 计算ADB密码（20230830 × MMDDHH，取后六位）
+            const adbFull = 20230830 * dateTimeNum;
             adbPassword = (adbFull % 1000000).toString().padStart(6, '0'); // 取最后六位+补零
 
             // 计算车机动态密码（20230830 × MMDDHH - HH，取后六位）
