@@ -12,7 +12,8 @@ function updateCountdown() {
     const countdownEl = document.getElementById('nextUpdateTime');
     if (!countdownEl) return;
     
-    if (countdownEl.textContent === '无（固定密码）') {
+    if (currentVersion === '04.06') {
+        countdownEl.textContent = '无（固定密码）';
         return;
     }
     
@@ -258,10 +259,6 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             adbPassword = adbFull30.toString().padStart(6, '0');
             carPassword = `*#20230730#*`;
             
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            document.getElementById('nextUpdateTime').textContent = 
-                `${tomorrow.getFullYear()}-${formatTimeUnit(tomorrow.getMonth() + 1)}-${formatTimeUnit(tomorrow.getDate())} 24:00`;
             document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
             document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
             
@@ -277,7 +274,6 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             isFixedPassword = true;
             carPassword = `*#20230730#*`;
             adbPassword = '无';
-            document.getElementById('nextUpdateTime').textContent = '无（固定密码）';
             document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
             const serialNumberInput = document.getElementById('serialNumberInput');
             const toggleAdbButton = document.getElementById('toggleAdbPassword');
