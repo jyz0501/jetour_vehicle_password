@@ -66,38 +66,30 @@ const carModels = {
     },
     fengyunA9: {
         name: '风云A9',
-        versions: ['pwd1', 'pwd2', 'pwd3'],
+        versions: ['unknown'],
         versionNames: {
-            'pwd1': '密码1',
-            'pwd2': '密码2',
-            'pwd3': '密码3'
+            'unknown': '未知版本'
         }
     },
     shanhal7: {
         name: '山海L7',
-        versions: ['pwd1', 'pwd2', 'pwd3'],
+        versions: ['unknown'],
         versionNames: {
-            'pwd1': '密码1',
-            'pwd2': '密码2',
-            'pwd3': '密码3'
+            'unknown': '未知版本'
         }
     },
     shanhal9: {
         name: '山海L9',
-        versions: ['pwd1', 'pwd2', 'pwd3'],
+        versions: ['unknown'],
         versionNames: {
-            'pwd1': '密码1',
-            'pwd2': '密码2',
-            'pwd3': '密码3'
+            'unknown': '未知版本'
         }
     },
     x70plus: {
         name: 'X70plus',
-        versions: ['pwd1', 'pwd2', 'pwd3'],
+        versions: ['unknown'],
         versionNames: {
-            'pwd1': '密码1',
-            'pwd2': '密码2',
-            'pwd3': '密码3'
+            'unknown': '未知版本'
         }
     },
     zizhe: {
@@ -170,6 +162,15 @@ function renderPasswordGroup() {
                     <div class="password-value" id="password1">--</div>
                 </div>
             `;
+        } else if (currentVersion === 'unknown') {
+            for (let i = 1; i <= 3; i++) {
+                html += `
+                    <div class="password-card">
+                        <h2>密码${i}</h2>
+                        <div class="password-value" id="password${i}">--</div>
+                    </div>
+                `;
+            }
         } else {
             for (let i = 1; i <= 3; i++) {
                 html += `
