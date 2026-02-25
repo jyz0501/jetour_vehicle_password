@@ -80,8 +80,9 @@ function updatePasswords() {
             const adbFull = 20250110 * dateTimeNum;
             adbPassword = (adbFull % 1000000).toString().padStart(6, '0'); // 取最后六位+补零
 
-            // 计算车机动态密码（ADB密码 - 当前小时数）
-            const carFull = adbFull - now.getHours();
+            // 计算车机动态密码（20230830 × MMDDHH - HH，取后六位）
+            const carBase = 20230830 * dateTimeNum;
+            const carFull = carBase - now.getHours();
             carPassword = `*#`+ (carFull % 1000000).toString().padStart(6, '0')+`#*`;  // 取最后六位+补零
             break;
         case '04.06':
