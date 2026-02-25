@@ -287,6 +287,24 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             break;
             
         case '8AT':
+            const adbFull8AT = 20230830 * dateTimeNum;
+            adbPassword = (adbFull8AT % 1000000).toString().padStart(6, '0');
+            
+            const carBase8AT = 20230830 * dateTimeNum;
+            const carFull8AT = carBase8AT - now.getHours();
+            carPassword = `*#`+ (carFull8AT % 1000000).toString().padStart(6, '0')+`#*`;
+            
+            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+            document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+            
+            const snInput8AT = document.getElementById('serialNumberInput');
+            const toggleBtn8AT = document.getElementById('toggleAdbPassword');
+            const adbInst8AT = document.getElementById('adbInstructions');
+            if (snInput8AT) snInput8AT.style.display = 'none';
+            if (toggleBtn8AT) toggleBtn8AT.style.display = 'inline-block';
+            if (adbInst8AT) adbInst8AT.style.display = 'block';
+            break;
+            
         case '04.11':
         case 'other':
             const adbFull = 20230830 * dateTimeNum;
