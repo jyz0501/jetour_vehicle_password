@@ -288,10 +288,10 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             break;
             
         case '8AT':
-            const adbFull8AT = 20230830 * dateTimeNum;
+            const adbFull8AT = 250110 * dateTimeNum;
             adbPassword = (adbFull8AT % 1000000).toString().padStart(6, '0');
             
-            const carBase8AT = 20230830 * dateTimeNum;
+            const carBase8AT = 250110 * dateTimeNum;
             const carFull8AT = carBase8AT - now.getHours();
             carPassword = `*#`+ (carFull8AT % 1000000).toString().padStart(6, '0')+`#*`;
             
@@ -308,10 +308,10 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             
         case '04.11':
         case 'other':
-            const adbFull = 20230830 * dateTimeNum;
+            const adbFull = 250110 * dateTimeNum;
             adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
             
-            const carBase = 20230830 * dateTimeNum;
+            const carBase = 250110 * dateTimeNum;
             const carFull = carBase - now.getHours();
             carPassword = `*#`+ (carFull % 1000000).toString().padStart(6, '0')+`#*`;
             
