@@ -7,251 +7,323 @@ function formatTimeUnit(unit) {
     return String(unit).padStart(2, '0');
 }
 
-// 当前选择的版本
+let currentCarModel = 'traveler';
 let currentVersion = '04.11';
 
-/**
- * 计算并更新密码
- */
-function updatePasswords() {
-    const now = new Date();
-
-    // 提取月日时（忽略分钟）
-    const month = formatTimeUnit(now.getMonth() + 1); // 月份（0-11 → 1-12 → 补零后01-12）
-    const date = formatTimeUnit(now.getDate());       // 日期（1-31 → 补零后01-31）
-    const hours = formatTimeUnit(now.getHours());     // 小时（0-23 → 补零后00-23）
-    const minutes = formatTimeUnit(now.getMinutes()); // 分钟（0-59 → 补零后00-59）
-
-    // 组合日期时间字符串（格式：MMDDHH，如090921表示9月9日21时）
-    const dateTimeKey = `${month}${date}${hours}`;
-    const dateTimeNum = parseInt(dateTimeKey, 10);    // 转换为数字（如090921 → 90921）
-
-    let adbPassword, carPassword;
-    let isFixedPassword = false;
-    
-    // 根据不同版本计算密码
-    switch(currentVersion) {
-        case '00x':
-            // 00x版本的ADB密码计算逻辑
-            const yymmdd = `${now.getFullYear().toString().slice(-2)}${month}${date}`;
-            const lastDigit = parseInt(yymmdd.slice(-1), 10);
-            let baseValue;
-            switch(lastDigit) {
-                case 0:
-                    baseValue = 213518;
-                    break;
-                case 1:
-                    baseValue = 658035;
-                    break;
-                case 2:
-                    baseValue = 235657;
-                    break;
-                case 3:
-                    baseValue = 567534;
-                    break;
-                case 4:
-                    baseValue = 647825;
-                    break;
-                case 5:
-                    baseValue = 234700;
-                    break;
-                case 6:
-                    baseValue = 127347;
-                    break;
-                case 7:
-                    baseValue = 648924;
-                    break;
-                case 8:
-                    baseValue = 733782;
-                    break;
-                case 9:
-                    baseValue = 553456;
-                    break;
-            }
-            const adbFull30 = parseInt(yymmdd, 10) + baseValue;
-            adbPassword = adbFull30.toString().padStart(6, '0');
-
-            // 计算车机动态密码（使用与ADB相同的逻辑）
-            carPassword = `*#20230730#*`;
-            break;
-        case '04.11':
-        case '04.12':
-            // 计算ADB密码（20230830 × MMDDHH，取后六位）
-            const adbFull = 20230830 * dateTimeNum;
-            adbPassword = (adbFull % 1000000).toString().padStart(6, '0'); // 取最后六位+补零
-
-            // 计算车机动态密码（20230830 × MMDDHH - HH，取后六位）
-            const carBase = 20230830 * dateTimeNum;
-            const carFull = carBase - now.getHours();
-            carPassword = `*#`+ (carFull % 1000000).toString().padStart(6, '0')+`#*`;  // 取最后六位+补零
-            break;
-        case '04.06':
-            // 04.06版本使用固定工程模式密码
-            isFixedPassword = true;
-            carPassword = `*#20230730#*`; // 固定工程模式密码
-            adbPassword = ''; // 04.06版本没有ADB密码
-            break;
-        case 'other':
-            // 其他版本使用固定工程模式密码，ADB密码基于序列号计算
-            isFixedPassword = true;
-            carPassword = `*#20230730#*`; // 固定工程模式密码
-            adbPassword = ''; // ADB密码需要用户输入序列号后计算
-            break;
-
-        default:
-            // 默认使用04.11版本的逻辑
-            const adbFullDefault = 20250110 * dateTimeNum;
-            adbPassword = (adbFullDefault % 1000000).toString().padStart(6, '0');
-            const carFullDefault = adbFullDefault - now.getHours();
-            carPassword = `*#`+ (carFullDefault % 1000000).toString().padStart(6, '0')+`#*`;
+const carModels = {
+    traveler: {
+        name: '捷途旅行者/山海T2',
+        versions: ['00x', '04.06', '04.11', 'other'],
+        versionNames: {
+            '00x': '00.07及以下',
+            '04.06': '4.05以下',
+            '04.11': '4.06-4.12',
+            'other': '其他'
+        }
+    },
+    ruhui8: {
+        name: '瑞虎8/Pro',
+        versions: ['ver1', 'ver2', 'ver3'],
+        versionNames: {
+            'ver1': '算法1',
+            'ver2': '算法2',
+            'ver3': '算法3'
+        }
+    },
+    fengyunA9: {
+        name: '风云A9',
+        versions: ['ver1', 'ver2', 'ver3'],
+        versionNames: {
+            'ver1': '算法1',
+            'ver2': '算法2',
+            'ver3': '算法3'
+        }
+    },
+    shanhal7: {
+        name: '山海L7',
+        versions: ['ver1', 'ver2', 'ver3'],
+        versionNames: {
+            'ver1': '算法1',
+            'ver2': '算法2',
+            'ver3': '算法3'
+        }
+    },
+    shanhal9: {
+        name: '山海L9',
+        versions: ['ver1', 'ver2', 'ver3'],
+        versionNames: {
+            'ver1': '算法1',
+            'ver2': '算法2',
+            'ver3': '算法3'
+        }
+    },
+    x70plus: {
+        name: 'X70plus',
+        versions: ['ver1', 'ver2', 'ver3'],
+        versionNames: {
+            'ver1': '算法1',
+            'ver2': '算法2',
+            'ver3': '算法3'
+        }
+    },
+    zizhe: {
+        name: '自由者/山海T1',
+        versions: ['ver1', 'ver2', 'ver3'],
+        versionNames: {
+            'ver1': '算法1',
+            'ver2': '算法2',
+            'ver3': '算法3'
+        }
     }
+};
 
-    // 更新页面显示
-    document.getElementById('carPassword').textContent = carPassword;
-    document.getElementById('updateTime').textContent = 
-        `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`; // 显示真实分钟
+function renderVersionButtons() {
+    const versionButtonsContainer = document.querySelector('.version-buttons');
+    versionButtonsContainer.innerHTML = '';
     
-    // 更新ADB密码并默认隐藏
-    const adbPasswordElement = document.getElementById('adbPassword');
-    const toggleAdbButton = document.getElementById('toggleAdbPassword');
-    const adbInstructions = document.getElementById('adbInstructions');
-    const carInstructions = document.getElementById('carInstructions');
+    const carModel = carModels[currentCarModel];
+    carModel.versions.forEach((version, index) => {
+        const button = document.createElement('button');
+        button.className = 'version-button' + (index === carModel.versions.length - 1 ? ' active' : '');
+        button.dataset.version = version;
+        button.textContent = carModel.versionNames[version];
+        versionButtonsContainer.appendChild(button);
+    });
     
-    const serialNumberInput = document.getElementById('serialNumberInput');
+    currentVersion = carModel.versions[carModel.versions.length - 1];
     
-    if (currentVersion === '04.06') {
-        // 04.06版本使用固定密码
-        adbPasswordElement.textContent = '无';
-        toggleAdbButton.style.display = 'none';
-        adbInstructions.style.display = 'none';
-        serialNumberInput.style.display = 'none';
-        // 04.06版本是固定密码，不需要下次变更时间
-        document.getElementById('nextUpdateTime').textContent = '无（固定密码）';
-        // 设置04.06版本的说明
-        carInstructions.textContent = '应用中心——蓝牙电话，输入上方密码';
-    } else if (currentVersion === 'other') {
-        // 其他版本显示序列号输入框
-        adbPasswordElement.textContent = '';
-        toggleAdbButton.style.display = 'none';
-        adbInstructions.style.display = 'block';
-        serialNumberInput.style.display = 'block';
-        // 其他版本的下次变更时间为下一天
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const tomorrowYear = tomorrow.getFullYear();
-        const tomorrowMonth = formatTimeUnit(tomorrow.getMonth() + 1);
-        const tomorrowDay = formatTimeUnit(tomorrow.getDate());
-        document.getElementById('nextUpdateTime').textContent = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
-        // 设置其他版本的说明
-        carInstructions.textContent = '应用中心——蓝牙电话，输入上方密码';
-        adbInstructions.textContent = '进入工程模式后，点加密项，输入产品序列号后六位';
-    } else if (currentVersion === '00x') {
-        // 00x版本正常显示
-        adbPasswordElement.dataset.actualPassword = adbPassword;
-        adbPasswordElement.textContent = '******'; // 默认显示星号
-        toggleAdbButton.style.display = 'inline-block';
-        adbInstructions.style.display = 'block';
-        serialNumberInput.style.display = 'none';
-        // 00x版本的下次变更时间为下一天
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const tomorrowYear = tomorrow.getFullYear();
-        const tomorrowMonth = formatTimeUnit(tomorrow.getMonth() + 1);
-        const tomorrowDay = formatTimeUnit(tomorrow.getDate());
-        document.getElementById('nextUpdateTime').textContent = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
-        // 设置00x版本的说明
-        carInstructions.textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
-        adbInstructions.textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
+    document.querySelectorAll('.version-button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.version-button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentVersion = this.dataset.version;
+            updatePasswords();
+        });
+    });
+}
+
+function renderPasswordGroup() {
+    const passwordGroup = document.getElementById('passwordGroup');
+    
+    if (currentCarModel === 'traveler') {
+        passwordGroup.innerHTML = `
+            <div class="password-card">
+                <h2>1. 工程模式密码</h2>
+                <div class="password-value" id="carPassword">--</div>
+                <div id="carInstructions">应用中心——蓝牙电话，输入上方密码</div>
+            </div>
+            <div class="password-card">
+                <h2>2. ADB权限密码</h2>
+                <div id="serialNumberInput" style="display: none; margin-bottom: 15px;">
+                    <input type="text" id="serialNumber" maxlength="6" placeholder="请输入序列号后六位">
+                    <button id="calculateAdbButton" class="toggle-button">计算密码</button>
+                </div>
+                <div class="password-container">
+                    <div class="password-value" id="adbPassword">--</div>
+                    <button id="toggleAdbPassword" class="toggle-button">显示密码</button>
+                </div>
+                <div id="adbInstructions">进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码</div>
+            </div>
+        `;
     } else {
-        // 其他版本正常显示
-        adbPasswordElement.dataset.actualPassword = adbPassword;
-        adbPasswordElement.textContent = '******'; // 默认显示星号
-        toggleAdbButton.style.display = 'inline-block';
-        adbInstructions.style.display = 'block';
-        serialNumberInput.style.display = 'none';
-        // 计算并显示下次刷新时间点（下一个整点）
-        const nextHour = (now.getHours() + 1) % 24;
-        document.getElementById('nextUpdateTime').textContent = `${nextHour.toString().padStart(2, '0')}:00`;
-        // 设置其他版本的说明
-        carInstructions.textContent = '应用中心——蓝牙电话，输入上方密码';
-        adbInstructions.textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+        let html = '';
+        for (let i = 1; i <= 3; i++) {
+            html += `
+                <div class="password-card">
+                    <h2>密码${i}</h2>
+                    <div class="password-value" id="password${i}">--</div>
+                </div>
+            `;
+        }
+        passwordGroup.innerHTML = html;
+    }
+    
+    setupEventListeners();
+}
+
+function setupEventListeners() {
+    const toggleAdbButton = document.getElementById('toggleAdbPassword');
+    if (toggleAdbButton) {
+        toggleAdbButton.addEventListener('click', function() {
+            const adbPasswordElement = document.getElementById('adbPassword');
+            const actualPassword = adbPasswordElement.dataset.actualPassword;
+            const currentText = adbPasswordElement.textContent;
+            
+            if (currentText === '******') {
+                adbPasswordElement.textContent = actualPassword;
+                this.textContent = '隐藏密码';
+            } else {
+                adbPasswordElement.textContent = '******';
+                this.textContent = '显示密码';
+            }
+        });
+    }
+    
+    const calculateAdbButton = document.getElementById('calculateAdbButton');
+    if (calculateAdbButton) {
+        calculateAdbButton.addEventListener('click', function() {
+            const serialNumber = document.getElementById('serialNumber').value;
+            if (serialNumber.length !== 6) {
+                alert('请输入车机序列号后六位');
+                return;
+            }
+            
+            const serialNum = parseInt(serialNumber, 10);
+            const adbFull = serialNum * 802018;
+            const adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
+            
+            const adbPasswordElement = document.getElementById('adbPassword');
+            adbPasswordElement.dataset.actualPassword = adbPassword;
+            adbPasswordElement.textContent = adbPassword;
+        });
     }
 }
 
-// 页面加载后立即计算一次
-updatePasswords();
-
-// 添加显示/隐藏ADB密码的事件监听器
-document.getElementById('toggleAdbPassword').addEventListener('click', function() {
-    const adbPasswordElement = document.getElementById('adbPassword');
-    const actualPassword = adbPasswordElement.dataset.actualPassword;
-    const currentText = adbPasswordElement.textContent;
+function updatePasswords() {
+    const now = new Date();
+    const month = formatTimeUnit(now.getMonth() + 1);
+    const date = formatTimeUnit(now.getDate());
+    const hours = formatTimeUnit(now.getHours());
+    const minutes = formatTimeUnit(now.getMinutes());
     
-    if (currentText === '******') {
-        // 显示密码
-        adbPasswordElement.textContent = actualPassword;
-        this.textContent = '隐藏密码';
+    const dateTimeKey = `${month}${date}${hours}`;
+    const dateTimeNum = parseInt(dateTimeKey, 10);
+    
+    document.getElementById('updateTime').textContent = 
+        `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`;
+    
+    if (currentCarModel === 'traveler') {
+        updateTravelerPasswords(dateTimeNum, now, hours);
     } else {
-        // 隐藏密码
-        adbPasswordElement.textContent = '******';
-        this.textContent = '显示密码';
+        updateOtherCarPasswords(dateTimeNum);
     }
-});
+}
 
-// 添加版本切换按钮的事件监听器
-document.querySelectorAll('.version-button').forEach(button => {
-    button.addEventListener('click', function() {
-        // 移除所有按钮的active类
-        document.querySelectorAll('.version-button').forEach(btn => btn.classList.remove('active'));
-        // 为当前点击的按钮添加active类
-        this.classList.add('active');
-        // 更新当前版本
-        currentVersion = this.dataset.version;
-        // 重置密码显示状态
-        const adbPasswordElement = document.getElementById('adbPassword');
-        const toggleAdbButton = document.getElementById('toggleAdbPassword');
-        adbPasswordElement.textContent = '******';
-        if (toggleAdbButton) {
-            toggleAdbButton.textContent = '显示密码';
-        }
-        // 重新计算密码
-        updatePasswords();
-    });
-});
-
-// 添加计算ADB密码按钮的事件监听器
-document.getElementById('calculateAdbButton').addEventListener('click', function() {
-    const serialNumber = document.getElementById('serialNumber').value;
-    if (serialNumber.length !== 6) {
-        alert('请输入车机序列号后六位');
-        return;
+function updateTravelerPasswords(dateTimeNum, now, hours) {
+    let adbPassword, carPassword;
+    let isFixedPassword = false;
+    
+    switch(currentVersion) {
+        case '00x':
+            const yymmdd = `${now.getFullYear().toString().slice(-2)}${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}`;
+            const lastDigit = parseInt(yymmdd.slice(-1), 10);
+            let baseValue;
+            switch(lastDigit) {
+                case 0: baseValue = 213518; break;
+                case 1: baseValue = 658035; break;
+                case 2: baseValue = 235657; break;
+                case 3: baseValue = 567534; break;
+                case 4: baseValue = 647825; break;
+                case 5: baseValue = 234700; break;
+                case 6: baseValue = 127347; break;
+                case 7: baseValue = 648924; break;
+                case 8: baseValue = 733782; break;
+                case 9: baseValue = 553456; break;
+            }
+            const adbFull30 = parseInt(yymmdd, 10) + baseValue;
+            adbPassword = adbFull30.toString().padStart(6, '0');
+            carPassword = `*#20230730#*`;
+            
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('nextUpdateTime').textContent = 
+                `${tomorrow.getFullYear()}-${formatTimeUnit(tomorrow.getMonth() + 1)}-${formatTimeUnit(tomorrow.getDate())}`;
+            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+            document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
+            break;
+            
+        case '04.06':
+            isFixedPassword = true;
+            carPassword = `*#20230730#*`;
+            adbPassword = '无';
+            document.getElementById('nextUpdateTime').textContent = '无（固定密码）';
+            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
+            const serialNumberInput = document.getElementById('serialNumberInput');
+            const toggleAdbButton = document.getElementById('toggleAdbPassword');
+            const adbInstructions = document.getElementById('adbInstructions');
+            if (serialNumberInput) serialNumberInput.style.display = 'none';
+            if (toggleAdbButton) toggleAdbButton.style.display = 'none';
+            if (adbInstructions) adbInstructions.style.display = 'none';
+            break;
+            
+        case '04.11':
+        case 'other':
+            const adbFull = 20230830 * dateTimeNum;
+            adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
+            
+            const carBase = 20230830 * dateTimeNum;
+            const carFull = carBase - now.getHours();
+            carPassword = `*#`+ (carFull % 1000000).toString().padStart(6, '0')+`#*`;
+            
+            const nextHour = (now.getHours() + 1) % 24;
+            document.getElementById('nextUpdateTime').textContent = `${nextHour.toString().padStart(2, '0')}:00`;
+            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
+            document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+            
+            const snInput = document.getElementById('serialNumberInput');
+            const toggleBtn = document.getElementById('toggleAdbPassword');
+            const adbInst = document.getElementById('adbInstructions');
+            if (snInput) snInput.style.display = 'none';
+            if (toggleBtn) toggleBtn.style.display = 'inline-block';
+            if (adbInst) adbInst.style.display = 'block';
+            break;
     }
     
-    // 计算ADB密码：序列号后六位 * 802018，取后六位
-    const serialNum = parseInt(serialNumber, 10);
-    const adbFull = serialNum * 802018;
-    const adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
+    const carPasswordElement = document.getElementById('carPassword');
+    if (carPasswordElement) {
+        carPasswordElement.textContent = carPassword || '--';
+    }
     
-    // 更新ADB密码显示
     const adbPasswordElement = document.getElementById('adbPassword');
-    adbPasswordElement.dataset.actualPassword = adbPassword;
-    adbPasswordElement.textContent = adbPassword;
+    if (adbPasswordElement) {
+        if (currentVersion === '04.06') {
+            adbPasswordElement.textContent = adbPassword;
+        } else {
+            adbPasswordElement.dataset.actualPassword = adbPassword;
+            adbPasswordElement.textContent = '******';
+        }
+    }
+}
+
+function updateOtherCarPasswords(dateTimeNum) {
+    const passwords = [];
+    
+    const p1 = (20230830 * dateTimeNum) % 1000000;
+    passwords.push(`*#${p1.toString().padStart(6, '0')}#*`);
+    
+    const p2 = (20230730 * dateTimeNum) % 1000000;
+    passwords.push(`*#${p2.toString().padStart(6, '0')}#*`);
+    
+    const p3 = (802018 * dateTimeNum) % 1000000;
+    passwords.push(`*#${p3.toString().padStart(6, '0')}#*`);
+    
+    for (let i = 1; i <= 3; i++) {
+        const el = document.getElementById(`password${i}`);
+        if (el) {
+            el.textContent = passwords[i - 1];
+        }
+    }
+    
+    const now = new Date();
+    const nextHour = (now.getHours() + 1) % 24;
+    document.getElementById('nextUpdateTime').textContent = `${nextHour.toString().padStart(2, '0')}:00`;
+}
+
+document.getElementById('carModel').addEventListener('change', function() {
+    currentCarModel = this.value;
+    renderVersionButtons();
+    renderPasswordGroup();
+    updatePasswords();
 });
 
-// 每分钟更新一次（60000ms）
-setInterval(updatePasswords, 60000);
-
-// 弹窗功能
 window.onload = function() {
     const popup = document.getElementById('usagePopup');
     const closePopup = document.getElementById('closePopup');
     
-    // 显示弹窗
     if (popup) {
         popup.style.display = 'flex';
     }
     
-    // 关闭弹窗
     if (closePopup) {
         closePopup.addEventListener('click', function() {
             if (popup) {
@@ -259,4 +331,10 @@ window.onload = function() {
             }
         });
     }
+    
+    renderVersionButtons();
+    renderPasswordGroup();
+    updatePasswords();
 };
+
+setInterval(updatePasswords, 60000);
