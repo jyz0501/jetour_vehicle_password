@@ -344,17 +344,26 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
 function updateOtherCarPasswords(dateTimeNum) {
     const now = new Date();
     const mmddhh = parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10);
-    const p3 = (20231030 * mmddhh) - now.getHours();
     
     const passwords = [];
     
-    const p1 = currentCarModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
-    passwords.push(p1);
-    
-    const p2 = `*#20230730#*`;
-    passwords.push(p2);
-    
-    passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
+    if (currentCarModel === 'zizhe' && currentVersion === '110104') {
+        const adbPwd = (240910 * mmddhh) % 1000000;
+        const carPwd = ((240910 * mmddhh) - now.getHours()) % 1000000;
+        passwords.push(adbPwd.toString().padStart(6, '0'));
+        passwords.push(carPwd.toString().padStart(6, '0'));
+        passwords.push('--');
+    } else {
+        const p3 = (20231030 * mmddhh) - now.getHours();
+        
+        const p1 = currentCarModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
+        passwords.push(p1);
+        
+        const p2 = `*#20230730#*`;
+        passwords.push(p2);
+        
+        passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
+    }
     
     for (let i = 1; i <= 3; i++) {
         const el = document.getElementById(`password${i}`);
