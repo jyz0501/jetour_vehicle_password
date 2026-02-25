@@ -9,15 +9,32 @@ function formatTimeUnit(unit) {
 
 function updateCountdown() {
     const now = new Date();
-    const nextHour = new Date(now);
-    nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-    const diff = nextHour - now;
-    
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    
     const countdownEl = document.getElementById('nextUpdateTime');
-    if (countdownEl && countdownEl.textContent !== '无（固定密码）') {
+    if (!countdownEl) return;
+    
+    if (countdownEl.textContent === '无（固定密码）') {
+        return;
+    }
+    
+    if (currentVersion === '00x' || currentCarModel !== 'traveler') {
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        const diff = tomorrow - now;
+        
+        const hours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        
+        countdownEl.textContent = `${hours}时${minutes}分${seconds.toString().padStart(2, '0')}秒`;
+    } else {
+        const nextHour = new Date(now);
+        nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+        const diff = nextHour - now;
+        
+        const minutes = Math.floor(diff / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        
         countdownEl.textContent = `${minutes}分${seconds.toString().padStart(2, '0')}秒`;
     }
 }
