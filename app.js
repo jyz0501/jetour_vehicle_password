@@ -66,30 +66,38 @@ const carModels = {
     },
     fengyunA9: {
         name: '风云A9',
-        versions: ['unknown'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'unknown': '未知版本'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     shanhal7: {
         name: '山海L7',
-        versions: ['unknown'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'unknown': '未知版本'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     shanhal9: {
         name: '山海L9',
-        versions: ['unknown'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'unknown': '未知版本'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     x70plus: {
         name: 'X70plus',
-        versions: ['unknown'],
+        versions: ['pwd1', 'pwd2', 'pwd3'],
         versionNames: {
-            'unknown': '未知版本'
+            'pwd1': '密码1',
+            'pwd2': '密码2',
+            'pwd3': '密码3'
         }
     },
     zizhe: {
@@ -159,13 +167,6 @@ function renderPasswordGroup() {
                 </div>
                 <div class="password-card">
                     <h2>2. ADB权限密码</h2>
-                    <div class="password-value" id="password1">--</div>
-                </div>
-            `;
-        } else if (['fengyunA9', 'shanhal7', 'shanhal9', 'x70plus'].includes(currentCarModel)) {
-            html = `
-                <div class="password-card">
-                    <h2>未知版本</h2>
                     <div class="password-value" id="password1">--</div>
                 </div>
             `;
@@ -361,9 +362,7 @@ function updateOtherCarPasswords(dateTimeNum) {
         const carPwd = ((240910 * mmddhh) - now.getHours()) % 1000000;
         passwords.push(`*#${carPwd.toString().padStart(6, '0')}#*`);
         passwords.push(adbPwd.toString().padStart(6, '0'));
-    } else if (['fengyunA9', 'shanhal7', 'shanhal9', 'x70plus'].includes(currentCarModel)) {
-        const p1 = currentCarModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
-        passwords.push(p1);
+        passwords.push('--');
     } else {
         const p3 = (20231030 * mmddhh) - now.getHours();
         
