@@ -267,8 +267,8 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             const snInput00x = document.getElementById('serialNumberInput');
             const toggleBtn00x = document.getElementById('toggleAdbPassword');
             const adbInst00x = document.getElementById('adbInstructions');
-            if (snInput00x) snInput00x.style.display = 'block';
-            if (toggleBtn00x) toggleBtn00x.style.display = 'inline-block';
+            if (snInput00x) snInput00x.style.display = 'none';
+            if (toggleBtn00x) toggleBtn00x.style.display = 'none';
             if (adbInst00x) adbInst00x.style.display = 'block';
             break;
             
@@ -316,6 +316,8 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
     const adbPasswordElement = document.getElementById('adbPassword');
     if (adbPasswordElement) {
         if (currentVersion === '04.06') {
+            adbPasswordElement.textContent = adbPassword;
+        } else if (currentVersion === '00x') {
             adbPasswordElement.textContent = adbPassword;
         } else {
             adbPasswordElement.dataset.actualPassword = adbPassword;
