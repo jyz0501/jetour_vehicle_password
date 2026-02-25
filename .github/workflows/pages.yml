@@ -18,7 +18,7 @@ jobs:
       - name: Inject commit time
         run: |
           TIME=$(date +"%M%S")
-          sed -i "s/<!--commit-hash-->/v${TIME}/" index.html
+          sed -i "s/<!--version-->/v${TIME}/" index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
