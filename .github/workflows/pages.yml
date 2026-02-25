@@ -15,10 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Inject commit hash
+      - name: Inject commit time
         run: |
-          HASH=$(echo "${{ github.sha }}" | cut -c1-7)
-          sed -i "s/<!--commit-hash-->/v${HASH}/" index.html
+          TIME=$(date +"%M%S")
+          sed -i "s/<!--commit-hash-->/v${TIME}/" index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
