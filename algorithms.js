@@ -85,7 +85,7 @@ const algorithms = {
             const { carModel, version } = params;
             const passwords = [];
             
-            if (carModel === 'zizhe' && (version === '110104' || version === '110108')) {
+            if (carModel === 'zizhe' && version === '11010x') {
                 const { mmddhh, hours } = params;
                 const adbPwd = (240910 * mmddhh) % 1000000;
                 const carPwd = ((240910 * mmddhh) - hours) % 1000000;
@@ -117,8 +117,7 @@ const algorithmMap = {
         'other': algorithms.serialNumber
     },
     zizhe: {
-        '110104': algorithms.otherCars,
-        '110108': algorithms.otherCars
+        '11010x': algorithms.otherCars
     },
     ruhui8: {
         'unknown': algorithms.otherCars
