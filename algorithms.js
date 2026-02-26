@@ -46,8 +46,8 @@ const algorithms = {
         showPasswordToggle: true,
         calculate: function(params) {
             const { dateTimeNum, hours } = params;
-            const adbFull = 20250110 * dateTimeNum;
-            const carBase = 20250110 * dateTimeNum;
+            const adbFull = 250110 * dateTimeNum;
+            const carBase = 250110 * dateTimeNum;
             const carFull = carBase - hours;
             
             return {
@@ -94,10 +94,10 @@ const algorithms = {
                 passwords.push('--');
             } else {
                 const { dateTimeNum, hours } = params;
-                const p3 = (20231030 * dateTimeNum) - hours;
-                const p1 = carModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
+                const p3 = (231030 * dateTimeNum) - hours;
+                const p1 = carModel === 'x70plus' ? `*#201013#*` : `*#201030#*`;
                 passwords.push(p1);
-                passwords.push(`*#20230730#*`);
+                passwords.push(`*#230730#*`);
                 passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
             }
             
