@@ -85,8 +85,8 @@ function calculatePasswords(version, now, serialNumber = '') {
       nextUpdateTime = `${nextHour.toString().padStart(2, '0')}:00`;
       break;
     
-    case '04.06':
-      // 04.06版本使用固定工程模式密码
+    case '0407':
+      // 0407版本使用固定工程模式密码
       isFixedPassword = true;
       carPassword = `*#20230730#*`;
       adbPassword = '无';
@@ -148,7 +148,7 @@ Page({
     
     // 版本列表
     versionList: [
-      { label: '4.06及以下', version: '04.06' },
+      { label: '4.07及以下', version: '0407' },
       { label: '00.00.x', version: '00x' },
       { label: '4.07及以上', version: '04.11' },
       { label: 'v04.12', version: '04.12' },
@@ -208,7 +208,7 @@ Page({
     let adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
     
     // 对于固定密码版本，直接显示
-    if (currentVersion === '04.06') {
+    if (currentVersion === '0407') {
       adbPasswordDisplay = result.adbPassword;
     } else if (currentVersion === 'other') {
       adbPasswordDisplay = result.adbPassword;
