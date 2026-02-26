@@ -71,10 +71,8 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     case '0407':
-    case '04.12':
-    case '8AT':
       // 计算ADB密码（20250110 × 日期时间）
-          const adbFull = 20250110 * dateTimeNum;
+      const adbFull = 20250110 * dateTimeNum;
       adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
 
       // 计算系统动态密码（ADB密码 - 当前小时数）
@@ -149,11 +147,9 @@ Page({
     
     // 版本列表
     versionList: [
-      { label: '4.06以下', version: '0406' },
+      { label: '4.06及以下', version: '0406' },
       { label: '00.08及以下', version: '00x' },
-      { label: '4.07-4.11', version: '0407' },
-      { label: '4.12及以上', version: '04.12' },
-      { label: '8AT/7DCT', version: '8AT' },
+      { label: '4.07以上', version: '0407' },
       { label: '其他', version: 'other' }
     ],
     
