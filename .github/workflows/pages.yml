@@ -1,40 +1,42 @@
-name: 生成静态页面
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Inject commit count
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      
+      - name: Update version
         run: |
-          COUNT=$(git rev-list --count HEAD)
-          sed -i "s/<!--version-->/v${COUNT}/" index.html
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+          chmod +x ./update-version.sh
+          ./update-version.sh
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          keep_files: false
-          exclude: |
-            douyin
-            douyin-miniprogram
-            wechat-miniprogram
-            .github
-            .gitee
-            .workflow
-            .trae
-            Dockerfile
-            requirements.txt
-            screenshot.py
-            build.sh
+          path: '.'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
