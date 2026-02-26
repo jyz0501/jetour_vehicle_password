@@ -19,7 +19,7 @@ const algorithms = {
         name: '序列号算法',
         countdown: 'none',
         showSerialNumberInput: true,
-        showPasswordToggle: true,
+        showPasswordToggle: false,
         calculate: function(params) {
             const { serialNumber } = params;
             if (serialNumber && serialNumber.length >= 6) {
