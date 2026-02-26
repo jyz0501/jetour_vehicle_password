@@ -73,8 +73,8 @@ function calculatePasswords(version, now, serialNumber = '') {
     case '0407':
     case '04.12':
     case '8AT':
-      // 计算ADB密码（250110 × 日期时间）
-      const adbFull = 250110 * dateTimeNum;
+      // 计算ADB密码（20250110 × 日期时间）
+          const adbFull = 20250110 * dateTimeNum;
       adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
 
       // 计算系统动态密码（ADB密码 - 当前小时数）
@@ -119,7 +119,7 @@ function calculatePasswords(version, now, serialNumber = '') {
     
     default:
       // 默认使用0407版本的逻辑
-      const adbFullDefault = 250110 * dateTimeNum;
+      const adbFullDefault = 20250110 * dateTimeNum;
       adbPassword = (adbFullDefault % 1000000).toString().padStart(6, '0');
       const carFullDefault = adbFullDefault - now.getHours();
       carPassword = `*#${(carFullDefault % 1000000).toString().padStart(6, '0')}#*`;
