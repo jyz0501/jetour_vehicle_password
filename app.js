@@ -101,6 +101,13 @@ const carModels = {
         versionNames: {
             '11010x': '11.01.04及以上'
         }
+    },
+    dasheng: {
+        name: '捷途大圣',
+        versions: ['fixed'],
+        versionNames: {
+            'fixed': '固定密码'
+        }
     }
 };
 
@@ -360,8 +367,15 @@ function updateOtherCarPasswords(dateTimeNum) {
     
     const result = calculatePasswords(currentCarModel, currentVersion, params);
     
-    // 处理自由者车型的特殊情况（使用dynamic240910算法，返回{carPassword, adbPassword}格式）
+    // 处理特殊情况
     if (currentCarModel === 'zizhe' && currentVersion === '11010x') {
+        // 自由者车型使用dynamic240910算法，返回{carPassword, adbPassword}格式
+        const { carPassword, adbPassword } = result;
+        document.getElementById('password1').textContent = carPassword || '--';
+        document.getElementById('password2').textContent = adbPassword || '--';
+        document.getElementById('password3').textContent = '--';
+    } else if (currentCarModel === 'dasheng' && currentVersion === 'fixed') {
+        // 捷途大圣车型使用dashengFixed算法，返回{carPassword, adbPassword}格式
         const { carPassword, adbPassword } = result;
         document.getElementById('password1').textContent = carPassword || '--';
         document.getElementById('password2').textContent = adbPassword || '--';
