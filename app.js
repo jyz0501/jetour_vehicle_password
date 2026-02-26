@@ -17,7 +17,7 @@ function updateCountdown() {
         return;
     }
     
-    if (currentVersion === '00x' || (currentCarModel !== 'traveler' && currentCarModel !== 'zizhe')) {
+    if (currentVersion === '00x' || currentVersion === 'other' || (currentCarModel !== 'traveler' && currentCarModel !== 'zizhe')) {
         const tomorrow = new Date(now);
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
