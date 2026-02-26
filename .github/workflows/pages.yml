@@ -15,10 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Inject commit time
+      - name: Inject commit count
         run: |
-          TIME=$(date +"%M%S")
-          sed -i "s/<!--version-->/v${TIME}/" index.html
+          COUNT=$(git rev-list --count HEAD)
+          sed -i "s/<!--version-->/v${COUNT}/" index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
