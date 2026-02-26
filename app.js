@@ -97,10 +97,9 @@ const carModels = {
     },
     zizhe: {
         name: '自由者/山海T1',
-        versions: ['110104', '110108'],
+        versions: ['11010x'],
         versionNames: {
-            '110104': '11.01.04-11.01.08',
-            '110108': '11.01.08以上'
+            '11010x': '11.01.04及以上'
         }
     }
 };
@@ -171,7 +170,7 @@ function renderPasswordGroup() {
         `;
     } else {
         let html = '';
-        if (currentCarModel === 'zizhe' && (currentVersion === '110104' || currentVersion === '110108')) {
+        if (currentCarModel === 'zizhe' && currentVersion === '11010x') {
             html = `
                 <div class="password-card">
                     <h2>1. 工程模式密码</h2>
