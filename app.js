@@ -3,6 +3,10 @@
  * @param {number} unit 时间单位（如月份、日期、小时）
  * @returns {string} 两位字符串（如 9 → '09'）
  */
+
+import { getAlgorithm, calculatePasswords, getDisplaySettings, getCountdownType } from './algorithms.js';
+
+// 格式化时间单位
 function formatTimeUnit(unit) {
     return String(unit).padStart(2, '0');
 }
@@ -12,12 +16,12 @@ function updateCountdown() {
     const countdownEl = document.getElementById('nextUpdateTime');
     if (!countdownEl) return;
     
-    if (currentVersion === '04.06') {
+    const countdownType = getCountdownType(currentCarModel, currentVersion);
+    
+    if (countdownType === 'none') {
         countdownEl.textContent = '无（固定密码）';
         return;
-    }
-    
-    if (currentVersion === '00x' || currentVersion === 'other' || (currentCarModel !== 'traveler' && currentCarModel !== 'zizhe')) {
+    } else if (countdownType === 'daily') {
         const tomorrow = new Date(now);
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
@@ -28,7 +32,7 @@ function updateCountdown() {
         const seconds = Math.floor((diff % 60000) / 1000);
         
         countdownEl.textContent = `${hours}时${minutes}分${seconds.toString().padStart(2, '0')}秒`;
-    } else {
+    } else if (countdownType === 'hourly') {
         const nextHour = new Date(now);
         nextHour.setHours(now.getHours() + 1, 0, 0, 0);
         const diff = nextHour - now;
@@ -246,110 +250,62 @@ function updatePasswords() {
 }
 
 function updateTravelerPasswords(dateTimeNum, now, hours) {
-    let adbPassword, carPassword;
-    let isFixedPassword = false;
+    const serialNumber = document.getElementById('serialNumberInput').value;
     
-    switch(currentVersion) {
-        case '00x':
-            const serialNumber = document.getElementById('serialNumberInput').value;
-            if (serialNumber && serialNumber.length >= 6) {
-                const snLastSix = serialNumber.slice(-6);
-                const adbFull30 = 802018 * parseInt(snLastSix, 10);
-                adbPassword = (adbFull30 % 1000000).toString().padStart(6, '0');
-            } else {
-                adbPassword = '请输入序列号';
-            }
-            carPassword = `*#20230730#*`;
-            
-            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
-            document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
-            
-            const snInput00x = document.getElementById('serialNumberInput');
-            const toggleBtn00x = document.getElementById('toggleAdbPassword');
-            const adbInst00x = document.getElementById('adbInstructions');
-            if (snInput00x) {
-                snInput00x.style.display = 'inline-block';
-                snInput00x.placeholder = '请输入产品序列号后六位';
-            }
-            if (toggleBtn00x) toggleBtn00x.style.display = 'inline-block';
-            if (adbInst00x) adbInst00x.style.display = 'block';
-            break;
-            
-        case '04.06':
-            isFixedPassword = true;
-            carPassword = `*#20230730#*`;
-            adbPassword = '无';
-            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
-            const serialNumberInput = document.getElementById('serialNumberInput');
-            const toggleAdbButton = document.getElementById('toggleAdbPassword');
-            const adbInstructions = document.getElementById('adbInstructions');
-            if (serialNumberInput) serialNumberInput.style.display = 'none';
-            if (toggleAdbButton) toggleAdbButton.style.display = 'none';
-            if (adbInstructions) adbInstructions.style.display = 'none';
-            break;
-            
-        case '8AT':
-            const adbFull8AT = 250110 * dateTimeNum;
-            adbPassword = (adbFull8AT % 1000000).toString().padStart(6, '0');
-            
-            const carBase8AT = 250110 * dateTimeNum;
-            const carFull8AT = carBase8AT - now.getHours();
-            carPassword = `*#`+ (carFull8AT % 1000000).toString().padStart(6, '0')+`#*`;
-            
-            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
-            document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
-            
-            const snInput8AT = document.getElementById('serialNumberInput');
-            const toggleBtn8AT = document.getElementById('toggleAdbPassword');
-            const adbInst8AT = document.getElementById('adbInstructions');
-            if (snInput8AT) snInput8AT.style.display = 'none';
-            if (toggleBtn8AT) toggleBtn8AT.style.display = 'inline-block';
-            if (adbInst8AT) adbInst8AT.style.display = 'block';
-            break;
-            
-        case '04.11':
-            const adbFull = 250110 * dateTimeNum;
-            adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
-            
-            const carBase = 250110 * dateTimeNum;
-            const carFull = carBase - now.getHours();
-            carPassword = `*#`+ (carFull % 1000000).toString().padStart(6, '0')+`#*`;
-            
-            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
-            document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
-            
-            const snInput = document.getElementById('serialNumberInput');
-            const toggleBtn = document.getElementById('toggleAdbPassword');
-            const adbInst = document.getElementById('adbInstructions');
-            if (snInput) snInput.style.display = 'none';
-            if (toggleBtn) toggleBtn.style.display = 'inline-block';
-            if (adbInst) adbInst.style.display = 'block';
-            break;
-            
-        case 'other':
-            const serialNumberOther = document.getElementById('serialNumberInput').value;
-            if (serialNumberOther && serialNumberOther.length >= 6) {
-                const snLastSixOther = serialNumberOther.slice(-6);
-                const adbFull30Other = 802018 * parseInt(snLastSixOther, 10);
-                adbPassword = (adbFull30Other % 1000000).toString().padStart(6, '0');
-            } else {
-                adbPassword = '请输入序列号';
-            }
-            carPassword = `*#20230730#*`;
-            
-            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
-            document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
-            
-            const snInputOther = document.getElementById('serialNumberInput');
-            const toggleBtnOther = document.getElementById('toggleAdbPassword');
-            const adbInstOther = document.getElementById('adbInstructions');
-            if (snInputOther) {
-                snInputOther.style.display = 'inline-block';
-                snInputOther.placeholder = '请输入产品序列号后六位';
-            }
-            if (toggleBtnOther) toggleBtnOther.style.display = 'inline-block';
-            if (adbInstOther) adbInstOther.style.display = 'block';
-            break;
+    const params = {
+        dateTimeNum,
+        hours,
+        serialNumber,
+        now,
+        mmddhh: parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10)
+    };
+    
+    const result = calculatePasswords(currentCarModel, currentVersion, params);
+    const { carPassword, adbPassword } = result;
+    
+    // 获取显示设置
+    const displaySettings = getDisplaySettings(currentCarModel, currentVersion);
+    const { showSerialNumberInput, showPasswordToggle } = displaySettings;
+    
+    // 更新说明文本
+    if (currentVersion === '00x' || currentVersion === 'other') {
+        document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+        document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
+    } else if (currentVersion === '8AT') {
+        document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+        document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+    } else if (currentVersion === '04.06') {
+        document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
+        document.getElementById('adbInstructions').textContent = '';
+    } else {
+        document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
+        document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+    }
+    
+    // 更新显示状态
+    const snInput = document.getElementById('serialNumberInput');
+    const toggleBtn = document.getElementById('toggleAdbPassword');
+    const adbInst = document.getElementById('adbInstructions');
+    
+    if (snInput) {
+        if (showSerialNumberInput) {
+            snInput.style.display = 'inline-block';
+            snInput.placeholder = '请输入产品序列号后六位';
+        } else {
+            snInput.style.display = 'none';
+        }
+    }
+    
+    if (toggleBtn) {
+        if (showPasswordToggle) {
+            toggleBtn.style.display = 'inline-block';
+        } else {
+            toggleBtn.style.display = 'none';
+        }
+    }
+    
+    if (adbInst) {
+        adbInst.style.display = 'block';
     }
     
     const carPasswordElement = document.getElementById('carPassword');
@@ -361,7 +317,7 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
     if (adbPasswordElement) {
         if (currentVersion === '04.06') {
             adbPasswordElement.textContent = adbPassword;
-        } else if (currentVersion === '00x') {
+        } else if (currentVersion === '00x' || currentVersion === 'other') {
             adbPasswordElement.textContent = adbPassword;
         } else {
             adbPasswordElement.dataset.actualPassword = adbPassword;
@@ -379,25 +335,16 @@ function updateOtherCarPasswords(dateTimeNum) {
     const now = new Date();
     const mmddhh = parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10);
     
-    const passwords = [];
+    const params = {
+        dateTimeNum,
+        hours: now.getHours(),
+        mmddhh,
+        carModel: currentCarModel,
+        version: currentVersion
+    };
     
-    if (currentCarModel === 'zizhe' && currentVersion === '110104') {
-        const adbPwd = (240910 * mmddhh) % 1000000;
-        const carPwd = ((240910 * mmddhh) - now.getHours()) % 1000000;
-        passwords.push(`*#${carPwd.toString().padStart(6, '0')}#*`);
-        passwords.push(adbPwd.toString().padStart(6, '0'));
-        passwords.push('--');
-    } else {
-        const p3 = (20231030 * mmddhh) - now.getHours();
-        
-        const p1 = currentCarModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
-        passwords.push(p1);
-        
-        const p2 = `*#20230730#*`;
-        passwords.push(p2);
-        
-        passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
-    }
+    const result = calculatePasswords(currentCarModel, currentVersion, params);
+    const { passwords } = result;
     
     for (let i = 1; i <= 3; i++) {
         const el = document.getElementById(`password${i}`);
