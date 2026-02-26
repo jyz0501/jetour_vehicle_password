@@ -114,8 +114,6 @@ const algorithmMap = {
         '00x': algorithms.serialNumber,
         '0406': algorithms.fixed,
         '0407': algorithms.dynamic250110,
-        '04.12': algorithms.dynamic250110,
-        '8AT': algorithms.dynamic250110,
         'other': algorithms.serialNumber
     },
     zizhe: {
