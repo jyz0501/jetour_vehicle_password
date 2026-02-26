@@ -14,6 +14,20 @@ const algorithms = {
         }
     },
     
+    // 捷途大圣固定密码算法
+    dashengFixed: {
+        name: '捷途大圣固定密码',
+        countdown: 'none',
+        showSerialNumberInput: false,
+        showPasswordToggle: false,
+        calculate: function(params) {
+            return {
+                carPassword: '*#20220730#*',
+                adbPassword: '无'
+            };
+        }
+    },
+    
     // 序列号算法
     serialNumber: {
         name: '序列号算法',
@@ -118,6 +132,9 @@ const algorithmMap = {
     },
     zizhe: {
         '11010x': algorithms.dynamic240910
+    },
+    dasheng: {
+        'fixed': algorithms.dashengFixed
     },
     ruhui8: {
         'unknown': algorithms.otherCars
