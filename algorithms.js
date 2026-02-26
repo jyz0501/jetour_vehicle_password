@@ -85,7 +85,7 @@ const algorithms = {
             const { carModel, version } = params;
             const passwords = [];
             
-            if (carModel === 'zizhe' && version === '110104') {
+            if (carModel === 'zizhe' && (version === '110104' || version === '110108')) {
                 const { mmddhh, hours } = params;
                 const adbPwd = (240910 * mmddhh) % 1000000;
                 const carPwd = ((240910 * mmddhh) - hours) % 1000000;
