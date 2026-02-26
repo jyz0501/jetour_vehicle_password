@@ -359,12 +359,21 @@ function updateOtherCarPasswords(dateTimeNum) {
     };
     
     const result = calculatePasswords(currentCarModel, currentVersion, params);
-    const { passwords } = result;
     
-    for (let i = 1; i <= 3; i++) {
-        const el = document.getElementById(`password${i}`);
-        if (el) {
-            el.textContent = passwords[i - 1] || '--';
+    // 处理自由者车型的特殊情况（使用dynamic240910算法，返回{carPassword, adbPassword}格式）
+    if (currentCarModel === 'zizhe' && currentVersion === '11010x') {
+        const { carPassword, adbPassword } = result;
+        document.getElementById('password1').textContent = carPassword || '--';
+        document.getElementById('password2').textContent = adbPassword || '--';
+        document.getElementById('password3').textContent = '--';
+    } else {
+        // 其他车型使用标准格式{passwords: []}
+        const { passwords } = result;
+        for (let i = 1; i <= 3; i++) {
+            const el = document.getElementById(`password${i}`);
+            if (el) {
+                el.textContent = passwords[i - 1] || '--';
+            }
         }
     }
 }
