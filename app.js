@@ -112,13 +112,29 @@ function renderVersionButtons() {
     const carModel = carModels[currentCarModel];
     carModel.versions.forEach((version, index) => {
         const button = document.createElement('button');
-        button.className = 'version-button' + (index === carModel.versions.length - 1 ? ' active' : '');
+        button.className = 'version-button' + (version === currentVersion ? ' active' : '');
         button.dataset.version = version;
         button.textContent = carModel.versionNames[version];
         versionButtonsContainer.appendChild(button);
     });
     
-    currentVersion = carModel.versions[carModel.versions.length - 1];
+    // 如果当前版本不在新车型的版本列表中，设置为默认版本
+    if (!carModel.versions.includes(currentVersion)) {
+        // 对于旅行者车型，默认使用 04.11 版本
+        if (currentCarModel === 'traveler') {
+            currentVersion = '04.11';
+        } else {
+            // 其他车型使用第一个版本
+            currentVersion = carModel.versions[0];
+        }
+        // 更新按钮的 active 状态
+        document.querySelectorAll('.version-button').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.version === currentVersion) {
+                btn.classList.add('active');
+            }
+        });
+    }
     
     document.querySelectorAll('.version-button').forEach(btn => {
         btn.addEventListener('click', function() {
