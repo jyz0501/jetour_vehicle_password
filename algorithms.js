@@ -117,8 +117,8 @@ const algorithmMap = {
         'other': algorithms.serialNumber
     },
     zizhe: {
-        '110104': algorithms.dynamic240910,
-        '110108': algorithms.dynamic240910
+        '110104': algorithms.otherCars,
+        '110108': algorithms.otherCars
     },
     ruhui8: {
         'unknown': algorithms.otherCars
