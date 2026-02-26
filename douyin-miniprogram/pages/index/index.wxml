@@ -61,7 +61,7 @@
         <view class="password-container">
           <text class="password-value">{{encryptionPassword}}</text>
           <button 
-            wx:if="{{currentVersion !== '0407' && currentVersion !== 'other'}}"
+            wx:if="{{currentVersion !== '0406' && currentVersion !== 'other'}}"
             class="toggle-button"
             bindtap="toggleEncryptionPassword"
           >

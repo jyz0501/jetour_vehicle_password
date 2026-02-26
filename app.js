@@ -45,16 +45,17 @@ function updateCountdown() {
 }
 
 let currentCarModel = 'traveler';
-let currentVersion = '04.11';
+let currentVersion = '0407';
 
 const carModels = {
     traveler: {
         name: '捷途旅行者/山海T2',
-        versions: ['00x', '0407', '04.11', '8AT', 'other'],
+        versions: ['00x', '0406', '0407', '04.12', '8AT', 'other'],
         versionNames: {
             '00x': '00.08及以下',
-            '0407': '4.07以下',
-            '04.11': '4.07-4.12',
+            '0406': '4.06以下',
+            '0407': '4.07-4.11',
+            '04.12': '4.12及以上',
             '8AT': '8AT/7DCT',
             'other': '其他'
         }
@@ -120,9 +121,9 @@ function renderVersionButtons() {
     
     // 如果当前版本不在新车型的版本列表中，设置为默认版本
     if (!carModel.versions.includes(currentVersion)) {
-        // 对于旅行者车型，默认使用 04.11 版本
+        // 对于旅行者车型，默认使用 0407 版本
         if (currentCarModel === 'traveler') {
-            currentVersion = '04.11';
+            currentVersion = '0407';
         } else {
             // 其他车型使用第一个版本
             currentVersion = carModel.versions[0];
@@ -290,7 +291,7 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
     } else if (currentVersion === '8AT') {
         document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
         document.getElementById('adbInstructions').textContent = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
-    } else if (currentVersion === '0407') {
+    } else if (currentVersion === '0406') {
         document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码';
         document.getElementById('adbInstructions').textContent = '';
     } else {
@@ -331,7 +332,7 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
     
     const adbPasswordElement = document.getElementById('adbPassword');
     if (adbPasswordElement) {
-        if (currentVersion === '0407') {
+        if (currentVersion === '0406') {
             adbPasswordElement.textContent = adbPassword;
         } else if (currentVersion === '00x' || currentVersion === 'other') {
             adbPasswordElement.textContent = adbPassword;
