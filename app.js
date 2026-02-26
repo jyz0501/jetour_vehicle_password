@@ -314,7 +314,6 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             break;
             
         case '04.11':
-        case 'other':
             const adbFull = 250110 * dateTimeNum;
             adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
             
@@ -331,6 +330,37 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             if (snInput) snInput.style.display = 'none';
             if (toggleBtn) toggleBtn.style.display = 'inline-block';
             if (adbInst) adbInst.style.display = 'block';
+            break;
+            
+        case 'other':
+            const yymmdd = `${now.getFullYear().toString().slice(-2)}${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}`;
+            const lastDigit = parseInt(yymmdd.slice(-1), 10);
+            let baseValue;
+            switch(lastDigit) {
+                case 0: baseValue = 213518; break;
+                case 1: baseValue = 658035; break;
+                case 2: baseValue = 235657; break;
+                case 3: baseValue = 567534; break;
+                case 4: baseValue = 647825; break;
+                case 5: baseValue = 234700; break;
+                case 6: baseValue = 127347; break;
+                case 7: baseValue = 648924; break;
+                case 8: baseValue = 733782; break;
+                case 9: baseValue = 553456; break;
+            }
+            const adbFull30 = parseInt(yymmdd, 10) + baseValue;
+            adbPassword = adbFull30.toString().padStart(6, '0');
+            carPassword = `*#20230730#*`;
+            
+            document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+            document.getElementById('adbInstructions').textContent = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
+            
+            const snInputOther = document.getElementById('serialNumberInput');
+            const toggleBtnOther = document.getElementById('toggleAdbPassword');
+            const adbInstOther = document.getElementById('adbInstructions');
+            if (snInputOther) snInputOther.style.display = 'none';
+            if (toggleBtnOther) toggleBtnOther.style.display = 'none';
+            if (adbInstOther) adbInstOther.style.display = 'block';
             break;
     }
     
