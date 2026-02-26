@@ -46,8 +46,8 @@ const algorithms = {
         showPasswordToggle: true,
         calculate: function(params) {
             const { dateTimeNum, hours } = params;
-            const adbFull = 250110 * dateTimeNum;
-            const carBase = 250110 * dateTimeNum;
+            const adbFull = 20250110 * dateTimeNum;
+            const carBase = 20250110 * dateTimeNum;
             const carFull = carBase - hours;
             
             return {
