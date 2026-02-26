@@ -70,13 +70,14 @@ function calculatePasswords(version, now, serialNumber = '') {
       nextUpdateTime = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
       break;
     
-    case '04.11':
+    case '0407':
     case '04.12':
-      // 计算ADB密码（20250110 × 日期时间）
-      const adbFull = 20250110 * dateTimeNum;
+    case '8AT':
+      // 计算ADB密码（250110 × 日期时间）
+      const adbFull = 250110 * dateTimeNum;
       adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
 
-      // 计算车机动态密码（ADB密码 - 当前小时数）
+      // 计算系统动态密码（ADB密码 - 当前小时数）
       const carFull = adbFull - now.getHours();
       carPassword = `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`;
       
@@ -85,8 +86,8 @@ function calculatePasswords(version, now, serialNumber = '') {
       nextUpdateTime = `${nextHour.toString().padStart(2, '0')}:00`;
       break;
     
-    case '0407':
-      // 0407版本使用固定工程模式密码
+    case '0406':
+      // 0406版本使用固定工程模式密码
       isFixedPassword = true;
       carPassword = `*#20230730#*`;
       adbPassword = '无';
@@ -117,8 +118,8 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     default:
-      // 默认使用04.11版本的逻辑
-      const adbFullDefault = 20250110 * dateTimeNum;
+      // 默认使用0407版本的逻辑
+      const adbFullDefault = 250110 * dateTimeNum;
       adbPassword = (adbFullDefault % 1000000).toString().padStart(6, '0');
       const carFullDefault = adbFullDefault - now.getHours();
       carPassword = `*#${(carFullDefault % 1000000).toString().padStart(6, '0')}#*`;
@@ -148,15 +149,16 @@ Page({
     
     // 版本列表
     versionList: [
-      { label: '4.07及以下', version: '0407' },
-      { label: '00.00.x', version: '00x' },
-      { label: '4.07及以上', version: '04.11' },
-      { label: 'v04.12', version: '04.12' },
+      { label: '4.06以下', version: '0406' },
+      { label: '00.08及以下', version: '00x' },
+      { label: '4.07-4.11', version: '0407' },
+      { label: '4.12及以上', version: '04.12' },
+      { label: '8AT/7DCT', version: '8AT' },
       { label: '其他', version: 'other' }
     ],
     
     // 当前选择的版本
-    currentVersion: '04.11',
+    currentVersion: '0407',
     
     // 密码相关
     carPassword: '--',
@@ -208,7 +210,7 @@ Page({
     let adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
     
     // 对于固定密码版本，直接显示
-    if (currentVersion === '0407') {
+    if (currentVersion === '0406') {
       adbPasswordDisplay = result.adbPassword;
     } else if (currentVersion === 'other') {
       adbPasswordDisplay = result.adbPassword;
@@ -216,6 +218,9 @@ Page({
     } else if (currentVersion === '00x') {
       carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
       adbInstructions = '进入加密项输入上方计算后的密码。同样适用：瑞虎8、风云车型';
+    } else if (currentVersion === '8AT') {
+      carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+      adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
     }
     
     this.setData({

@@ -112,8 +112,9 @@ const algorithms = {
 const algorithmMap = {
     traveler: {
         '00x': algorithms.serialNumber,
-        '0407': algorithms.fixed,
-        '04.11': algorithms.dynamic250110,
+        '0406': algorithms.fixed,
+        '0407': algorithms.dynamic250110,
+        '04.12': algorithms.dynamic250110,
         '8AT': algorithms.dynamic250110,
         'other': algorithms.serialNumber
     },
