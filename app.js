@@ -251,23 +251,14 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
     
     switch(currentVersion) {
         case '00x':
-            const yymmdd = `${now.getFullYear().toString().slice(-2)}${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}`;
-            const lastDigit = parseInt(yymmdd.slice(-1), 10);
-            let baseValue;
-            switch(lastDigit) {
-                case 0: baseValue = 213518; break;
-                case 1: baseValue = 658035; break;
-                case 2: baseValue = 235657; break;
-                case 3: baseValue = 567534; break;
-                case 4: baseValue = 647825; break;
-                case 5: baseValue = 234700; break;
-                case 6: baseValue = 127347; break;
-                case 7: baseValue = 648924; break;
-                case 8: baseValue = 733782; break;
-                case 9: baseValue = 553456; break;
+            const serialNumber = document.getElementById('serialNumberInput').value;
+            if (serialNumber && serialNumber.length >= 6) {
+                const snLastSix = serialNumber.slice(-6);
+                const adbFull30 = 802018 * parseInt(snLastSix, 10);
+                adbPassword = (adbFull30 % 1000000).toString().padStart(6, '0');
+            } else {
+                adbPassword = '请输入序列号';
             }
-            const adbFull30 = parseInt(yymmdd, 10) + baseValue;
-            adbPassword = adbFull30.toString().padStart(6, '0');
             carPassword = `*#20230730#*`;
             
             document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
@@ -276,8 +267,11 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             const snInput00x = document.getElementById('serialNumberInput');
             const toggleBtn00x = document.getElementById('toggleAdbPassword');
             const adbInst00x = document.getElementById('adbInstructions');
-            if (snInput00x) snInput00x.style.display = 'none';
-            if (toggleBtn00x) toggleBtn00x.style.display = 'none';
+            if (snInput00x) {
+                snInput00x.style.display = 'inline-block';
+                snInput00x.placeholder = '请输入产品序列号后六位';
+            }
+            if (toggleBtn00x) toggleBtn00x.style.display = 'inline-block';
             if (adbInst00x) adbInst00x.style.display = 'block';
             break;
             
@@ -333,23 +327,14 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             break;
             
         case 'other':
-            const yymmdd = `${now.getFullYear().toString().slice(-2)}${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}`;
-            const lastDigit = parseInt(yymmdd.slice(-1), 10);
-            let baseValue;
-            switch(lastDigit) {
-                case 0: baseValue = 213518; break;
-                case 1: baseValue = 658035; break;
-                case 2: baseValue = 235657; break;
-                case 3: baseValue = 567534; break;
-                case 4: baseValue = 647825; break;
-                case 5: baseValue = 234700; break;
-                case 6: baseValue = 127347; break;
-                case 7: baseValue = 648924; break;
-                case 8: baseValue = 733782; break;
-                case 9: baseValue = 553456; break;
+            const serialNumberOther = document.getElementById('serialNumberInput').value;
+            if (serialNumberOther && serialNumberOther.length >= 6) {
+                const snLastSixOther = serialNumberOther.slice(-6);
+                const adbFull30Other = 802018 * parseInt(snLastSixOther, 10);
+                adbPassword = (adbFull30Other % 1000000).toString().padStart(6, '0');
+            } else {
+                adbPassword = '请输入序列号';
             }
-            const adbFull30 = parseInt(yymmdd, 10) + baseValue;
-            adbPassword = adbFull30.toString().padStart(6, '0');
             carPassword = `*#20230730#*`;
             
             document.getElementById('carInstructions').textContent = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
@@ -358,8 +343,11 @@ function updateTravelerPasswords(dateTimeNum, now, hours) {
             const snInputOther = document.getElementById('serialNumberInput');
             const toggleBtnOther = document.getElementById('toggleAdbPassword');
             const adbInstOther = document.getElementById('adbInstructions');
-            if (snInputOther) snInputOther.style.display = 'none';
-            if (toggleBtnOther) toggleBtnOther.style.display = 'none';
+            if (snInputOther) {
+                snInputOther.style.display = 'inline-block';
+                snInputOther.placeholder = '请输入产品序列号后六位';
+            }
+            if (toggleBtnOther) toggleBtnOther.style.display = 'inline-block';
             if (adbInstOther) adbInstOther.style.display = 'block';
             break;
     }
@@ -445,6 +433,12 @@ window.onload = function() {
     renderVersionButtons();
     renderPasswordGroup();
     updatePasswords();
+    
+    // 添加序列号输入框事件监听器
+    const serialNumberInput = document.getElementById('serialNumberInput');
+    if (serialNumberInput) {
+        serialNumberInput.addEventListener('input', updatePasswords);
+    }
 };
 
 setInterval(updateCountdown, 1000);
