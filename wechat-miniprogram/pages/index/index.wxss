@@ -100,6 +100,66 @@
   width: 100%;
 }
 
+/* 链接按钮样式 */
+.link-buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+  width: 100%;
+  justify-content: center;
+}
+
+.link-button {
+  flex: 1;
+  max-width: 200rpx;
+  height: 60rpx;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 车型选择器样式 */
+.car-selector {
+  margin-bottom: 30rpx;
+  width: 100%;
+}
+
+.car-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  margin-bottom: 20rpx;
+  justify-content: center;
+}
+
+.car-button {
+  flex: 1;
+  min-width: 200rpx;
+  height: 70rpx;
+  background-color: #FF9800;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  padding: 0 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.car-button.active {
+  background-color: #F57C00;
+  color: white;
+}
+}
+
 /* 版本选择器样式 */
 .version-switcher {
   margin-bottom: 40rpx;
