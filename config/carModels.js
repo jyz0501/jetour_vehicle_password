@@ -16,6 +16,16 @@ export const carModels = {
             'other': 'serialNumber'
         }
     },
+    ziyouzhe: {
+        name: '自由者/山海T1',
+        versions: ['11010x'],
+        versionNames: {
+            '11010x': '11.01.04及以上'
+        },
+        algorithms: {
+            '11010x': 'dynamic240910'
+        }
+    },
     ruihu8: {
         name: '瑞虎8/Pro',
         versions: ['unknown'],
@@ -37,7 +47,7 @@ export const carModels = {
         }
     },
     shanhal7: {
-        name: '山海L7',
+        name: '山海L7/Plus',
         versions: ['unknown'],
         versionNames: {
             'unknown': '未知版本'
@@ -57,7 +67,7 @@ export const carModels = {
         }
     },
     x70plus: {
-        name: 'X70plus',
+        name: 'X70Plus/L/Pro/CDM',
         versions: ['unknown'],
         versionNames: {
             'unknown': '00.01.0x'
@@ -66,14 +76,24 @@ export const carModels = {
             'unknown': 'otherCars'
         }
     },
-    ziyouzhe: {
-        name: '自由者/山海T1',
-        versions: ['11010x'],
+    x90plus: {
+        name: 'X90/Plus/Pro/CDM',
+        versions: ['unknown'],
         versionNames: {
-            '11010x': '11.01.04及以上'
+            'unknown': '未知版本'
         },
         algorithms: {
-            '11010x': 'dynamic240910'
+            'unknown': 'otherCars'
+        }
+    },
+    x95: {
+        name: 'X95',
+        versions: ['unknown'],
+        versionNames: {
+            'unknown': '未知版本'
+        },
+        algorithms: {
+            'unknown': 'otherCars'
         }
     },
     dasheng: {
