@@ -31,6 +31,30 @@ function getFixedPassword(carModel, version) {
     return '*#20230730#*';
 }
 
+// 计算serialNumberDaily密码
+function calculateSerialNumberDailyPassword(year, month, date) {
+    const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
+    const lastDigit = yymmdd % 10;
+    
+    let baseValue;
+    switch(lastDigit) {
+        case 0: baseValue = 213518; break;
+        case 1: baseValue = 658035; break;
+        case 2: baseValue = 235657; break;
+        case 3: baseValue = 567534; break;
+        case 4: baseValue = 647825; break;
+        case 5: baseValue = 234700; break;
+        case 6: baseValue = 127347; break;
+        case 7: baseValue = 875634; break;
+        case 8: baseValue = 345678; break;
+        case 9: baseValue = 982345; break;
+        default: baseValue = 213518;
+    }
+    
+    const adbFull = yymmdd + baseValue;
+    return (adbFull % 1000000).toString().padStart(6, '0');
+}
+
 // 密码算法定义
 export const algorithms = {
     // 固定密码算法
@@ -94,28 +118,10 @@ export const algorithms = {
         showPasswordToggle: false,
         calculate: function(params) {
             const { year, month, date } = params;
-            const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
-            const lastDigit = yymmdd % 10;
-            
-            let baseValue;
-            switch(lastDigit) {
-                case 0: baseValue = 213518; break;
-                case 1: baseValue = 658035; break;
-                case 2: baseValue = 235657; break;
-                case 3: baseValue = 567534; break;
-                case 4: baseValue = 647825; break;
-                case 5: baseValue = 234700; break;
-                case 6: baseValue = 127347; break;
-                case 7: baseValue = 875634; break;
-                case 8: baseValue = 345678; break;
-                case 9: baseValue = 982345; break;
-                default: baseValue = 213518;
-            }
-            
-            const adbFull = yymmdd + baseValue;
+            const adbPassword = calculateSerialNumberDailyPassword(year, month, date);
             return {
                 carPassword: '*#20230730#*',
-                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+                adbPassword: adbPassword
             };
         }
     },
@@ -182,18 +188,22 @@ export const algorithms = {
         showSerialNumberInput: false,
         showPasswordToggle: true,
         calculate: function(params) {
-            const { carModel, version } = params;
+            const { carModel, version, year, month, date, dateTimeNum, hours } = params;
             const passwords = [];
             
             if (carModel === 'ziyouzhe' && version === '11010x') {
-                const { mmddhh, hours } = params;
+                const { mmddhh } = params;
                 const adbPwd = (240910 * mmddhh) % 1000000;
                 const carPwd = ((240910 * mmddhh) - hours) % 1000000;
                 passwords.push(`*#${carPwd.toString().padStart(6, '0')}#*`);
                 passwords.push(adbPwd.toString().padStart(6, '0'));
                 passwords.push('--');
+            } else if (carModel === 'shanhal7') {
+                const p3 = (231030 * dateTimeNum) - hours;
+                passwords.push(`*#20201030#*`);
+                passwords.push(calculateSerialNumberDailyPassword(year, month, date));
+                passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
             } else {
-                const { dateTimeNum, hours } = params;
                 const p3 = (231030 * dateTimeNum) - hours;
                 const p1 = carModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
                 passwords.push(p1);
