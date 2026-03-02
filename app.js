@@ -2,6 +2,7 @@ import { carModels } from './config/carModels.js';
 import { calculatePasswords, getCountdownType } from './utils/password.js';
 import { 
     renderVersionButtons, 
+    renderPasswordGroup,
     updateCarInstructions, 
     updateCountdown,
     updateTravelerPasswords,
@@ -39,6 +40,7 @@ document.getElementById('carModel').addEventListener('change', function() {
     currentVersion = carModel.versions[0];
     
     renderVersionButtons(currentCarModel, currentVersion);
+    renderPasswordGroup(currentCarModel, currentVersion);
     updateCarInstructions(currentCarModel, currentVersion);
     updatePasswords();
 });
@@ -60,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     renderVersionButtons(currentCarModel, currentVersion);
+    renderPasswordGroup(currentCarModel, currentVersion);
     updateCarInstructions(currentCarModel, currentVersion);
     updatePasswords();
     
@@ -69,30 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.version-button').forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
             currentVersion = e.target.dataset.version;
+            renderPasswordGroup(currentCarModel, currentVersion);
             updateCarInstructions(currentCarModel, currentVersion);
             updatePasswords();
         }
     });
-    
-    // 序列号输入框事件监听器
-    const serialNumberInput = document.getElementById('serialNumber');
-    if (serialNumberInput) {
-        serialNumberInput.addEventListener('input', updatePasswords);
-    }
-    
-    // ADB密码切换按钮
-    const toggleAdbButton = document.querySelector('.toggle-button');
-    if (toggleAdbButton) {
-        toggleAdbButton.addEventListener('click', toggleAdbPassword);
-    }
-    
-    // 计算ADB密码按钮
-    const calculateAdbButton = document.querySelector('.calculate-button');
-    if (calculateAdbButton) {
-        calculateAdbButton.addEventListener('click', function() {
-            calculateAdbPassword(document.getElementById('serialNumber')?.value, currentCarModel, currentVersion);
-        });
-    }
 });
 
 // 每秒更新倒计时
