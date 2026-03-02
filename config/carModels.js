@@ -28,12 +28,14 @@ export const carModels = {
     },
     shanhal7: {
         name: '山海L7/Plus',
-        versions: ['os10201'],
+        versions: ['os10201', 'os1201000'],
         versionNames: {
-            'os10201': 'OS1-02.01'
+            'os10201': 'OS1-02.01',
+            'os1201000': 'OS1_20.10.00'
         },
         algorithms: {
-            'os10201': 'otherCars'
+            'os10201': 'otherCars',
+            'os1201000': 'otherCars'
         }
     },
     shanhal9: {
