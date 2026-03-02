@@ -9,7 +9,7 @@ const fixedPasswords = {
     x70plus: {
         'unknown': '*#20201013#*'
     },
-    ruhui8: {
+    ruihu8: {
         'unknown': '*#20201030#*'
     },
     fengyunA9: {

@@ -52,7 +52,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
         if (currentVersion === '0407' || currentVersion === '00x' || currentVersion === 'other') {
             toggleAdbButton.style.display = 'block';
         }
-    } else if (currentCarModel === 'zizhe') {
+    } else if (currentCarModel === 'ziyouzhe') {
         passwordGroup.innerHTML = `
             <div class="password-card">
                 <h2>1. 工程模式密码</h2>
@@ -153,7 +153,7 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
             carInstructions = '应用中心——蓝牙电话，输入上方密码';
             adbInstructions = '';
         }
-    } else if (currentCarModel === 'zizhe') {
+    } else if (currentCarModel === 'ziyouzhe') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
         adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
     } else if (currentCarModel === 'dasheng') {
@@ -243,7 +243,7 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
     
     const result = calculatePasswords(currentCarModel, currentVersion, params);
     
-    if (currentCarModel === 'zizhe' || currentCarModel === 'dasheng') {
+    if (currentCarModel === 'ziyouzhe' || currentCarModel === 'dasheng') {
         const { carPassword, adbPassword } = result;
         const password1El = document.getElementById('password1');
         const password2El = document.getElementById('password2');

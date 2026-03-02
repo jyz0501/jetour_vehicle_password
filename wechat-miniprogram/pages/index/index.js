@@ -15,7 +15,7 @@ const carModels = {
       'other': '其他'
     }
   },
-  zizhe: {
+  ziyouzhe: {
     name: '自由者/山海T1',
     versions: ['11010x'],
     versionNames: {
@@ -146,7 +146,7 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     }
   }
   // 自由者车型
-  else if (carModel === 'zizhe') {
+  else if (carModel === 'ziyouzhe') {
     // 计算ADB密码（240910 × 日期时间）
     const adbFull = 240910 * mmddhh;
     adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
@@ -188,7 +188,7 @@ Page({
     // 车型列表
     carModelList: [
       { label: '捷途旅行者/山海T2', value: 'traveler' },
-      { label: '自由者/山海T1', value: 'zizhe' },
+      { label: '自由者/山海T1', value: 'ziyouzhe' },
       { label: '捷途大圣', value: 'dasheng' }
     ],
     
@@ -406,7 +406,7 @@ Page({
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
         adbInstructions = '';
       }
-    } else if (currentCarModel === 'zizhe') {
+    } else if (currentCarModel === 'ziyouzhe') {
       carInstructions = '应用中心——蓝牙电话，输入上方密码';
       adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
     } else if (currentCarModel === 'dasheng') {
