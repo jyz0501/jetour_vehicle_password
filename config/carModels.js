@@ -16,7 +16,7 @@ export const carModels = {
             'other': 'serialNumber'
         }
     },
-    ruhui8: {
+    ruihu8: {
         name: '瑞虎8/Pro',
         versions: ['unknown'],
         versionNames: {
@@ -66,7 +66,7 @@ export const carModels = {
             'unknown': 'otherCars'
         }
     },
-    zizhe: {
+    ziyouzhe: {
         name: '自由者/山海T1',
         versions: ['11010x'],
         versionNames: {

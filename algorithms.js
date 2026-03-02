@@ -99,7 +99,7 @@ const algorithms = {
             const { carModel, version } = params;
             const passwords = [];
             
-            if (carModel === 'zizhe' && version === '11010x') {
+            if (carModel === 'ziyouzhe' && version === '11010x') {
                 const { mmddhh, hours } = params;
                 const adbPwd = (240910 * mmddhh) % 1000000;
                 const carPwd = ((240910 * mmddhh) - hours) % 1000000;
@@ -130,13 +130,13 @@ const algorithmMap = {
         '0407': algorithms.dynamic250110,
         'other': algorithms.serialNumber
     },
-    zizhe: {
+    ziyouzhe: {
         '11010x': algorithms.dynamic240910
     },
     dasheng: {
         'fixed': algorithms.dashengFixed
     },
-    ruhui8: {
+    ruihu8: {
         'unknown': algorithms.otherCars
     },
     fengyunA9: {
