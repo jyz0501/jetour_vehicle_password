@@ -98,24 +98,14 @@ export const algorithms = {
         showSerialNumberInput: false,
         showPasswordToggle: true,
         calculate: function(params) {
-            const { carModel, version } = params;
+            const { carModel, dateTimeNum, hours } = params;
             const passwords = [];
             
-            if (carModel === 'zizhe' && version === '11010x') {
-                const { mmddhh, hours } = params;
-                const adbPwd = (240910 * mmddhh) % 1000000;
-                const carPwd = ((240910 * mmddhh) - hours) % 1000000;
-                passwords.push(`*#${carPwd.toString().padStart(6, '0')}#*`);
-                passwords.push(adbPwd.toString().padStart(6, '0'));
-                passwords.push('--');
-            } else {
-                const { dateTimeNum, hours } = params;
-                const p3 = (231030 * dateTimeNum) - hours;
-                const p1 = carModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
-                passwords.push(p1);
-                passwords.push(`*#20230730#*`);
-                passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
-            }
+            const p3 = (231030 * dateTimeNum) - hours;
+            const p1 = carModel === 'x70plus' ? '*#20201013#*' : '*#20201030#*';
+            passwords.push(p1);
+            passwords.push('*#20230730#*');
+            passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
             
             return {
                 passwords: passwords
