@@ -86,16 +86,16 @@ export const algorithms = {
         }
     },
     
-    // 序列号动态算法（基于日期最后一位，每日更新）
+    // 序列号动态算法（基于日期MMDDHH最后一位，每小时更新）
     serialNumberDaily: {
-        name: '序列号动态算法（每日更新）',
-        countdown: 'daily',
-        showSerialNumberInput: true,
+        name: '序列号动态算法（每小时更新）',
+        countdown: 'hourly',
+        showSerialNumberInput: false,
         showPasswordToggle: false,
         calculate: function(params) {
-            const { serialNumber, year, month, date } = params;
-            const yymmdd = `${year.toString().slice(-2)}${month}${date}`;
-            const lastDigit = parseInt(yymmdd.slice(-1), 10);
+            const { month, date, hours } = params;
+            const mmddhh = parseInt(`${month}${date}${hours}`, 10);
+            const lastDigit = mmddhh % 10;
             
             let baseValue;
             switch(lastDigit) {
@@ -112,19 +112,11 @@ export const algorithms = {
                 default: baseValue = 213518;
             }
             
-            if (serialNumber && serialNumber.length >= 6) {
-                const snLastSix = serialNumber.slice(-6);
-                const adbFull = parseInt(snLastSix, 10) + baseValue;
-                return {
-                    carPassword: '*#20230730#*',
-                    adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
-                };
-            } else {
-                return {
-                    carPassword: '*#20230730#*',
-                    adbPassword: '请输入序列号'
-                };
-            }
+            const adbFull = mmddhh + baseValue;
+            return {
+                carPassword: '*#20230730#*',
+                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+            };
         }
     },
     
