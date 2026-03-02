@@ -80,7 +80,7 @@ const algorithms = {
             
             if (serialNumber && serialNumber.length >= 6) {
                 const snLastSix = serialNumber.slice(-6);
-                const adbFull = parseInt(snLastSix, 10) * baseValue;
+                const adbFull = parseInt(snLastSix, 10) + baseValue;
                 return {
                     carPassword: '*#20230730#*',
                     adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
