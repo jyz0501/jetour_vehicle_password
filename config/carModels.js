@@ -10,7 +10,7 @@ export const carModels = {
             'other': '其他'
         },
         algorithms: {
-            '00x': 'serialNumber',
+            '00x': 'serialNumberDaily',
             '0406': 'fixed',
             '0407': 'dynamic250110',
             'other': 'serialNumber'

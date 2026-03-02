@@ -25,5 +25,20 @@ export function getCountdownType(carModel, version) {
 // 计算密码
 export function calculatePasswords(carModel, version, params) {
     const algorithm = getCarModelAlgorithm(carModel, version);
-    return algorithm.calculate(params);
+    const now = new Date();
+    
+    // 添加日期参数
+    const fullParams = {
+        ...params,
+        year: now.getFullYear(),
+        month: formatTimeUnit(now.getMonth() + 1),
+        date: formatTimeUnit(now.getDate()),
+        hours: now.getHours(),
+        dateTimeNum: parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10),
+        mmddhh: parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10),
+        carModel,
+        version
+    };
+    
+    return algorithm.calculate(fullParams);
 }

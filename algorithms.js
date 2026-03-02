@@ -28,7 +28,7 @@ const algorithms = {
         }
     },
     
-    // 序列号算法
+    // 序列号算法（固定乘数802018）
     serialNumber: {
         name: '序列号算法',
         countdown: 'none',
@@ -39,6 +39,48 @@ const algorithms = {
             if (serialNumber && serialNumber.length >= 6) {
                 const snLastSix = serialNumber.slice(-6);
                 const adbFull = 802018 * parseInt(snLastSix, 10);
+                return {
+                    carPassword: '*#20230730#*',
+                    adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+                };
+            } else {
+                return {
+                    carPassword: '*#20230730#*',
+                    adbPassword: '请输入序列号'
+                };
+            }
+        }
+    },
+    
+    // 序列号动态算法（基于日期最后一位，每日更新）
+    serialNumberDaily: {
+        name: '序列号动态算法（每日更新）',
+        countdown: 'daily',
+        showSerialNumberInput: true,
+        showPasswordToggle: false,
+        calculate: function(params) {
+            const { serialNumber, year, month, date } = params;
+            const yymmdd = `${year.toString().slice(-2)}${month}${date}`;
+            const lastDigit = parseInt(yymmdd.slice(-1), 10);
+            
+            let baseValue;
+            switch(lastDigit) {
+                case 0: baseValue = 213518; break;
+                case 1: baseValue = 658035; break;
+                case 2: baseValue = 235657; break;
+                case 3: baseValue = 567534; break;
+                case 4: baseValue = 647825; break;
+                case 5: baseValue = 234700; break;
+                case 6: baseValue = 127347; break;
+                case 7: baseValue = 875634; break;
+                case 8: baseValue = 345678; break;
+                case 9: baseValue = 982345; break;
+                default: baseValue = 213518;
+            }
+            
+            if (serialNumber && serialNumber.length >= 6) {
+                const snLastSix = serialNumber.slice(-6);
+                const adbFull = parseInt(snLastSix, 10) * baseValue;
                 return {
                     carPassword: '*#20230730#*',
                     adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
@@ -89,6 +131,24 @@ const algorithms = {
         }
     },
     
+    // 231030动态算法（按小时更新，备用）
+    dynamic231030: {
+        name: '231030动态算法',
+        countdown: 'hourly',
+        showSerialNumberInput: false,
+        showPasswordToggle: true,
+        calculate: function(params) {
+            const { dateTimeNum, hours } = params;
+            const adbFull = 231030 * dateTimeNum;
+            const carFull = adbFull - hours;
+            
+            return {
+                carPassword: `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`,
+                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+            };
+        }
+    },
+    
     // 其他车型算法
     otherCars: {
         name: '其他车型算法',
@@ -125,7 +185,7 @@ const algorithms = {
 // 车型版本到算法的映射
 const algorithmMap = {
     traveler: {
-        '00x': algorithms.serialNumber,
+        '00x': algorithms.serialNumberDaily,
         '0406': algorithms.fixed,
         '0407': algorithms.dynamic250110,
         'other': algorithms.serialNumber
