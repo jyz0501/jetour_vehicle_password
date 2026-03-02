@@ -70,6 +70,14 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div class="password-value" id="password1">--</div>
             </div>
         `;
+    } else if (currentCarModel === 'fengyunA9') {
+        passwordGroup.innerHTML = `
+            <div class="password-card">
+                <h2>密码</h2>
+                <div class="password-value" id="password1">--</div>
+                <div id="carInstructions">系统——连点6次"关于"界面——加密项</div>
+            </div>
+        `;
     } else {
         let html = '';
         for (let i = 1; i <= 3; i++) {
@@ -158,6 +166,9 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
         adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
     } else if (currentCarModel === 'dasheng') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        adbInstructions = '';
+    } else if (currentCarModel === 'fengyunA9') {
+        carInstructions = '系统——连点6次"关于"界面——加密项';
         adbInstructions = '';
     }
     
@@ -253,6 +264,12 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
         }
         if (password2El) {
             password2El.textContent = adbPassword || '--';
+        }
+    } else if (currentCarModel === 'fengyunA9') {
+        const { passwords } = result;
+        const password1El = document.getElementById('password1');
+        if (password1El && passwords && passwords.length > 0) {
+            password1El.textContent = passwords[0] || '--';
         }
     } else {
         const { passwords } = result;
