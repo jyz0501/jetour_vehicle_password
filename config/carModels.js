@@ -48,6 +48,26 @@ export const carModels = {
             'unknown': 'otherCars'
         }
     },
+    fengyunA9: {
+        name: '风云A9/T9',
+        versions: ['unknown'],
+        versionNames: {
+            'unknown': '未知版本'
+        },
+        algorithms: {
+            'unknown': 'serialNumberDaily'
+        }
+    },
+    hu8: {
+        name: '虎8/8L',
+        versions: ['unknown'],
+        versionNames: {
+            'unknown': '未知版本'
+        },
+        algorithms: {
+            'unknown': 'serialNumberDaily'
+        }
+    },
     x70plus: {
         name: 'X70Plus/L/Pro/CDM',
         versions: ['unknown'],
