@@ -86,16 +86,16 @@ export const algorithms = {
         }
     },
     
-    // 序列号动态算法（基于日期MMDD最后一位，每日更新）
+    // 序列号动态算法（基于年月日YYMMDD最后一位，每日更新）
     serialNumberDaily: {
         name: '序列号动态算法（每日更新）',
         countdown: 'daily',
         showSerialNumberInput: false,
         showPasswordToggle: false,
         calculate: function(params) {
-            const { month, date } = params;
-            const mmdd = parseInt(`${month}${date}`, 10);
-            const lastDigit = mmdd % 10;
+            const { year, month, date } = params;
+            const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
+            const lastDigit = yymmdd % 10;
             
             let baseValue;
             switch(lastDigit) {
@@ -112,7 +112,7 @@ export const algorithms = {
                 default: baseValue = 213518;
             }
             
-            const adbFull = mmdd + baseValue;
+            const adbFull = yymmdd + baseValue;
             return {
                 carPassword: '*#20230730#*',
                 adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
