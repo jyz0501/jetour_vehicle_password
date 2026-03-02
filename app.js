@@ -380,12 +380,6 @@ function updateOtherCarPasswords(dateTimeNum) {
         document.getElementById('password1').textContent = carPassword || '--';
         document.getElementById('password2').textContent = adbPassword || '--';
         document.getElementById('password3').textContent = '--';
-    } else if (currentCarModel === 'x70plus' && currentVersion === 'unknown') {
-        // X70plus车型使用x70plusFixed算法，返回{carPassword, adbPassword}格式
-        const { carPassword, adbPassword } = result;
-        document.getElementById('password1').textContent = carPassword || '--';
-        document.getElementById('password2').textContent = adbPassword || '--';
-        document.getElementById('password3').textContent = '--';
     } else {
         // 其他车型使用标准格式{passwords: []}
         const { passwords } = result;
