@@ -7,7 +7,6 @@ import {
     updateCountdown,
     updateTravelerPasswords,
     updateOtherCarPasswords,
-    toggleAdbPassword,
     calculateAdbPassword
 } from './utils/ui.js';
 
