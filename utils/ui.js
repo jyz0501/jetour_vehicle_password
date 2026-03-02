@@ -85,7 +85,9 @@ export function updateTravelerPasswords(dateTimeNum, currentVersion, serialNumbe
     const params = {
         dateTimeNum,
         hours: new Date().getHours(),
-        serialNumber
+        serialNumber,
+        carModel: 'traveler',
+        version: currentVersion
     };
     
     const result = calculatePasswords('traveler', currentVersion, params);
