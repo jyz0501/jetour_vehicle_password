@@ -28,20 +28,6 @@ const algorithms = {
         }
     },
     
-    // X70plus固定密码算法
-    x70plusFixed: {
-        name: 'X70plus固定密码',
-        countdown: 'none',
-        showSerialNumberInput: false,
-        showPasswordToggle: false,
-        calculate: function(params) {
-            return {
-                carPassword: '*#20201013#*',
-                adbPassword: '*#20230730#*'
-            };
-        }
-    },
-    
     // 序列号算法
     serialNumber: {
         name: '序列号算法',
@@ -106,7 +92,7 @@ const algorithms = {
     // 其他车型算法
     otherCars: {
         name: '其他车型算法',
-        countdown: 'daily',
+        countdown: 'hourly',
         showSerialNumberInput: false,
         showPasswordToggle: true,
         calculate: function(params) {
@@ -123,9 +109,9 @@ const algorithms = {
             } else {
                 const { dateTimeNum, hours } = params;
                 const p3 = (231030 * dateTimeNum) - hours;
-                const p1 = carModel === 'x70plus' ? `*#201013#*` : `*#201030#*`;
+                const p1 = carModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
                 passwords.push(p1);
-                passwords.push(`*#230730#*`);
+                passwords.push(`*#20230730#*`);
                 passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
             }
             
@@ -163,7 +149,7 @@ const algorithmMap = {
         'unknown': algorithms.otherCars
     },
     x70plus: {
-        'unknown': algorithms.x70plusFixed
+        'unknown': algorithms.otherCars
     }
 };
 
