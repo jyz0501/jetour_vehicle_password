@@ -28,6 +28,20 @@ const algorithms = {
         }
     },
     
+    // X70plus固定密码算法
+    x70plusFixed: {
+        name: 'X70plus固定密码',
+        countdown: 'none',
+        showSerialNumberInput: false,
+        showPasswordToggle: false,
+        calculate: function(params) {
+            return {
+                carPassword: '*#20201013#*',
+                adbPassword: '*#20230730#*'
+            };
+        }
+    },
+    
     // 序列号算法
     serialNumber: {
         name: '序列号算法',
@@ -149,7 +163,7 @@ const algorithmMap = {
         'unknown': algorithms.otherCars
     },
     x70plus: {
-        'unknown': algorithms.fixed
+        'unknown': algorithms.x70plusFixed
     }
 };
 
