@@ -70,6 +70,23 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div class="password-value" id="password1">--</div>
             </div>
         `;
+    } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
+        let html = '';
+        for (let i = 1; i <= 3; i++) {
+            html += `
+                <div class="password-card">
+                    <h2>密码${i}</h2>
+                    <div class="password-value" id="password${i}">--</div>
+                </div>
+            `;
+        }
+        html += `
+            <div class="password-card">
+                <h2>使用说明</h2>
+                <div id="carInstructions">系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式</div>
+            </div>
+        `;
+        passwordGroup.innerHTML = html;
     } else {
         let html = '';
         for (let i = 1; i <= 3; i++) {
@@ -158,6 +175,9 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
         adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
     } else if (currentCarModel === 'dasheng') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        adbInstructions = '';
+    } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
+        carInstructions = '系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式';
         adbInstructions = '';
     }
     
