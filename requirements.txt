@@ -1,5 +1,0 @@
-playwright==1.42.0
-requests==2.31.0
-beautifulsoup4==4.12.3
-tenacity==8.2.3
-schedule==1.2.1
