@@ -33,24 +33,16 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     <input type="text" id="serialNumber" maxlength="6" placeholder="请输入序列号后六位">
                     <button id="calculateAdbButton" class="toggle-button">计算密码</button>
                 </div>
-                <div class="password-container">
-                    <div class="password-value" id="adbPassword">--</div>
-                    <button id="toggleAdbPassword" class="toggle-button" style="display: none;">显示密码</button>
-                </div>
+                <div class="password-value" id="adbPassword">--</div>
                 <div id="adbInstructions">进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码</div>
             </div>
         `;
         
-        // 根据版本显示/隐藏序列号输入框和显示密码按钮
+        // 根据版本显示/隐藏序列号输入框
         const serialNumberInput = document.getElementById('serialNumberInput');
-        const toggleAdbButton = document.getElementById('toggleAdbPassword');
         
         if (currentVersion === '00x' || currentVersion === 'other') {
             serialNumberInput.style.display = 'block';
-        }
-        
-        if (currentVersion === '0407' || currentVersion === '00x' || currentVersion === 'other') {
-            toggleAdbButton.style.display = 'block';
         }
     } else if (currentCarModel === 'ziyouzhe') {
         passwordGroup.innerHTML = `
@@ -105,23 +97,6 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
 
 // 设置密码区域事件监听器
 function setupPasswordEventListeners(currentCarModel, currentVersion) {
-    const toggleAdbButton = document.getElementById('toggleAdbPassword');
-    if (toggleAdbButton) {
-        toggleAdbButton.addEventListener('click', function() {
-            const adbPasswordElement = document.getElementById('adbPassword');
-            const actualPassword = adbPasswordElement.dataset.actualPassword;
-            const currentText = adbPasswordElement.textContent;
-            
-            if (currentText === '******') {
-                adbPasswordElement.textContent = actualPassword;
-                this.textContent = '隐藏密码';
-            } else {
-                adbPasswordElement.textContent = '******';
-                this.textContent = '显示密码';
-            }
-        });
-    }
-    
     const calculateAdbButton = document.getElementById('calculateAdbButton');
     if (calculateAdbButton) {
         calculateAdbButton.addEventListener('click', function() {
@@ -146,7 +121,6 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
             const result = calculatePasswords(currentCarModel, currentVersion, params);
             
             const adbPasswordElement = document.getElementById('adbPassword');
-            adbPasswordElement.dataset.actualPassword = result.adbPassword;
             adbPasswordElement.textContent = result.adbPassword;
         });
     }
@@ -239,12 +213,7 @@ export function updateTravelerPasswords(dateTimeNum, currentVersion, serialNumbe
     }
     
     if (adbPasswordEl) {
-        if (currentVersion === '0407' || currentVersion === '00x' || currentVersion === 'other') {
-            adbPasswordEl.textContent = '******';
-            adbPasswordEl.dataset.actualPassword = result.adbPassword || '--';
-        } else {
-            adbPasswordEl.textContent = result.adbPassword || '--';
-        }
+        adbPasswordEl.textContent = result.adbPassword || '--';
     }
 }
 
@@ -285,22 +254,6 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
     }
 }
 
-// 切换ADB密码显示/隐藏
-export function toggleAdbPassword() {
-    const adbPasswordEl = document.getElementById('adbPassword');
-    const toggleButton = document.getElementById('toggleAdbPassword');
-    
-    if (!adbPasswordEl || !toggleButton) return;
-    
-    if (toggleButton.textContent === '显示密码') {
-        adbPasswordEl.textContent = adbPasswordEl.dataset.actualPassword;
-        toggleButton.textContent = '隐藏密码';
-    } else {
-        adbPasswordEl.textContent = '******';
-        toggleButton.textContent = '显示密码';
-    }
-}
-
 // 计算ADB密码（用于00x和other版本）
 export function calculateAdbPassword(serialNumber, currentCarModel, currentVersion) {
     if (!serialNumber || serialNumber.length !== 6) {
@@ -325,6 +278,5 @@ export function calculateAdbPassword(serialNumber, currentCarModel, currentVersi
     const adbPasswordEl = document.getElementById('adbPassword');
     if (adbPasswordEl) {
         adbPasswordEl.textContent = result.adbPassword;
-        adbPasswordEl.dataset.actualPassword = result.adbPassword;
     }
 }
