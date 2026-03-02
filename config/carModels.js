@@ -26,26 +26,6 @@ export const carModels = {
             '11010x': 'dynamic240910'
         }
     },
-    ruihu8: {
-        name: '瑞虎8/Pro',
-        versions: ['unknown'],
-        versionNames: {
-            'unknown': '00.01.0x'
-        },
-        algorithms: {
-            'unknown': 'otherCars'
-        }
-    },
-    fengyunA9: {
-        name: '风云A9',
-        versions: ['unknown'],
-        versionNames: {
-            'unknown': '未知版本'
-        },
-        algorithms: {
-            'unknown': 'otherCars'
-        }
-    },
     shanhal7: {
         name: '山海L7/Plus',
         versions: ['unknown'],
