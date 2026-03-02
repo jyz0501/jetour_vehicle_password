@@ -149,7 +149,7 @@ const algorithmMap = {
         'unknown': algorithms.otherCars
     },
     x70plus: {
-        'unknown': algorithms.otherCars
+        'unknown': algorithms.fixed
     }
 };
 
