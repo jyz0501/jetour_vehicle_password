@@ -15,12 +15,6 @@ const fixedPasswords = {
     x95: {
         'unknown': '*#20201030#*'
     },
-    ruihu8: {
-        'unknown': '*#20201030#*'
-    },
-    fengyunA9: {
-        'unknown': '*#20201030#*'
-    },
     shanhal7: {
         'unknown': '*#20201030#*'
     },

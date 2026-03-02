@@ -136,12 +136,6 @@ const algorithmMap = {
     dasheng: {
         'fixed': algorithms.dashengFixed
     },
-    ruihu8: {
-        'unknown': algorithms.otherCars
-    },
-    fengyunA9: {
-        'unknown': algorithms.otherCars
-    },
     shanhal7: {
         'unknown': algorithms.otherCars
     },
@@ -149,6 +143,12 @@ const algorithmMap = {
         'unknown': algorithms.otherCars
     },
     x70plus: {
+        'unknown': algorithms.otherCars
+    },
+    x90plus: {
+        'unknown': algorithms.otherCars
+    },
+    x95: {
         'unknown': algorithms.otherCars
     }
 };
