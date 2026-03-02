@@ -7,7 +7,7 @@ const fixedPasswords = {
         'fixed': '*#20220730#*'
     },
     x70plus: {
-        'unknown': '*#20201013#*'
+        'unknown': '*#20201030#*'
     },
     x90plus: {
         'unknown': '*#20201030#*'
@@ -195,8 +195,7 @@ export const algorithms = {
             } else {
                 const { dateTimeNum, hours } = params;
                 const p3 = (231030 * dateTimeNum) - hours;
-                const p1 = carModel === 'x70plus' ? `*#20201013#*` : `*#20201030#*`;
-                passwords.push(p1);
+                passwords.push(`*#20201030#*`);
                 passwords.push(`*#20230730#*`);
                 passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
             }
