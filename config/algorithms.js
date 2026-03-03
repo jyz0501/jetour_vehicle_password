@@ -140,6 +140,24 @@ export const algorithms = {
         }
     },
     
+    // 280330动态算法（CDM系统，按小时更新）
+    dynamic280330: {
+        name: '280330动态算法（CDM系统）',
+        countdown: 'hourly',
+        showSerialNumberInput: false,
+        calculate: function(params) {
+            const { dateTimeNum, hours } = params;
+            const adbFull = 280330 * dateTimeNum;
+            const carBase = 280330 * dateTimeNum;
+            const carFull = carBase - hours;
+            
+            return {
+                carPassword: `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`,
+                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+            };
+        }
+    },
+    
     // 240910动态算法（按小时更新）
     dynamic240910: {
         name: '240910动态算法',

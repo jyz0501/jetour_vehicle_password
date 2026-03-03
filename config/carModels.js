@@ -2,18 +2,20 @@
 export const carModels = {
     traveler: {
         name: '捷途旅行者/山海T2',
-        versions: ['00x', '0406', '0407', 'other'],
+        versions: ['00x', '0406', '0407', 'other', 'cdm'],
         versionNames: {
             '00x': '00.08及以下',
             '0406': '4.06及以下',
             '0407': '4.07以上',
-            'other': '其他'
+            'other': '其他',
+            'cdm': 'CDM系统'
         },
         algorithms: {
             '00x': 'serialNumber',
             '0406': 'fixed',
             '0407': 'dynamic250110',
-            'other': 'serialNumberDaily'
+            'other': 'serialNumberDaily',
+            'cdm': 'dynamic280330'
         }
     },
     ziyouzhe: {
