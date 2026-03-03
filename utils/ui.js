@@ -41,7 +41,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
         // 根据版本显示/隐藏序列号输入框
         const serialNumberInput = document.getElementById('serialNumberInput');
         
-        if (currentVersion === '00x' || currentVersion === 'other') {
+        if (currentVersion === '00x') {
             serialNumberInput.style.display = 'block';
         }
     } else if (currentCarModel === 'ziyouzhe') {
@@ -195,10 +195,14 @@ export function updateCountdown(currentCarModel, currentVersion) {
 
 // 更新旅行者车型密码
 export function updateTravelerPasswords(dateTimeNum, currentVersion, serialNumber) {
+    const now = new Date();
     const params = {
         dateTimeNum,
-        hours: new Date().getHours(),
+        hours: now.getHours(),
         serialNumber,
+        year: now.getFullYear(),
+        month: formatTimeUnit(now.getMonth() + 1),
+        date: formatTimeUnit(now.getDate()),
         carModel: 'traveler',
         version: currentVersion
     };
@@ -226,6 +230,9 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
         dateTimeNum,
         hours: now.getHours(),
         mmddhh,
+        year: now.getFullYear(),
+        month: formatTimeUnit(now.getMonth() + 1),
+        date: formatTimeUnit(now.getDate()),
         carModel: currentCarModel,
         version: currentVersion
     };
@@ -270,7 +277,10 @@ export function calculateAdbPassword(serialNumber, currentCarModel, currentVersi
     const params = {
         dateTimeNum,
         hours: now.getHours(),
-        serialNumber
+        serialNumber,
+        year: now.getFullYear(),
+        month: formatTimeUnit(now.getMonth() + 1),
+        date: formatTimeUnit(now.getDate())
     };
     
     const result = calculatePasswords(currentCarModel, currentVersion, params);
