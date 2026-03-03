@@ -201,7 +201,7 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
             adbInstructions = '';
         } else if (currentVersion === 'cdm') {
             carInstructions = '应用中心——蓝牙电话，输入上方密码';
-            adbInstructions = '点击显示密码按钮，输入正确的dynamic250110 ADB密码查看';
+            adbInstructions = '';
         }
     } else if (currentCarModel === 'ziyouzhe') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
