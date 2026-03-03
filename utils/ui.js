@@ -33,16 +33,23 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     <input type="text" id="serialNumber" maxlength="6" placeholder="请输入序列号后六位">
                     <button id="calculateAdbButton" class="toggle-button">计算密码</button>
                 </div>
+                <div id="cdmPasswordInput" style="display: none; margin-bottom: 15px;">
+                    <input type="password" id="cdmPassword" maxlength="6" placeholder="请输入密码查看">
+                    <button id="showCdmPasswordButton" class="toggle-button">显示密码</button>
+                </div>
                 <div class="password-value" id="adbPassword">--</div>
                 <div id="adbInstructions">进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码</div>
             </div>
         `;
         
-        // 根据版本显示/隐藏序列号输入框
+        // 根据版本显示/隐藏序列号输入框或CDM密码输入框
         const serialNumberInput = document.getElementById('serialNumberInput');
+        const cdmPasswordInput = document.getElementById('cdmPasswordInput');
         
         if (currentVersion === '00x') {
             serialNumberInput.style.display = 'block';
+        } else if (currentVersion === 'cdm') {
+            cdmPasswordInput.style.display = 'block';
         }
     } else if (currentCarModel === 'ziyouzhe') {
         passwordGroup.innerHTML = `
@@ -95,6 +102,15 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
     setupPasswordEventListeners(currentCarModel, currentVersion);
 }
 
+// 获取当前时间的MMDHH密码
+function getCdmPassword() {
+    const now = new Date();
+    const month = formatTimeUnit(now.getMonth() + 1);
+    const date = formatTimeUnit(now.getDate());
+    const hours = formatTimeUnit(now.getHours());
+    return `${month}${date}${hours}`;
+}
+
 // 设置密码区域事件监听器
 function setupPasswordEventListeners(currentCarModel, currentVersion) {
     const calculateAdbButton = document.getElementById('calculateAdbButton');
@@ -124,6 +140,42 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
             adbPasswordElement.textContent = result.adbPassword;
         });
     }
+    
+    // CDM版本显示密码按钮
+    const showCdmPasswordButton = document.getElementById('showCdmPasswordButton');
+    if (showCdmPasswordButton) {
+        showCdmPasswordButton.addEventListener('click', function() {
+            const cdmPasswordInput = document.getElementById('cdmPassword');
+            const adbPasswordEl = document.getElementById('adbPassword');
+            const inputPassword = cdmPasswordInput.value;
+            const correctPassword = getCdmPassword();
+            
+            if (inputPassword === correctPassword) {
+                // 密码正确，显示ADB密码
+                const now = new Date();
+                const month = formatTimeUnit(now.getMonth() + 1);
+                const date = formatTimeUnit(now.getDate());
+                const hours = formatTimeUnit(now.getHours());
+                const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
+                
+                const params = {
+                    dateTimeNum,
+                    hours: now.getHours(),
+                    year: now.getFullYear(),
+                    month: month,
+                    date: date,
+                    carModel: currentCarModel,
+                    version: currentVersion
+                };
+                
+                const result = calculatePasswords(currentCarModel, currentVersion, params);
+                adbPasswordEl.textContent = result.adbPassword;
+                cdmPasswordInput.value = '';
+            } else {
+                alert('密码错误，请输入当前时间的MMDDHH格式密码（如030318表示3月3日18时）');
+            }
+        });
+    }
 }
 
 // 更新车型说明
@@ -143,6 +195,9 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
         } else if (currentVersion === '0406') {
             carInstructions = '应用中心——蓝牙电话，输入上方密码';
             adbInstructions = '';
+        } else if (currentVersion === 'cdm') {
+            carInstructions = '应用中心——蓝牙电话，输入上方密码';
+            adbInstructions = '输入当前时间的MMDDHH格式密码查看加密项密码';
         }
     } else if (currentCarModel === 'ziyouzhe') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
@@ -216,8 +271,11 @@ export function updateTravelerPasswords(dateTimeNum, currentVersion, serialNumbe
         carPasswordEl.textContent = result.carPassword || '--';
     }
     
-    if (adbPasswordEl) {
+    // CDM版本不自动显示ADB密码，需要输入密码查看
+    if (adbPasswordEl && currentVersion !== 'cdm') {
         adbPasswordEl.textContent = result.adbPassword || '--';
+    } else if (adbPasswordEl && currentVersion === 'cdm') {
+        adbPasswordEl.textContent = '********';
     }
 }
 
