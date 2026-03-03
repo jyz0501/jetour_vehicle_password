@@ -26,32 +26,36 @@
   <!-- 车型选择 -->
   <view class="car-selector">
     <text class="section-title">选择车型：</text>
-    <view class="car-buttons">
-      <button 
-        wx:for="{{carModelList}}" 
-        wx:key="value"
-        class="car-button {{currentCarModel === item.value ? 'active' : ''}}"
-        bindtap="switchCarModel"
-        data-model="{{item.value}}"
-      >
-        {{item.label}}
-      </button>
-    </view>
+    <picker 
+      mode="selector" 
+      range="{{carModelList}}" 
+      range-key="label"
+      value="{{carModelIndex}}"
+      bindchange="onCarModelChange"
+      class="car-picker"
+    >
+      <view class="picker-value">
+        {{carModelList[carModelIndex].label}}
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
   </view>
   
   <view class="version-switcher">
     <text class="section-title">选择车机版本：</text>
-    <view class="version-buttons">
-      <button 
-        wx:for="{{versionList}}" 
-        wx:key="version"
-        class="version-button {{currentVersion === item.version ? 'active' : ''}}"
-        bindtap="switchVersion"
-        data-version="{{item.version}}"
-      >
-        {{item.label}}
-      </button>
-    </view>
+    <picker 
+      mode="selector" 
+      range="{{versionList}}" 
+      range-key="label"
+      value="{{versionIndex}}"
+      bindchange="onVersionChange"
+      class="version-picker"
+    >
+      <view class="picker-value">
+        {{versionList[versionIndex].label}}
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
   </view>
   
   <view class="hour-password-group">
@@ -69,7 +73,7 @@
       <view class="password-card">
         <text class="card-title">2. ADB权限密码</text>
         
-        <view wx:if="{{currentVersion === '00x' || currentVersion === 'other'}}" class="serial-number-input">
+        <view wx:if="{{currentVersion === '00x'}}" class="serial-number-input">
           <input 
             type="text" 
             placeholder="请输入序列号后六位" 
@@ -82,11 +86,11 @@
         <view class="password-container">
           <text class="password-value">{{adbPassword}}</text>
           <button 
-            wx:if="{{currentVersion !== '0406' && currentVersion !== 'other' && currentVersion !== 'fixed'}}"
-            class="toggle-button"
-            bindtap="toggleAdbPassword"
+            wx:if="{{isCdmVersion && !cdmPasswordVerified}}"
+            class="show-password-button"
+            bindtap="showCdmPassword"
           >
-            {{adbPasswordVisible ? '隐藏密码' : '显示密码'}}
+            显示密码
           </button>
         </view>
         

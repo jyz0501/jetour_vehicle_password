@@ -211,11 +211,13 @@ Page({
       { label: '捷途大圣', value: 'dasheng' }
     ],
     
-    // 当前选择的车型
+    // 当前选择的车型索引
+    carModelIndex: 0,
     currentCarModel: 'traveler',
     
     // 版本列表（根据车型动态更新）
     versionList: [],
+    versionIndex: 0,
     
     // 当前选择的版本
     currentVersion: '0407',
@@ -224,7 +226,6 @@ Page({
     carPassword: '--',
     adbPassword: '******',
     actualAdbPassword: '',
-    adbPasswordVisible: false,
     nextUpdateTime: '--',
     updateTime: '--',
     
@@ -319,22 +320,39 @@ Page({
     });
   },
 
-  // 切换车型
-  switchCarModel(e) {
-    const carModel = e.currentTarget.dataset.model;
+  // 车型下拉菜单变化
+  onCarModelChange(e) {
+    const index = parseInt(e.detail.value);
+    const carModel = this.data.carModelList[index].value;
     const carModelConfig = carModels[carModel];
     
     // 设置默认版本为第一个版本
     const defaultVersion = carModelConfig.versions[0];
     
     this.setData({
+      carModelIndex: index,
       currentCarModel: carModel,
       currentVersion: defaultVersion,
+      versionIndex: 0,
       serialNumber: '',
-      adbPasswordVisible: false,
       cdmPasswordVerified: false
     }, () => {
       this.updateVersionList();
+      this.updatePasswords();
+    });
+  },
+
+  // 版本下拉菜单变化
+  onVersionChange(e) {
+    const index = parseInt(e.detail.value);
+    const version = this.data.versionList[index].version;
+    
+    this.setData({
+      versionIndex: index,
+      currentVersion: version,
+      serialNumber: '',
+      cdmPasswordVerified: false
+    }, () => {
       this.updatePasswords();
     });
   },
@@ -349,19 +367,6 @@ Page({
     
     this.setData({
       versionList: versionList
-    });
-  },
-
-  // 切换版本
-  switchVersion(e) {
-    const version = e.currentTarget.dataset.version;
-    this.setData({
-      currentVersion: version,
-      serialNumber: '',
-      adbPasswordVisible: false,
-      cdmPasswordVerified: false
-    }, () => {
-      this.updatePasswords();
     });
   },
 
@@ -429,25 +434,6 @@ Page({
     });
   },
 
-  // 切换ADB密码显示/隐藏
-  toggleAdbPassword() {
-    const { adbPasswordVisible, actualAdbPassword } = this.data;
-    
-    if (adbPasswordVisible) {
-      // 当前是显示状态，切换到隐藏
-      this.setData({
-        adbPassword: '******',
-        adbPasswordVisible: false
-      });
-    } else {
-      // 当前是隐藏状态，切换到显示
-      this.setData({
-        adbPassword: actualAdbPassword,
-        adbPasswordVisible: true
-      });
-    }
-  },
-
   // 更新密码
   updatePasswords() {
     const { currentCarModel, currentVersion, serialNumber } = this.data;
@@ -483,21 +469,19 @@ Page({
     
     // 26款版本特殊处理：不自动显示ADB密码
     let displayAdbPassword = result.adbPassword;
-    let displayAdbPasswordVisible = false;
     
     if (result.isCdmVersion && !this.data.cdmPasswordVerified) {
       displayAdbPassword = '********';
     } else if (result.isFixedPassword) {
       displayAdbPassword = result.adbPassword;
     } else if (!result.isCdmVersion) {
-      displayAdbPassword = '******';
+      displayAdbPassword = result.adbPassword;
     }
     
     this.setData({
       carPassword: result.carPassword,
       actualAdbPassword: result.adbPassword,
       adbPassword: displayAdbPassword,
-      adbPasswordVisible: displayAdbPasswordVisible,
       nextUpdateTime: result.nextUpdateTime,
       updateTime: result.updateTime,
       carInstructions: carInstructions,
