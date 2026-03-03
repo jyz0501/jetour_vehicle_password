@@ -3,6 +3,36 @@ function formatTimeUnit(unit) {
   return String(unit).padStart(2, '0');
 }
 
+// 计算serialNumberDaily密码
+function calculateSerialNumberDailyPassword(year, month, date) {
+  const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
+  const lastDigit = yymmdd % 10;
+  
+  let baseValue;
+  switch(lastDigit) {
+    case 0: baseValue = 213518; break;
+    case 1: baseValue = 658035; break;
+    case 2: baseValue = 235657; break;
+    case 3: baseValue = 567534; break;
+    case 4: baseValue = 647825; break;
+    case 5: baseValue = 234700; break;
+    case 6: baseValue = 127347; break;
+    case 7: baseValue = 875634; break;
+    case 8: baseValue = 345678; break;
+    case 9: baseValue = 982345; break;
+    default: baseValue = 213518;
+  }
+  
+  const adbFull = yymmdd + baseValue;
+  return (adbFull % 1000000).toString().padStart(6, '0');
+}
+
+// 获取dynamic250110的ADB密码值（用于26款验证）
+function getCdmVerifyPassword(dateTimeNum) {
+  const adbFull = 250110 * dateTimeNum;
+  return (adbFull % 1000000).toString().padStart(6, '0');
+}
+
 // 计算口令的核心函数
 function calculatePasswords(version, now, serialNumber = '') {
   // 提取月日时（忽略分钟）
@@ -10,6 +40,7 @@ function calculatePasswords(version, now, serialNumber = '') {
   const date = formatTimeUnit(now.getDate());
   const hours = formatTimeUnit(now.getHours());
   const minutes = formatTimeUnit(now.getMinutes());
+  const year = now.getFullYear();
 
   // 组合日期时间字符串
   const dateTimeKey = `${month}${date}${hours}`;
@@ -17,57 +48,25 @@ function calculatePasswords(version, now, serialNumber = '') {
 
   let adbPassword, systemPassword, nextUpdateTime;
   let isFixedPassword = false;
+  let isCdmVersion = false;
 
   // 根据不同版本计算口令
   switch(version) {
     case '00x':
-      // 00x版本的ADB口令计算逻辑
-      const yymmdd = `${now.getFullYear().toString().slice(-2)}${month}${date}`;
-      const lastDigit = parseInt(yymmdd.slice(-1), 10);
-      let baseValue;
-      switch(lastDigit) {
-        case 0:
-          baseValue = 213518;
-          break;
-        case 1:
-          baseValue = 658035;
-          break;
-        case 2:
-          baseValue = 235657;
-          break;
-        case 3:
-          baseValue = 567534;
-          break;
-        case 4:
-          baseValue = 647825;
-          break;
-        case 5:
-          baseValue = 234700;
-          break;
-        case 6:
-          baseValue = 127347;
-          break;
-        case 7:
-          baseValue = 648924;
-          break;
-        case 8:
-          baseValue = 733782;
-          break;
-        case 9:
-          baseValue = 553456;
-          break;
+      // 00x版本使用serialNumber算法（序列号 * 802018）
+      if (serialNumber && serialNumber.length === 6) {
+        const serialNum = parseInt(serialNumber, 10);
+        const adbFull = serialNum * 802018;
+        adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
+      } else {
+        adbPassword = '';
       }
-      const adbFull30 = parseInt(yymmdd, 10) + baseValue;
-      adbPassword = adbFull30.toString().padStart(6, '0');
+      
       systemPassword = `*#20230730#*`;
       
-      // 00x版本的下次变更时间为下一天
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowYear = tomorrow.getFullYear();
-      const tomorrowMonth = formatTimeUnit(tomorrow.getMonth() + 1);
-      const tomorrowDay = formatTimeUnit(tomorrow.getDate());
-      nextUpdateTime = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
+      // 00x版本的下次变更时间为无（固定口令）
+      nextUpdateTime = '无（固定口令）';
+      isFixedPassword = true;
       break;
     
     case '0407':
@@ -93,20 +92,11 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     case 'other':
-      // 其他版本使用固定工程模式口令，ADB口令基于序列号计算
-      isFixedPassword = true;
+      // other版本使用serialNumberDaily算法（基于日期YYMMDD）
       systemPassword = `*#20230730#*`;
+      adbPassword = calculateSerialNumberDailyPassword(year, month, date);
       
-      if (serialNumber && serialNumber.length === 6) {
-        // 计算ADB口令：序列号后六位 * 802018，取后六位
-        const serialNum = parseInt(serialNumber, 10);
-        const adbFull = serialNum * 802018;
-        adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
-      } else {
-        adbPassword = '';
-      }
-      
-      // 其他版本的下次变更时间为下一天
+      // 下次变更时间为下一天
       const tomorrowOther = new Date();
       tomorrowOther.setDate(tomorrowOther.getDate() + 1);
       const tomorrowYearOther = tomorrowOther.getFullYear();
@@ -115,7 +105,20 @@ function calculatePasswords(version, now, serialNumber = '') {
       nextUpdateTime = `${tomorrowYearOther}-${tomorrowMonthOther}-${tomorrowDayOther}`;
       break;
     
+    case 'cdm':
+      // 26款版本使用215430算法
+      isCdmVersion = true;
+      const adbFullCdm = 215430 * dateTimeNum;
+      adbPassword = (adbFullCdm % 1000000).toString().padStart(6, '0');
 
+      // 计算系统动态口令（ADB口令 - 当前小时数）
+      const systemFullCdm = adbFullCdm - now.getHours();
+      systemPassword = `*#${(systemFullCdm % 1000000).toString().padStart(6, '0')}#*`;
+      
+      // 下次变更时间为下一个整点
+      const nextHourCdm = (now.getHours() + 1) % 24;
+      nextUpdateTime = `${nextHourCdm.toString().padStart(2, '0')}:00`;
+      break;
     
     default:
       // 默认使用0407版本的逻辑
@@ -137,7 +140,8 @@ function calculatePasswords(version, now, serialNumber = '') {
     adbPassword,
     nextUpdateTime,
     updateTime,
-    isFixedPassword
+    isFixedPassword,
+    isCdmVersion
   };
 }
 
@@ -152,7 +156,8 @@ Page({
       { label: '4.06及以下', version: '0406' },
       { label: '00.08及以下', version: '00x' },
       { label: '4.07以上', version: '0407' },
-      { label: '其他', version: 'other' }
+      { label: '其他', version: 'other' },
+      { label: '26款', version: 'cdm' }
     ],
     
     // 当前选择的版本
@@ -172,6 +177,10 @@ Page({
     
     // 序列号输入
     serialNumber: '',
+    
+    // 26款密码保护
+    isCdmVersion: false,
+    cdmPasswordVerified: false,
     
     // 定时器
     updateTimer: null
@@ -210,15 +219,20 @@ Page({
     // 对于固定口令版本，直接显示
     if (currentVersion === '0406') {
       encryptionPasswordDisplay = result.adbPassword;
+      encryptionInstructions = '';
     } else if (currentVersion === 'other') {
       encryptionPasswordDisplay = result.adbPassword;
-      encryptionInstructions = '进入工程模式后，点加密项，输入产品序列号后六位';
+      encryptionInstructions = '';
     } else if (currentVersion === '00x') {
       systemInstructions = '应用中心——蓝牙电话，输入上方口令 或者 通用—系统—右侧空白处连点10下';
-      encryptionInstructions = '进入加密项输入上方计算后的口令。同样适用：瑞虎8、风云车型';
-    } else if (currentVersion === '8AT') {
-      systemInstructions = '应用中心——蓝牙电话，输入上方口令 或者 通用—系统—右侧空白处连点10下';
-      encryptionInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方口令';
+      encryptionInstructions = '进入加密项输入上方计算后的口令';
+    } else if (currentVersion === 'cdm') {
+      systemInstructions = '应用中心——蓝牙电话，输入上方口令';
+      encryptionInstructions = '';
+      // 26款版本需要验证后才显示
+      if (!this.data.cdmPasswordVerified) {
+        encryptionPasswordDisplay = '********';
+      }
     }
     
     this.setData({
@@ -228,7 +242,8 @@ Page({
       nextUpdateTime: result.nextUpdateTime,
       updateTime: result.updateTime,
       systemInstructions: systemInstructions,
-      encryptionInstructions: encryptionInstructions
+      encryptionInstructions: encryptionInstructions,
+      isCdmVersion: result.isCdmVersion
     });
   },
 
@@ -237,7 +252,8 @@ Page({
     const version = e.currentTarget.dataset.version;
     this.setData({
       currentVersion: version,
-      serialNumber: ''
+      serialNumber: '',
+      cdmPasswordVerified: false
     });
     this.updatePasswords();
   },
@@ -250,11 +266,11 @@ Page({
     });
   },
 
-  // 计算加密项口令（其他版本）
+  // 计算加密项口令（00x版本）
   calculateEncryptionPassword() {
     const { serialNumber, currentVersion } = this.data;
     
-    if (currentVersion !== 'other') return;
+    if (currentVersion !== '00x') return;
     
     if (serialNumber.length !== 6) {
       wx.showToast({
@@ -265,6 +281,42 @@ Page({
     }
     
     this.updatePasswords();
+  },
+
+  // 显示26款密码（需要验证）
+  showCdmPassword() {
+    const now = new Date();
+    const month = formatTimeUnit(now.getMonth() + 1);
+    const date = formatTimeUnit(now.getDate());
+    const hours = formatTimeUnit(now.getHours());
+    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
+    
+    const correctPassword = getCdmVerifyPassword(dateTimeNum);
+    
+    wx.showModal({
+      title: '请输入密码',
+      content: '请输入dynamic250110的ADB密码值查看',
+      editable: true,
+      placeholderText: '请输入6位密码',
+      success: (res) => {
+        if (res.confirm) {
+          const inputPassword = res.content;
+          if (inputPassword === correctPassword) {
+            const result = calculatePasswords(this.data.currentVersion, now, '');
+            this.setData({
+              encryptionPassword: result.adbPassword,
+              actualEncryptionPassword: result.adbPassword,
+              cdmPasswordVerified: true
+            });
+          } else {
+            wx.showToast({
+              title: '密码错误',
+              icon: 'none'
+            });
+          }
+        }
+      }
+    });
   },
 
   // 切换加密项口令显示/隐藏
