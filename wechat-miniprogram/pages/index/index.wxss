@@ -129,33 +129,25 @@
   width: 100%;
 }
 
-.car-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15rpx;
-  margin-bottom: 20rpx;
-  justify-content: center;
+.car-picker {
+  width: 100%;
 }
 
-.car-button {
-  flex: 1;
-  min-width: 200rpx;
-  height: 70rpx;
+.picker-value {
   background-color: #FF9800;
   color: white;
-  border: none;
+  padding: 20rpx 30rpx;
   border-radius: 8rpx;
-  font-size: 24rpx;
-  padding: 0 20rpx;
+  font-size: 28rpx;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.car-button.active {
-  background-color: #F57C00;
+.picker-arrow {
+  font-size: 24rpx;
   color: white;
 }
 
@@ -174,35 +166,12 @@
   text-align: center;
 }
 
-.version-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15rpx;
-  margin-bottom: 20rpx;
-  justify-content: center;
+.version-picker {
+  width: 100%;
 }
 
-.version-button {
-  flex: 1;
-  min-width: 150rpx;
-  height: 60rpx;
+.version-picker .picker-value {
   background-color: #1E88E5;
-  color: white;
-  border: none;
-  border-radius: 8rpx;
-  font-size: 22rpx;
-  padding: 0 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.version-button.active {
-  background-color: #1976D2;
-  color: white;
-  border-color: #1976D2;
 }
 
 /* 小时密码组样式 */
@@ -285,6 +254,17 @@
   padding: 0 20rpx;
 }
 
+/* 显示密码按钮样式 */
+.show-password-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  padding: 15rpx 30rpx;
+  margin-top: 10rpx;
+}
+
 /* 更新信息样式 */
 .update-info {
   text-align: center;
@@ -298,11 +278,6 @@
 
 /* 响应式设计 */
 @media (max-width: 375rpx) {
-  .version-button {
-    font-size: 22rpx;
-    padding: 0 15rpx;
-  }
-  
   .password-value {
     font-size: 32rpx;
   }
