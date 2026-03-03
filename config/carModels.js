@@ -8,7 +8,7 @@ export const carModels = {
             '0406': '4.06及以下',
             '0407': '4.07以上',
             'other': '其他',
-            'cdm': 'CDM'
+            'cdm': '26款'
         },
         algorithms: {
             '00x': 'serialNumber',
