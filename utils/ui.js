@@ -34,7 +34,6 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     <button id="calculateAdbButton" class="toggle-button">计算密码</button>
                 </div>
                 <div id="cdmPasswordInput" style="display: none; margin-bottom: 15px;">
-                    <input type="password" id="cdmPassword" maxlength="6" placeholder="请输入密码查看">
                     <button id="showCdmPasswordButton" class="toggle-button">显示密码</button>
                 </div>
                 <div class="password-value" id="adbPassword">--</div>
@@ -102,13 +101,15 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
     setupPasswordEventListeners(currentCarModel, currentVersion);
 }
 
-// 获取当前时间的MMDHH密码
+// 获取dynamic250110的ADB密码值
 function getCdmPassword() {
     const now = new Date();
     const month = formatTimeUnit(now.getMonth() + 1);
     const date = formatTimeUnit(now.getDate());
     const hours = formatTimeUnit(now.getHours());
-    return `${month}${date}${hours}`;
+    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
+    const adbFull = 250110 * dateTimeNum;
+    return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
 // 设置密码区域事件监听器
@@ -145,9 +146,13 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
     const showCdmPasswordButton = document.getElementById('showCdmPasswordButton');
     if (showCdmPasswordButton) {
         showCdmPasswordButton.addEventListener('click', function() {
-            const cdmPasswordInput = document.getElementById('cdmPassword');
             const adbPasswordEl = document.getElementById('adbPassword');
-            const inputPassword = cdmPasswordInput.value;
+            const inputPassword = prompt('请输入密码查看加密项密码：');
+            
+            if (inputPassword === null) {
+                return;
+            }
+            
             const correctPassword = getCdmPassword();
             
             if (inputPassword === correctPassword) {
@@ -170,9 +175,8 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
                 
                 const result = calculatePasswords(currentCarModel, currentVersion, params);
                 adbPasswordEl.textContent = result.adbPassword;
-                cdmPasswordInput.value = '';
             } else {
-                alert('密码错误，请输入当前时间的MMDDHH格式密码（如030318表示3月3日18时）');
+                alert('密码错误');
             }
         });
     }
@@ -197,7 +201,7 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
             adbInstructions = '';
         } else if (currentVersion === 'cdm') {
             carInstructions = '应用中心——蓝牙电话，输入上方密码';
-            adbInstructions = '输入当前时间的MMDDHH格式密码查看加密项密码';
+            adbInstructions = '点击显示密码按钮，输入正确的dynamic250110 ADB密码查看';
         }
     } else if (currentCarModel === 'ziyouzhe') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
