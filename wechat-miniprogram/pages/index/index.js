@@ -410,7 +410,7 @@ Page({
     
     wx.showModal({
       title: '请输入密码',
-      content: '请输入dynamic250110的ADB密码值查看',
+      content: '请输入密码查看',
       editable: true,
       placeholderText: '请输入6位密码',
       success: (res) => {
