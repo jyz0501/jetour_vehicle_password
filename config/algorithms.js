@@ -140,15 +140,15 @@ export const algorithms = {
         }
     },
     
-    // 280330动态算法（CDM系统，按小时更新）
-    dynamic280330: {
-        name: '280330动态算法（CDM系统）',
+    // 215430动态算法（CDM系统，按小时更新）
+    dynamic215430: {
+        name: '215430动态算法（CDM系统）',
         countdown: 'hourly',
         showSerialNumberInput: false,
         calculate: function(params) {
             const { dateTimeNum, hours } = params;
-            const adbFull = 280330 * dateTimeNum;
-            const carBase = 280330 * dateTimeNum;
+            const adbFull = 215430 * dateTimeNum;
+            const carBase = 215430 * dateTimeNum;
             const carFull = carBase - hours;
             
             return {
