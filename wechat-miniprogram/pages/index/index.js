@@ -23,6 +23,56 @@ const carModels = {
       '11010x': '11.01.04及以上'
     }
   },
+  shanhal7: {
+    name: '山海L7/Plus/T9',
+    versions: ['os10201', 'os1201000'],
+    versionNames: {
+      'os10201': 'OS1-02.01',
+      'os1201000': 'OS1_20.10.00'
+    }
+  },
+  shanhal9: {
+    name: '山海L9',
+    versions: ['unknown'],
+    versionNames: {
+      'unknown': '未知版本'
+    }
+  },
+  fengyunA9: {
+    name: '风云A9/T9',
+    versions: ['unknown'],
+    versionNames: {
+      'unknown': '未知版本'
+    }
+  },
+  hu8: {
+    name: '虎8/8L',
+    versions: ['unknown'],
+    versionNames: {
+      'unknown': '未知版本'
+    }
+  },
+  x70plus: {
+    name: 'X70Plus/L/Pro/CDM',
+    versions: ['unknown'],
+    versionNames: {
+      'unknown': '00.01.0x'
+    }
+  },
+  x90plus: {
+    name: 'X90/Plus/Pro/CDM',
+    versions: ['unknown'],
+    versionNames: {
+      'unknown': '未知版本'
+    }
+  },
+  x95: {
+    name: 'X95',
+    versions: ['unknown'],
+    versionNames: {
+      'unknown': '未知版本'
+    }
+  },
   dasheng: {
     name: '捷途大圣',
     versions: ['fixed'],
@@ -177,6 +227,67 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     const nextHour = (now.getHours() + 1) % 24;
     nextUpdateTime = `${nextHour.toString().padStart(2, '0')}:00`;
   }
+  // 山海L7/Plus/T9
+  else if (carModel === 'shanhal7') {
+    carPassword = `*#20230730#*`;
+    adbPassword = '20201030';
+    nextUpdateTime = '无（固定密码）';
+    isFixedPassword = true;
+  }
+  // 山海L9
+  else if (carModel === 'shanhal9') {
+    carPassword = `*#20230730#*`;
+    adbPassword = '20201030';
+    nextUpdateTime = '无（固定密码）';
+    isFixedPassword = true;
+  }
+  // 风云A9/T9
+  else if (carModel === 'fengyunA9') {
+    carPassword = `*#20230730#*`;
+    adbPassword = calculateSerialNumberDailyPassword(year, month, date);
+    
+    // 下次变更时间为下一天
+    const tomorrowFengyun = new Date();
+    tomorrowFengyun.setDate(tomorrowFengyun.getDate() + 1);
+    const tomorrowYearFengyun = tomorrowFengyun.getFullYear();
+    const tomorrowMonthFengyun = formatTimeUnit(tomorrowFengyun.getMonth() + 1);
+    const tomorrowDayFengyun = formatTimeUnit(tomorrowFengyun.getDate());
+    nextUpdateTime = `${tomorrowYearFengyun}-${tomorrowMonthFengyun}-${tomorrowDayFengyun}`;
+  }
+  // 虎8/8L
+  else if (carModel === 'hu8') {
+    carPassword = `*#20230730#*`;
+    adbPassword = calculateSerialNumberDailyPassword(year, month, date);
+    
+    // 下次变更时间为下一天
+    const tomorrowHu8 = new Date();
+    tomorrowHu8.setDate(tomorrowHu8.getDate() + 1);
+    const tomorrowYearHu8 = tomorrowHu8.getFullYear();
+    const tomorrowMonthHu8 = formatTimeUnit(tomorrowHu8.getMonth() + 1);
+    const tomorrowDayHu8 = formatTimeUnit(tomorrowHu8.getDate());
+    nextUpdateTime = `${tomorrowYearHu8}-${tomorrowMonthHu8}-${tomorrowDayHu8}`;
+  }
+  // X70Plus/L/Pro/CDM
+  else if (carModel === 'x70plus') {
+    carPassword = `*#20201030#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定密码）';
+    isFixedPassword = true;
+  }
+  // X90/Plus/Pro/CDM
+  else if (carModel === 'x90plus') {
+    carPassword = `*#20201030#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定密码）';
+    isFixedPassword = true;
+  }
+  // X95
+  else if (carModel === 'x95') {
+    carPassword = `*#20201030#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定密码）';
+    isFixedPassword = true;
+  }
   // 捷途大圣车型
   else if (carModel === 'dasheng') {
     carPassword = `*#20220730#*`;
@@ -208,6 +319,13 @@ Page({
     carModelList: [
       { label: '捷途旅行者/山海T2', value: 'traveler' },
       { label: '自由者/山海T1', value: 'ziyouzhe' },
+      { label: '山海L7/Plus/T9', value: 'shanhal7' },
+      { label: '山海L9', value: 'shanhal9' },
+      { label: '风云A9/T9', value: 'fengyunA9' },
+      { label: '虎8/8L', value: 'hu8' },
+      { label: 'X70Plus/L/Pro/CDM', value: 'x70plus' },
+      { label: 'X90/Plus/Pro/CDM', value: 'x90plus' },
+      { label: 'X95', value: 'x95' },
       { label: '捷途大圣', value: 'dasheng' }
     ],
     
@@ -462,7 +580,13 @@ Page({
     } else if (currentCarModel === 'ziyouzhe') {
       carInstructions = '应用中心——蓝牙电话，输入上方密码';
       adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+    } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
+      carInstructions = '系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式';
+      adbInstructions = '';
     } else if (currentCarModel === 'dasheng') {
+      carInstructions = '应用中心——蓝牙电话，输入上方密码';
+      adbInstructions = '';
+    } else {
       carInstructions = '应用中心——蓝牙电话，输入上方密码';
       adbInstructions = '';
     }
