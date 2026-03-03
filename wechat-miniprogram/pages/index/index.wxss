@@ -158,7 +158,6 @@
   background-color: #F57C00;
   color: white;
 }
-}
 
 /* 版本选择器样式 */
 .version-switcher {
