@@ -194,8 +194,20 @@
 }
 
 .highlight {
-  color: #1E88E5;
+  color: #FF9800;
   font-weight: bold;
+}
+
+.countdown {
+  color: #4CAF50;
+  font-size: 24rpx;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
 }
 
 .password-group {

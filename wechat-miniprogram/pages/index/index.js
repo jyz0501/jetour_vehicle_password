@@ -126,9 +126,10 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
   const dateTimeNum = parseInt(dateTimeKey, 10);
   const mmddhh = parseInt(`${month}${date}${hours}`, 10);
 
-  let adbPassword, carPassword, nextUpdateTime;
+  let adbPassword, carPassword, nextUpdateTime, countdownSeconds;
   let isFixedPassword = false;
   let isCdmVersion = false;
+  let isCountdownMode = false;
 
   // 旅行者车型
   if (carModel === 'traveler') {
@@ -177,13 +178,13 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         carPassword = `*#20230730#*`;
         adbPassword = calculateSerialNumberDailyPassword(year, month, date);
         
-        // 下次变更时间为下一天
+        // 计算到明天00:00:00的倒计时秒数
         const tomorrowOther = new Date();
         tomorrowOther.setDate(tomorrowOther.getDate() + 1);
-        const tomorrowYearOther = tomorrowOther.getFullYear();
-        const tomorrowMonthOther = formatTimeUnit(tomorrowOther.getMonth() + 1);
-        const tomorrowDayOther = formatTimeUnit(tomorrowOther.getDate());
-        nextUpdateTime = `${tomorrowYearOther}-${tomorrowMonthOther}-${tomorrowDayOther}`;
+        tomorrowOther.setHours(0, 0, 0, 0);
+        countdownSeconds = Math.floor((tomorrowOther - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
         break;
       
       case 'cdm':
@@ -246,26 +247,26 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     carPassword = `*#20230730#*`;
     adbPassword = calculateSerialNumberDailyPassword(year, month, date);
     
-    // 下次变更时间为下一天
+    // 计算到明天00:00:00的倒计时秒数
     const tomorrowFengyun = new Date();
     tomorrowFengyun.setDate(tomorrowFengyun.getDate() + 1);
-    const tomorrowYearFengyun = tomorrowFengyun.getFullYear();
-    const tomorrowMonthFengyun = formatTimeUnit(tomorrowFengyun.getMonth() + 1);
-    const tomorrowDayFengyun = formatTimeUnit(tomorrowFengyun.getDate());
-    nextUpdateTime = `${tomorrowYearFengyun}-${tomorrowMonthFengyun}-${tomorrowDayFengyun}`;
+    tomorrowFengyun.setHours(0, 0, 0, 0);
+    countdownSeconds = Math.floor((tomorrowFengyun - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
   }
   // 虎8/8L
   else if (carModel === 'hu8') {
     carPassword = `*#20230730#*`;
     adbPassword = calculateSerialNumberDailyPassword(year, month, date);
     
-    // 下次变更时间为下一天
+    // 计算到明天00:00:00的倒计时秒数
     const tomorrowHu8 = new Date();
     tomorrowHu8.setDate(tomorrowHu8.getDate() + 1);
-    const tomorrowYearHu8 = tomorrowHu8.getFullYear();
-    const tomorrowMonthHu8 = formatTimeUnit(tomorrowHu8.getMonth() + 1);
-    const tomorrowDayHu8 = formatTimeUnit(tomorrowHu8.getDate());
-    nextUpdateTime = `${tomorrowYearHu8}-${tomorrowMonthHu8}-${tomorrowDayHu8}`;
+    tomorrowHu8.setHours(0, 0, 0, 0);
+    countdownSeconds = Math.floor((tomorrowHu8 - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
   }
   // X70Plus/L/Pro/CDM
   else if (carModel === 'x70plus') {
@@ -305,7 +306,9 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     nextUpdateTime,
     updateTime,
     isFixedPassword,
-    isCdmVersion
+    isCdmVersion,
+    isCountdownMode,
+    countdownSeconds
   };
 }
 
@@ -347,6 +350,11 @@ Page({
     nextUpdateTime: '--',
     updateTime: '--',
     
+    // 倒计时相关
+    isCountdownMode: false,
+    countdownSeconds: 0,
+    countdownDisplay: '',
+    
     // 说明文本
     carInstructions: '应用中心——蓝牙电话，输入上方密码',
     adbInstructions: '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码',
@@ -359,7 +367,8 @@ Page({
     cdmPasswordVerified: false,
     
     // 定时器
-    updateTimer: null
+    updateTimer: null,
+    countdownTimer: null
   },
 
   // 页面加载
@@ -378,6 +387,9 @@ Page({
     // 清除定时器
     if (this.data.updateTimer) {
       clearInterval(this.data.updateTimer);
+    }
+    if (this.data.countdownTimer) {
+      clearInterval(this.data.countdownTimer);
     }
   },
 
@@ -447,13 +459,21 @@ Page({
     // 设置默认版本为第一个版本
     const defaultVersion = carModelConfig.versions[0];
     
+    // 清除之前的倒计时定时器
+    if (this.data.countdownTimer) {
+      clearInterval(this.data.countdownTimer);
+    }
+    
     this.setData({
       carModelIndex: index,
       currentCarModel: carModel,
       currentVersion: defaultVersion,
       versionIndex: 0,
       serialNumber: '',
-      cdmPasswordVerified: false
+      cdmPasswordVerified: false,
+      isCountdownMode: false,
+      countdownSeconds: 0,
+      countdownDisplay: ''
     }, () => {
       this.updateVersionList();
       this.updatePasswords();
@@ -465,11 +485,19 @@ Page({
     const index = parseInt(e.detail.value);
     const version = this.data.versionList[index].version;
     
+    // 清除之前的倒计时定时器
+    if (this.data.countdownTimer) {
+      clearInterval(this.data.countdownTimer);
+    }
+    
     this.setData({
       versionIndex: index,
       currentVersion: version,
       serialNumber: '',
-      cdmPasswordVerified: false
+      cdmPasswordVerified: false,
+      isCountdownMode: false,
+      countdownSeconds: 0,
+      countdownDisplay: ''
     }, () => {
       this.updatePasswords();
     });
@@ -528,7 +556,6 @@ Page({
     
     wx.showModal({
       title: '请输入密码',
-      content: '请输入密码查看',
       editable: true,
       placeholderText: '请输入6位密码',
       success: (res) => {
@@ -550,6 +577,43 @@ Page({
         }
       }
     });
+  },
+
+  // 格式化倒计时显示
+  formatCountdown(seconds) {
+    if (seconds <= 0) {
+      return '00:00:00';
+    }
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  },
+
+  // 启动倒计时
+  startCountdown() {
+    // 清除之前的定时器
+    if (this.data.countdownTimer) {
+      clearInterval(this.data.countdownTimer);
+    }
+    
+    // 启动新的倒计时
+    this.data.countdownTimer = setInterval(() => {
+      this.setData({
+        countdownSeconds: this.data.countdownSeconds - 1,
+        countdownDisplay: this.formatCountdown(this.data.countdownSeconds - 1)
+      });
+      
+      // 倒计时结束，更新密码
+      if (this.data.countdownSeconds <= 1) {
+        if (this.data.countdownTimer) {
+          clearInterval(this.data.countdownTimer);
+        }
+        this.updatePasswords();
+      }
+    }, 1000);
   },
 
   // 更新密码
@@ -602,15 +666,37 @@ Page({
       displayAdbPassword = result.adbPassword;
     }
     
+    // 倒计时模式处理
+    let displayNextUpdateTime = result.nextUpdateTime;
+    let countdownDisplay = '';
+    
+    if (result.isCountdownMode) {
+      countdownDisplay = this.formatCountdown(result.countdownSeconds);
+      displayNextUpdateTime = '倒计时';
+    }
+    
     this.setData({
       carPassword: result.carPassword,
       actualAdbPassword: result.adbPassword,
       adbPassword: displayAdbPassword,
-      nextUpdateTime: result.nextUpdateTime,
+      nextUpdateTime: displayNextUpdateTime,
       updateTime: result.updateTime,
       carInstructions: carInstructions,
       adbInstructions: adbInstructions,
-      isCdmVersion: result.isCdmVersion
+      isCdmVersion: result.isCdmVersion,
+      isCountdownMode: result.isCountdownMode,
+      countdownSeconds: result.countdownSeconds || 0,
+      countdownDisplay: countdownDisplay
+    }, () => {
+      // 如果是倒计时模式，启动倒计时
+      if (result.isCountdownMode) {
+        this.startCountdown();
+      } else {
+        // 清除倒计时定时器
+        if (this.data.countdownTimer) {
+          clearInterval(this.data.countdownTimer);
+        }
+      }
     });
   }
 });
