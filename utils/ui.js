@@ -146,8 +146,9 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
     const showCdmPasswordButton = document.getElementById('showCdmPasswordButton');
     if (showCdmPasswordButton) {
         showCdmPasswordButton.addEventListener('click', function() {
+            const carPasswordEl = document.getElementById('carPassword');
             const adbPasswordEl = document.getElementById('adbPassword');
-            const inputPassword = prompt('请输入密码查看加密项密码：');
+            const inputPassword = prompt('请输入密码查看密码：');
             
             if (inputPassword === null) {
                 return;
@@ -156,7 +157,7 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
             const correctPassword = getCdmPassword();
             
             if (inputPassword === correctPassword) {
-                // 密码正确，显示ADB密码
+                // 密码正确，显示所有密码
                 const now = new Date();
                 const month = formatTimeUnit(now.getMonth() + 1);
                 const date = formatTimeUnit(now.getDate());
@@ -174,7 +175,12 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
                 };
                 
                 const result = calculatePasswords(currentCarModel, currentVersion, params);
-                adbPasswordEl.textContent = result.adbPassword;
+                if (carPasswordEl) {
+                    carPasswordEl.textContent = result.carPassword;
+                }
+                if (adbPasswordEl) {
+                    adbPasswordEl.textContent = result.adbPassword;
+                }
             } else {
                 alert('密码错误');
             }
@@ -271,15 +277,21 @@ export function updateTravelerPasswords(dateTimeNum, currentVersion, serialNumbe
     const carPasswordEl = document.getElementById('carPassword');
     const adbPasswordEl = document.getElementById('adbPassword');
     
-    if (carPasswordEl) {
-        carPasswordEl.textContent = result.carPassword || '--';
-    }
-    
-    // CDM版本不自动显示ADB密码，需要输入密码查看
-    if (adbPasswordEl && currentVersion !== 'cdm') {
-        adbPasswordEl.textContent = result.adbPassword || '--';
-    } else if (adbPasswordEl && currentVersion === 'cdm') {
-        adbPasswordEl.textContent = '********';
+    // CDM版本不自动显示密码，需要输入密码查看
+    if (currentVersion === 'cdm') {
+        if (carPasswordEl) {
+            carPasswordEl.textContent = '********';
+        }
+        if (adbPasswordEl) {
+            adbPasswordEl.textContent = '********';
+        }
+    } else {
+        if (carPasswordEl) {
+            carPasswordEl.textContent = result.carPassword || '--';
+        }
+        if (adbPasswordEl) {
+            adbPasswordEl.textContent = result.adbPassword || '--';
+        }
     }
 }
 
