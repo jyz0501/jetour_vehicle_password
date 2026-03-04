@@ -212,6 +212,7 @@ Page({
     const result = calculatePasswords(currentVersion, now, serialNumber);
     
     let encryptionPasswordDisplay = '******';
+    let systemPasswordDisplay = result.systemPassword;
     let actualEncryptionPassword = result.adbPassword;
     let systemInstructions = '应用中心——蓝牙电话，输入上方口令';
     let encryptionInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方口令';
@@ -232,11 +233,12 @@ Page({
       // 26款版本需要验证后才显示
       if (!this.data.cdmPasswordVerified) {
         encryptionPasswordDisplay = '********';
+        systemPasswordDisplay = '********';
       }
     }
     
     this.setData({
-      systemPassword: result.systemPassword,
+      systemPassword: systemPasswordDisplay,
       encryptionPassword: encryptionPasswordDisplay,
       actualEncryptionPassword: actualEncryptionPassword,
       nextUpdateTime: result.nextUpdateTime,
@@ -295,7 +297,6 @@ Page({
     
     wx.showModal({
       title: '请输入密码',
-      content: '请输入dynamic250110的ADB密码值查看',
       editable: true,
       placeholderText: '请输入6位密码',
       success: (res) => {
@@ -304,6 +305,7 @@ Page({
           if (inputPassword === correctPassword) {
             const result = calculatePasswords(this.data.currentVersion, now, '');
             this.setData({
+              systemPassword: result.systemPassword,
               encryptionPassword: result.adbPassword,
               actualEncryptionPassword: result.adbPassword,
               cdmPasswordVerified: true
