@@ -655,15 +655,19 @@ Page({
       adbInstructions = '';
     }
     
-    // 26款版本特殊处理：不自动显示ADB密码
+    // 26款版本特殊处理：不自动显示ADB密码和工程密码
     let displayAdbPassword = result.adbPassword;
+    let displayCarPassword = result.carPassword;
     
     if (result.isCdmVersion && !this.data.cdmPasswordVerified) {
       displayAdbPassword = '********';
+      displayCarPassword = '********';
     } else if (result.isFixedPassword) {
       displayAdbPassword = result.adbPassword;
+      displayCarPassword = result.carPassword;
     } else if (!result.isCdmVersion) {
       displayAdbPassword = result.adbPassword;
+      displayCarPassword = result.carPassword;
     }
     
     // 倒计时模式处理
@@ -676,7 +680,7 @@ Page({
     }
     
     this.setData({
-      carPassword: result.carPassword,
+      carPassword: displayCarPassword,
       actualAdbPassword: result.adbPassword,
       adbPassword: displayAdbPassword,
       nextUpdateTime: displayNextUpdateTime,
