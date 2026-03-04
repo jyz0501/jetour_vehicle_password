@@ -68,7 +68,16 @@
     <view class="password-group">
       <view class="password-card">
         <text class="card-title">1. 工程模式密码</text>
-        <text class="password-value">{{carPassword}}</text>
+        <view class="password-container">
+          <text class="password-value">{{carPassword}}</text>
+          <button 
+            wx:if="{{isCdmVersion && !cdmPasswordVerified}}"
+            class="show-password-button"
+            bindtap="showCdmPassword"
+          >
+            显示密码
+          </button>
+        </view>
         <text class="instructions">{{carInstructions}}</text>
       </view>
       
