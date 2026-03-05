@@ -14,8 +14,10 @@
     <text class="title">旅行者CDM/山海T2系统口令 v1.138.0</text>
   </view>
   
-  <view class="douyin-info">
-    交流反馈：抖音@大伦哥的CDM
+  <view class="link-buttons">
+    <button class="link-button" bindtap="openManual">使用教程</button>
+    <button class="link-button" bindtap="openTool">安装工具</button>
+    <button class="link-button" bindtap="copyId">关注大伦哥</button>
   </view>
   
   <view class="version-switcher">

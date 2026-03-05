@@ -463,6 +463,20 @@ Page({
     });
   },
 
+  // 复制ID关注大伦哥
+  copyId() {
+    wx.setClipboardData({
+      data: 'JetourTravel',
+      success() {
+        wx.showToast({
+          title: 'ID已复制，请前往平台搜索关注',
+          icon: 'none',
+          duration: 2000
+        });
+      }
+    });
+  },
+
   // 车型下拉菜单变化
   onCarModelChange(e) {
     const index = parseInt(e.detail.value);

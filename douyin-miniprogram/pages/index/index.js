@@ -359,6 +359,46 @@ Page({
     this.updatePasswords();
   },
 
+  // 打开使用教程
+  openManual() {
+    wx.setClipboardData({
+      data: 'https://manual.qianxian.tech/',
+      success() {
+        wx.showToast({
+          title: '链接已复制',
+          icon: 'success'
+        });
+      }
+    });
+  },
+
+  // 打开安装工具
+  openTool() {
+    wx.setClipboardData({
+      data: 'https://tool.qianxian.tech/',
+      success() {
+        wx.showToast({
+          title: '链接已复制',
+          icon: 'success'
+        });
+      }
+    });
+  },
+
+  // 复制ID关注大伦哥
+  copyId() {
+    wx.setClipboardData({
+      data: 'JetourTravel',
+      success() {
+        wx.showToast({
+          title: 'ID已复制，请前往平台搜索关注',
+          icon: 'none',
+          duration: 2000
+        });
+      }
+    });
+  },
+
   // 输入序列号
   inputSerialNumber(e) {
     const serialNumber = e.detail.value;
