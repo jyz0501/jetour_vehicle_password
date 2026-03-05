@@ -409,8 +409,13 @@ Page({
         ];
         break;
       case 'x70':
+        versionList = [
+          { label: '其他', version: 'other' }
+        ];
+        break;
       case 'x90':
         versionList = [
+          { label: '04.0x', version: '040x' },
           { label: '其他', version: 'other' }
         ];
         break;
