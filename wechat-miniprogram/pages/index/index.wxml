@@ -68,7 +68,7 @@
         <view class="password-container">
           <text class="password-value">{{carPassword}}</text>
           <button 
-            wx:if="{{(isCdmVersion || (currentCarModel === 'ziyouzhe' && currentVersion === '010108')) && !cdmPasswordVerified}}"
+            wx:if="{{(isCdmVersion || (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402'))) && !cdmPasswordVerified}}"
             class="show-password-button"
             bindtap="showCdmPassword"
           >
@@ -94,7 +94,7 @@
         <view class="password-container">
           <text class="password-value">{{adbPassword}}</text>
           <button 
-            wx:if="{{(isCdmVersion || (currentCarModel === 'ziyouzhe' && currentVersion === '010108')) && !cdmPasswordVerified}}"
+            wx:if="{{(isCdmVersion || (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402'))) && !cdmPasswordVerified}}"
             class="show-password-button"
             bindtap="showCdmPassword"
           >

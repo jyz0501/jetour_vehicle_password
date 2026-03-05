@@ -20,14 +20,16 @@ export const carModels = {
     },
     ziyouzhe: {
         name: '自由者/山海T1',
-        versions: ['11010x', '010108'],
+        versions: ['11010x', '010108', '000402'],
         versionNames: {
             '11010x': '11.01.04及以上',
-            '010108': '01.01.08'
+            '010108': '01.01.08',
+            '000402': '00.04.02'
         },
         algorithms: {
             '11010x': 'dynamic240910',
-            '010108': 'dynamic240910_encrypted'
+            '010108': 'dynamic240910_encrypted',
+            '000402': 'dynamic240910_encrypted'
         }
     },
     shanhal7: {

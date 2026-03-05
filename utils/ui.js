@@ -62,8 +62,8 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             </div>
         `;
         
-        // 01.01.08版本需要显示密码按钮
-        if (currentVersion === '010108') {
+        // 01.01.08和00.04.02版本需要显示密码按钮
+        if (currentVersion === '010108' || currentVersion === '000402') {
             html = `
                 <div class="password-card">
                     <h2>1. 工程模式密码</h2>
@@ -405,8 +405,8 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
         const password1El = document.getElementById('password1');
         const password2El = document.getElementById('password2');
         
-        // 自由者01.01.08版本不自动显示密码，需要输入密码查看
-        if (currentCarModel === 'ziyouzhe' && currentVersion === '010108') {
+        // 自由者01.01.08和00.04.02版本不自动显示密码，需要输入密码查看
+        if (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402')) {
             if (password1El) {
                 password1El.textContent = '********';
             }
