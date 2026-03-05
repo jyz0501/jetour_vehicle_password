@@ -91,6 +91,31 @@ page {
   margin-top: 5px;
 }
 
+/* 链接按钮样式 */
+.link-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.link-button {
+  flex: 1;
+  min-width: 100px;
+  max-width: 120px;
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.link-button:active {
+  background-color: #45a049;
+}
+
 /* 抖音信息样式 */
 .douyin-info {
   background-color: #e74c3c;

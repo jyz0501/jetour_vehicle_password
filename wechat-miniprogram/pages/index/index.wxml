@@ -17,45 +17,44 @@
   <view class="link-buttons">
     <button class="link-button" bindtap="openManual">使用教程</button>
     <button class="link-button" bindtap="openTool">安装工具</button>
+    <button class="link-button" bindtap="copyId">关注大伦哥</button>
   </view>
   
-  <view class="douyin-info">
-    交流反馈：抖音@大伦哥的CDM
-  </view>
-  
-  <!-- 车型选择 -->
-  <view class="car-selector">
-    <text class="section-title">选择车型：</text>
-    <picker 
-      mode="selector" 
-      range="{{carModelList}}" 
-      range-key="label"
-      value="{{carModelIndex}}"
-      bindchange="onCarModelChange"
-      class="car-picker"
-    >
-      <view class="picker-value">
-        {{carModelList[carModelIndex].label}}
-        <text class="picker-arrow">▼</text>
-      </view>
-    </picker>
-  </view>
-  
-  <view class="version-switcher">
-    <text class="section-title">选择车机版本：</text>
-    <picker 
-      mode="selector" 
-      range="{{versionList}}" 
-      range-key="label"
-      value="{{versionIndex}}"
-      bindchange="onVersionChange"
-      class="version-picker"
-    >
-      <view class="picker-value">
-        {{versionList[versionIndex].label}}
-        <text class="picker-arrow">▼</text>
-      </view>
-    </picker>
+  <!-- 车型和版本选择 -->
+  <view class="selector-row">
+    <view class="car-selector-inline">
+      <text class="section-title">车型：</text>
+      <picker 
+        mode="selector" 
+        range="{{carModelList}}" 
+        range-key="label"
+        value="{{carModelIndex}}"
+        bindchange="onCarModelChange"
+        class="car-picker"
+      >
+        <view class="picker-value">
+          {{carModelList[carModelIndex].label}}
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    
+    <view class="version-selector-inline">
+      <text class="section-title">版本：</text>
+      <picker 
+        mode="selector" 
+        range="{{versionList}}" 
+        range-key="label"
+        value="{{versionIndex}}"
+        bindchange="onVersionChange"
+        class="version-picker"
+      >
+        <view class="picker-value">
+          {{versionList[versionIndex].label}}
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
   </view>
   
   <view class="hour-password-group">
