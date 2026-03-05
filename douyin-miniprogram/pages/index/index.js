@@ -120,6 +120,21 @@ function calculatePasswords(version, now, serialNumber = '') {
       nextUpdateTime = `${nextHourCdm.toString().padStart(2, '0')}:00`;
       break;
     
+    case '010108':
+      // 01.01.08版本使用240910算法
+      isCdmVersion = true;
+      const adbFull010108 = 240910 * dateTimeNum;
+      adbPassword = (adbFull010108 % 1000000).toString().padStart(6, '0');
+
+      // 计算系统动态口令（ADB口令 - 当前小时数）
+      const systemFull010108 = adbFull010108 - now.getHours();
+      systemPassword = `*#${(systemFull010108 % 1000000).toString().padStart(6, '0')}#*`;
+      
+      // 下次变更时间为下一个整点
+      const nextHour010108 = (now.getHours() + 1) % 24;
+      nextUpdateTime = `${nextHour010108.toString().padStart(2, '0')}:00`;
+      break;
+    
     default:
       // 默认使用0407版本的逻辑
       const adbFullDefault = 250110 * dateTimeNum;
@@ -157,7 +172,8 @@ Page({
       { label: '00.08及以下', version: '00x' },
       { label: '4.07以上', version: '0407' },
       { label: '其他', version: 'other' },
-      { label: '26款', version: 'cdm' }
+      { label: '26款', version: 'cdm' },
+      { label: '01.01.08', version: '010108' }
     ],
     
     // 当前选择的版本
@@ -227,10 +243,10 @@ Page({
     } else if (currentVersion === '00x') {
       systemInstructions = '应用中心——蓝牙电话，输入上方口令 或者 通用—系统—右侧空白处连点10下';
       encryptionInstructions = '进入加密项输入上方计算后的口令';
-    } else if (currentVersion === 'cdm') {
+    } else if (currentVersion === 'cdm' || currentVersion === '010108') {
       systemInstructions = '应用中心——蓝牙电话，输入上方口令';
       encryptionInstructions = '';
-      // 26款版本需要验证后才显示
+      // 26款和01.01.08版本需要验证后才显示
       if (!this.data.cdmPasswordVerified) {
         encryptionPasswordDisplay = '********';
         systemPasswordDisplay = '********';

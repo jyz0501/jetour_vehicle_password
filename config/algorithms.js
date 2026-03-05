@@ -175,6 +175,24 @@ export const algorithms = {
         }
     },
     
+    // 240910动态算法（加密版，按小时更新）
+    dynamic240910_encrypted: {
+        name: '240910动态算法（加密版）',
+        countdown: 'hourly',
+        showSerialNumberInput: false,
+        isEncrypted: true,
+        calculate: function(params) {
+            const { mmddhh, hours } = params;
+            const adbFull = 240910 * mmddhh;
+            const carFull = (240910 * mmddhh) - hours;
+            
+            return {
+                carPassword: `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`,
+                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+            };
+        }
+    },
+    
     // 231030动态算法（按小时更新，备用）
     dynamic231030: {
         name: '231030动态算法',
