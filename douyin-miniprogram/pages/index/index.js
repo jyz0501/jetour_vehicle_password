@@ -181,15 +181,35 @@ Page({
     // 弹窗控制
     showPopup: true,
     
+    // 车型列表
+    carModelList: [
+      { label: '旅行者/山海T2', value: 'lvxingzhe' },
+      { label: '自由者/山海T1', value: 'ziyouzhe' },
+      { label: '大圣', value: 'dasheng' },
+      { label: 'X70系列', value: 'x70' },
+      { label: 'X90系列', value: 'x90' },
+      { label: '山海L7/Plus/T9', value: 'l7' },
+      { label: '山海L9', value: 'l9' },
+      { label: '其他', value: 'other' }
+    ],
+    
+    // 当前选择的车型索引
+    carModelIndex: 0,
+    
+    // 当前选择的车型
+    currentCarModel: 'lvxingzhe',
+    
     // 版本列表
     versionList: [
       { label: '4.06及以下', version: '0406' },
       { label: '00.08及以下', version: '00x' },
       { label: '4.07以上', version: '0407' },
       { label: '其他', version: 'other' },
-      { label: '26款', version: 'cdm' },
-      { label: '01.01.08', version: '010108' }
+      { label: '26款', version: 'cdm' }
     ],
+    
+    // 当前选择的版本索引
+    versionIndex: 2,
     
     // 当前选择的版本
     currentVersion: '0407',
@@ -356,6 +376,86 @@ Page({
       serialNumber: '',
       cdmPasswordVerified: false
     });
+    this.updatePasswords();
+  },
+
+  // 车型下拉菜单变化
+  onCarModelChange(e) {
+    const index = parseInt(e.detail.value);
+    const carModel = this.data.carModelList[index].value;
+
+    // 根据车型更新版本列表
+    let versionList = [];
+    switch(carModel) {
+      case 'lvxingzhe':
+        versionList = [
+          { label: '4.06及以下', version: '0406' },
+          { label: '00.08及以下', version: '00x' },
+          { label: '4.07以上', version: '0407' },
+          { label: '其他', version: 'other' },
+          { label: '26款', version: 'cdm' }
+        ];
+        break;
+      case 'ziyouzhe':
+        versionList = [
+          { label: '11.01.04及以上', version: '11010x' },
+          { label: '01.01.08', version: '010108' }
+        ];
+        break;
+      case 'dasheng':
+        versionList = [
+          { label: 'OS1-02.01', version: '0201' },
+          { label: 'OS1_20.10.00', version: '201000' }
+        ];
+        break;
+      case 'x70':
+      case 'x90':
+        versionList = [
+          { label: '其他', version: 'other' }
+        ];
+        break;
+      case 'l7':
+        versionList = [
+          { label: 'OS1-02.01', version: '0201' },
+          { label: 'OS1_20.10.00', version: '201000' }
+        ];
+        break;
+      case 'l9':
+        versionList = [
+          { label: '11.01.04及以上', version: '11010x' }
+        ];
+        break;
+      default:
+        versionList = [
+          { label: '其他', version: 'other' }
+        ];
+    }
+
+    this.setData({
+      carModelIndex: index,
+      currentCarModel: carModel,
+      versionList: versionList,
+      versionIndex: 0,
+      currentVersion: versionList[0].version,
+      serialNumber: '',
+      cdmPasswordVerified: false
+    });
+
+    this.updatePasswords();
+  },
+
+  // 版本下拉菜单变化
+  onVersionChange(e) {
+    const index = parseInt(e.detail.value);
+    const version = this.data.versionList[index].version;
+
+    this.setData({
+      versionIndex: index,
+      currentVersion: version,
+      serialNumber: '',
+      cdmPasswordVerified: false
+    });
+
     this.updatePasswords();
   },
 

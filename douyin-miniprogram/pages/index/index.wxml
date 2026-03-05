@@ -20,19 +20,40 @@
     <button class="link-button" bindtap="copyId">关注大伦哥</button>
   </view>
   
-  <view class="version-switcher">
-    <text class="section-title">选择系统版本：</text>
-    <view class="version-buttons">
-      <button 
-        wx:for="{{versionList}}" 
-        wx:key="version"
-        class="version-button {{currentVersion === item.version ? 'active' : ''}}"
-        bindtap="switchVersion"
-        data-version="{{item.version}}"
-      >
-        {{item.label}}
-      </button>
-    </view>
+  <!-- 车型选择 -->
+  <view class="selector-row">
+    <text class="section-title-inline">选择车型：</text>
+    <picker 
+      mode="selector" 
+      range="{{carModelList}}" 
+      range-key="label"
+      value="{{carModelIndex}}"
+      bindchange="onCarModelChange"
+      class="car-picker-inline"
+    >
+      <view class="picker-value-inline">
+        {{carModelList[carModelIndex].label}}
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
+  </view>
+  
+  <!-- 车机系统版本选择 -->
+  <view class="selector-row">
+    <text class="section-title-inline">选择车机系统版本：</text>
+    <picker 
+      mode="selector" 
+      range="{{versionList}}" 
+      range-key="label"
+      value="{{versionIndex}}"
+      bindchange="onVersionChange"
+      class="version-picker-inline"
+    >
+      <view class="picker-value-inline">
+        {{versionList[versionIndex].label}}
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
   </view>
   
   <view class="hour-password-group">

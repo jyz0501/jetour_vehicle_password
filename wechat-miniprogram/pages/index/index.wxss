@@ -125,36 +125,44 @@
   justify-content: center;
 }
 
-/* 选择器行样式 */
+/* 选择器行样式 - 每行独立显示 */
 .selector-row {
   display: flex;
-  gap: 20rpx;
-  margin-bottom: 30rpx;
+  align-items: center;
+  gap: 15rpx;
+  margin-bottom: 20rpx;
   width: 100%;
 }
 
-.car-selector-inline,
-.version-selector-inline {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-
-.car-selector-inline .section-title,
-.version-selector-inline .section-title {
-  font-size: 26rpx;
+.section-title-inline {
+  font-size: 28rpx;
   font-weight: bold;
   color: #333;
   white-space: nowrap;
-  margin-bottom: 0;
+  min-width: 200rpx;
+  text-align: right;
 }
 
-.car-selector-inline .picker-value,
-.version-selector-inline .picker-value {
+.car-picker-inline,
+.version-picker-inline {
   flex: 1;
-  padding: 15rpx 20rpx;
-  font-size: 24rpx;
+}
+
+.picker-value-inline {
+  background-color: #FF9800;
+  color: white;
+  padding: 20rpx 30rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.version-picker-inline .picker-value-inline {
+  background-color: #1E88E5;
 }
 
 /* 车型选择器样式 */
