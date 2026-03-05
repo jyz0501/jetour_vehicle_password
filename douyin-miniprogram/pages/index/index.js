@@ -224,7 +224,7 @@ Page({
     
     // 说明文本
     systemInstructions: '应用中心——蓝牙电话，输入上方口令',
-    encryptionInstructions: '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方口令',
+    encryptionInstructions: '加密设置——进入加密设置，输入上方口令',
     
     // 序列号输入
     serialNumber: '',
@@ -312,7 +312,7 @@ Page({
     let systemPasswordDisplay = result.systemPassword;
     let actualEncryptionPassword = result.adbPassword;
     let systemInstructions = '应用中心——蓝牙电话，输入上方口令';
-    let encryptionInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方口令';
+    let encryptionInstructions = '加密设置——进入加密设置，输入上方口令';
     
     // 对于固定口令版本，直接显示
     if (currentVersion === '0406') {
@@ -322,7 +322,7 @@ Page({
       encryptionPasswordDisplay = result.adbPassword;
       encryptionInstructions = '';
     } else if (currentVersion === '00x') {
-      systemInstructions = '应用中心——蓝牙电话，输入上方口令 或者 通用—系统—右侧空白处连点10下';
+      systemInstructions = '系统界面连点 8 次';
       encryptionInstructions = '进入加密项输入上方计算后的口令';
     } else if (currentVersion === 'cdm' || currentVersion === '010108') {
       systemInstructions = '应用中心——蓝牙电话，输入上方口令';
