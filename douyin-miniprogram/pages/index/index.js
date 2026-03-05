@@ -582,5 +582,22 @@ Page({
     this.setData({
       showPopup: false
     });
+  },
+
+  // 分享到抖音好友
+  onShareAppMessage() {
+    return {
+      title: '车机密码工具',
+      desc: '专业的车机工程模式密码计算工具',
+      path: '/pages/index/index'
+    };
+  },
+
+  // 分享到抖音朋友圈
+  onShareTimeline() {
+    return {
+      title: '车机密码工具 - 专业的车机工程模式密码计算',
+      query: {}
+    };
   }
 });
