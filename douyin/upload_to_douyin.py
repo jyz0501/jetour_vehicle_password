@@ -54,8 +54,8 @@ def main():
         
         # 创建图文作品
         print("正在创建图文作品...")
-        title = "捷途车机动态密码更新"
-        description = "每小时更新的捷途车机动态密码，包含工程模式密码和ADB权限密码。\n\n适用车型：\n- 2024款捷途山海T2\n- 2023/2024款捷途旅行者\n\n使用方法：\n1. 工程模式密码：应用中心——蓝牙电话，输入密码\n2. ADB权限密码：工程模式——加密设置，输入密码\n\n密码每小时更新一次，请使用最新密码。"
+        title = "捷途车机动态口令更新"
+        description = "每小时更新的捷途车机动态口令，包含工程模式口令和ADB权限口令。\n\n适用车型：\n- 2024款捷途山海T2\n- 2023/2024款捷途旅行者\n\n使用方法：\n1. 工程模式口令：应用中心——蓝牙电话，输入口令\n2. ADB权限口令：工程模式——加密设置，输入口令\n\n口令每小时更新一次，请使用最新口令。"
         
         create_result = create_photo_album(ACCESS_TOKEN, image_id, title, description)
         print(f"创建结果: {json.dumps(create_result, ensure_ascii=False)}")

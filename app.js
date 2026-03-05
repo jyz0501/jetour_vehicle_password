@@ -83,5 +83,5 @@ setInterval(() => {
     updateCountdown(currentCarModel, currentVersion);
 }, 1000);
 
-// 每分钟更新密码
+// 每分钟更新口令
 setInterval(updatePasswords, 60000);

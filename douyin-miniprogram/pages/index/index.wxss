@@ -184,7 +184,7 @@ page {
   font-weight: bold;
 }
 
-/* 密码组样式 */
+/* 口令组样式 */
 .hour-password-group {
   border: 2px solid #3498db;
   border-radius: 12px;

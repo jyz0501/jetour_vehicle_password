@@ -128,7 +128,7 @@ page {
   border-color: #1E88E5;
 }
 
-/* 小时密码组样式 */
+/* 小时口令组样式 */
 .hour-password-group {
   margin-bottom: 40rpx;
 }
@@ -205,7 +205,7 @@ page {
   font-weight: bold;
 }
 
-/* 密码容器样式 */
+/* 口令容器样式 */
 .password-container {
   display: flex;
   align-items: center;

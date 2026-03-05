@@ -110,7 +110,7 @@ export const carModels = {
         name: '捷途大圣',
         versions: ['fixed'],
         versionNames: {
-            'fixed': '固定密码'
+            'fixed': '固定口令'
         },
         algorithms: {
             'fixed': 'dashengFixed'
