@@ -46,9 +46,10 @@ function calculatePasswords(version, now, serialNumber = '') {
   const dateTimeKey = `${month}${date}${hours}`;
   const dateTimeNum = parseInt(dateTimeKey, 10);
 
-  let adbPassword, systemPassword, nextUpdateTime;
+  let adbPassword, systemPassword, nextUpdateTime, countdownSeconds;
   let isFixedPassword = false;
   let isCdmVersion = false;
+  let isCountdownMode = false;
 
   // 根据不同版本计算口令
   switch(version) {
@@ -78,9 +79,12 @@ function calculatePasswords(version, now, serialNumber = '') {
       const systemFull = adbFull - now.getHours();
       systemPassword = `*#${(systemFull % 1000000).toString().padStart(6, '0')}#*`;
       
-      // 下次变更时间为下一个整点
-      const nextHour = (now.getHours() + 1) % 24;
-      nextUpdateTime = `${nextHour.toString().padStart(2, '0')}:00`;
+      // 计算到下一个整点的倒计时秒数
+      const nextHour0407 = new Date(now);
+      nextHour0407.setHours(now.getHours() + 1, 0, 0, 0);
+      countdownSeconds = Math.floor((nextHour0407 - now) / 1000);
+      nextUpdateTime = '倒计时';
+      isCountdownMode = true;
       break;
     
     case '0406':
@@ -96,13 +100,13 @@ function calculatePasswords(version, now, serialNumber = '') {
       systemPassword = `*#20230730#*`;
       adbPassword = calculateSerialNumberDailyPassword(year, month, date);
       
-      // 下次变更时间为下一天
+      // 计算到明天00:00:00的倒计时秒数
       const tomorrowOther = new Date();
       tomorrowOther.setDate(tomorrowOther.getDate() + 1);
-      const tomorrowYearOther = tomorrowOther.getFullYear();
-      const tomorrowMonthOther = formatTimeUnit(tomorrowOther.getMonth() + 1);
-      const tomorrowDayOther = formatTimeUnit(tomorrowOther.getDate());
-      nextUpdateTime = `${tomorrowYearOther}-${tomorrowMonthOther}-${tomorrowDayOther}`;
+      tomorrowOther.setHours(0, 0, 0, 0);
+      countdownSeconds = Math.floor((tomorrowOther - now) / 1000);
+      nextUpdateTime = '倒计时';
+      isCountdownMode = true;
       break;
     
     case 'cdm':
@@ -115,9 +119,12 @@ function calculatePasswords(version, now, serialNumber = '') {
       const systemFullCdm = adbFullCdm - now.getHours();
       systemPassword = `*#${(systemFullCdm % 1000000).toString().padStart(6, '0')}#*`;
       
-      // 下次变更时间为下一个整点
-      const nextHourCdm = (now.getHours() + 1) % 24;
-      nextUpdateTime = `${nextHourCdm.toString().padStart(2, '0')}:00`;
+      // 计算到下一个整点的倒计时秒数
+      const nextHourCdm = new Date(now);
+      nextHourCdm.setHours(now.getHours() + 1, 0, 0, 0);
+      countdownSeconds = Math.floor((nextHourCdm - now) / 1000);
+      nextUpdateTime = '倒计时';
+      isCountdownMode = true;
       break;
     
     case '010108':
@@ -130,21 +137,27 @@ function calculatePasswords(version, now, serialNumber = '') {
       const systemFull010108 = adbFull010108 - now.getHours();
       systemPassword = `*#${(systemFull010108 % 1000000).toString().padStart(6, '0')}#*`;
       
-      // 下次变更时间为下一个整点
-      const nextHour010108 = (now.getHours() + 1) % 24;
-      nextUpdateTime = `${nextHour010108.toString().padStart(2, '0')}:00`;
+      // 计算到下一个整点的倒计时秒数
+      const nextHour010108 = new Date(now);
+      nextHour010108.setHours(now.getHours() + 1, 0, 0, 0);
+      countdownSeconds = Math.floor((nextHour010108 - now) / 1000);
+      nextUpdateTime = '倒计时';
+      isCountdownMode = true;
       break;
     
     default:
-      // 默认使用0407版本的逻辑
-      const adbFullDefault = 250110 * dateTimeNum;
-      adbPassword = (adbFullDefault % 1000000).toString().padStart(6, '0');
-      const systemFullDefault = adbFullDefault - now.getHours();
-      systemPassword = `*#${(systemFullDefault % 1000000).toString().padStart(6, '0')}#*`;
-      
-      // 下次变更时间为下一个整点
-      const nextHourDefault = (now.getHours() + 1) % 24;
-      nextUpdateTime = `${nextHourDefault.toString().padStart(2, '0')}:00`;
+        // 默认使用0407版本的逻辑
+        const adbFullDefault = 250110 * dateTimeNum;
+        adbPassword = (adbFullDefault % 1000000).toString().padStart(6, '0');
+        const systemFullDefault = adbFullDefault - now.getHours();
+        systemPassword = `*#${(systemFullDefault % 1000000).toString().padStart(6, '0')}#*`;
+        
+        // 计算到下一个整点的倒计时秒数
+        const nextHourDefault = new Date(now);
+        nextHourDefault.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHourDefault - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
   }
 
   // 生成更新时间字符串
@@ -156,7 +169,9 @@ function calculatePasswords(version, now, serialNumber = '') {
     nextUpdateTime,
     updateTime,
     isFixedPassword,
-    isCdmVersion
+    isCdmVersion,
+    isCountdownMode,
+    countdownSeconds
   };
 }
 
@@ -198,8 +213,14 @@ Page({
     isCdmVersion: false,
     cdmPasswordVerified: false,
     
+    // 倒计时相关
+    isCountdownMode: false,
+    countdownSeconds: 0,
+    countdownDisplay: '',
+    
     // 定时器
-    updateTimer: null
+    updateTimer: null,
+    countdownTimer: null
   },
 
   // 页面加载
@@ -218,6 +239,46 @@ Page({
     if (this.data.updateTimer) {
       clearInterval(this.data.updateTimer);
     }
+    if (this.data.countdownTimer) {
+      clearInterval(this.data.countdownTimer);
+    }
+  },
+
+  // 格式化倒计时显示
+  formatCountdown(seconds) {
+    if (seconds <= 0) {
+      return '00:00:00';
+    }
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  },
+
+  // 启动倒计时
+  startCountdown() {
+    // 清除之前的定时器
+    if (this.data.countdownTimer) {
+      clearInterval(this.data.countdownTimer);
+    }
+    
+    // 启动新的倒计时
+    this.data.countdownTimer = setInterval(() => {
+      this.setData({
+        countdownSeconds: this.data.countdownSeconds - 1,
+        countdownDisplay: this.formatCountdown(this.data.countdownSeconds - 1)
+      });
+      
+      // 倒计时结束，更新密码
+      if (this.data.countdownSeconds <= 1) {
+        if (this.data.countdownTimer) {
+          clearInterval(this.data.countdownTimer);
+        }
+        this.updatePasswords();
+      }
+    }, 1000);
   },
 
   // 更新口令
@@ -253,15 +314,37 @@ Page({
       }
     }
     
+    // 倒计时模式处理
+    let displayNextUpdateTime = result.nextUpdateTime;
+    let countdownDisplay = '';
+    
+    if (result.isCountdownMode) {
+      countdownDisplay = this.formatCountdown(result.countdownSeconds);
+      displayNextUpdateTime = '倒计时';
+    }
+    
     this.setData({
       systemPassword: systemPasswordDisplay,
       encryptionPassword: encryptionPasswordDisplay,
       actualEncryptionPassword: actualEncryptionPassword,
-      nextUpdateTime: result.nextUpdateTime,
+      nextUpdateTime: displayNextUpdateTime,
       updateTime: result.updateTime,
       systemInstructions: systemInstructions,
       encryptionInstructions: encryptionInstructions,
-      isCdmVersion: result.isCdmVersion
+      isCdmVersion: result.isCdmVersion,
+      isCountdownMode: result.isCountdownMode,
+      countdownSeconds: result.countdownSeconds || 0,
+      countdownDisplay: countdownDisplay
+    }, () => {
+      // 如果是倒计时模式，启动倒计时
+      if (result.isCountdownMode) {
+        this.startCountdown();
+      } else {
+        // 清除倒计时定时器
+        if (this.data.countdownTimer) {
+          clearInterval(this.data.countdownTimer);
+        }
+      }
     });
   },
 

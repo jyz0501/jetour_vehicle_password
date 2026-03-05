@@ -161,9 +161,12 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         const carFull0407 = adbFull0407 - now.getHours();
         carPassword = `*#${(carFull0407 % 1000000).toString().padStart(6, '0')}#*`;
         
-        // 下次变更时间为下一个整点
-        const nextHour0407 = (now.getHours() + 1) % 24;
-        nextUpdateTime = `${nextHour0407.toString().padStart(2, '0')}:00`;
+        // 计算到下一个整点的倒计时秒数
+        const nextHour0407 = new Date(now);
+        nextHour0407.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHour0407 - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
         break;
       
       case '0406':
@@ -198,9 +201,12 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         const carFullCdm = adbFullCdm - now.getHours();
         carPassword = `*#${(carFullCdm % 1000000).toString().padStart(6, '0')}#*`;
         
-        // 下次变更时间为下一个整点
-        const nextHourCdm = (now.getHours() + 1) % 24;
-        nextUpdateTime = `${nextHourCdm.toString().padStart(2, '0')}:00`;
+        // 计算到下一个整点的倒计时秒数
+        const nextHourCdm = new Date(now);
+        nextHourCdm.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHourCdm - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
         break;
       
       default:
@@ -210,9 +216,12 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         const carFullDefault = adbFullDefault - now.getHours();
         carPassword = `*#${(carFullDefault % 1000000).toString().padStart(6, '0')}#*`;
         
-        // 下次变更时间为下一个整点
-        const nextHourDefault = (now.getHours() + 1) % 24;
-        nextUpdateTime = `${nextHourDefault.toString().padStart(2, '0')}:00`;
+        // 计算到下一个整点的倒计时秒数
+        const nextHourDefault = new Date(now);
+        nextHourDefault.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHourDefault - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
     }
   }
   // 自由者车型
@@ -225,9 +234,12 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     const carFull = adbFull - now.getHours();
     carPassword = `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`;
     
-    // 下次变更时间为下一个整点
-    const nextHour = (now.getHours() + 1) % 24;
-    nextUpdateTime = `${nextHour.toString().padStart(2, '0')}:00`;
+    // 计算到下一个整点的倒计时秒数
+    const nextHour = new Date(now);
+    nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+    countdownSeconds = Math.floor((nextHour - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
   }
   // 山海L7/Plus/T9
   else if (carModel === 'shanhal7') {

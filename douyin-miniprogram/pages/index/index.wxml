@@ -35,7 +35,9 @@
   
   <view class="hour-password-group">
     <view class="hour-indicator">
-      下次变更时间：<text class="highlight">{{nextUpdateTime}}</text>
+      密码有效期：
+      <text wx:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
+      <text wx:else class="highlight countdown">{{countdownDisplay}}</text>
     </view>
     
     <view class="password-group">
