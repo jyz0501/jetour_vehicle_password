@@ -22,7 +22,7 @@
   
   <!-- 车型选择 -->
   <view class="selector-row">
-    <text class="section-title-inline">选择车型：</text>
+    <text class="section-title-inline">车型：</text>
     <picker 
       mode="selector" 
       range="{{carModelList}}" 
@@ -40,7 +40,7 @@
   
   <!-- 车机系统版本选择 -->
   <view class="selector-row">
-    <text class="section-title-inline">选择车机系统版本：</text>
+    <text class="section-title-inline">车机系统版本：</text>
     <picker 
       mode="selector" 
       range="{{versionList}}" 
