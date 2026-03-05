@@ -128,7 +128,8 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     case '010108':
-      // 01.01.08版本使用240910算法
+    case '000402':
+      // 01.01.08和00.04.02版本使用240910算法
       isCdmVersion = true;
       const adbFull010108 = 240910 * dateTimeNum;
       adbPassword = (adbFull010108 % 1000000).toString().padStart(6, '0');
@@ -324,7 +325,7 @@ Page({
     } else if (currentVersion === '00x') {
       systemInstructions = '系统界面连点 8 次';
       encryptionInstructions = '进入加密项输入上方计算后的口令';
-    } else if (currentVersion === 'cdm' || currentVersion === '010108') {
+    } else if (currentVersion === 'cdm' || currentVersion === '010108' || currentVersion === '000402') {
       systemInstructions = '应用中心——蓝牙电话，输入上方口令';
       encryptionInstructions = '';
       // 26款和01.01.08版本需要验证后才显示
@@ -399,7 +400,8 @@ Page({
       case 'ziyouzhe':
         versionList = [
           { label: '11.01.04及以上', version: '11010x' },
-          { label: '01.01.08', version: '010108' }
+          { label: '01.01.08', version: '010108' },
+          { label: '00.04.02', version: '000402' }
         ];
         break;
       case 'dasheng':

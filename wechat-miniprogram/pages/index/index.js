@@ -18,10 +18,11 @@ const carModels = {
   },
   ziyouzhe: {
     name: '自由者/山海T1',
-    versions: ['11010x', '010108'],
+    versions: ['11010x', '010108', '000402'],
     versionNames: {
       '11010x': '11.01.04及以上',
-      '010108': '01.01.08'
+      '010108': '01.01.08',
+      '000402': '00.04.02'
     }
   },
   shanhal7: {
@@ -659,7 +660,7 @@ Page({
     if (result.isCdmVersion && !this.data.cdmPasswordVerified) {
       displayAdbPassword = '********';
       displayCarPassword = '********';
-    } else if (currentCarModel === 'ziyouzhe' && currentVersion === '010108' && !this.data.cdmPasswordVerified) {
+    } else if (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402') && !this.data.cdmPasswordVerified) {
       displayAdbPassword = '********';
       displayCarPassword = '********';
     } else if (result.isFixedPassword) {
