@@ -10,6 +10,7 @@ const fixedPasswords = {
         'unknown': '*#20201030#*'
     },
     x90plus: {
+        '040x': '*#20230730#*',
         'unknown': '*#20201030#*'
     },
     x95: {
