@@ -51,7 +51,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             cdmPasswordInput.style.display = 'block';
         }
     } else if (currentCarModel === 'ziyouzhe') {
-        passwordGroup.innerHTML = `
+        let html = `
             <div class="password-card">
                 <h2>1. 工程模式密码</h2>
                 <div class="password-value" id="password1">--</div>
@@ -61,6 +61,25 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div class="password-value" id="password2">--</div>
             </div>
         `;
+        
+        // 01.01.08版本需要显示密码按钮
+        if (currentVersion === '010108') {
+            html = `
+                <div class="password-card">
+                    <h2>1. 工程模式密码</h2>
+                    <div id="ziyouzhePasswordInput" style="margin-bottom: 15px;">
+                        <button id="showZiyouzhePasswordButton" class="toggle-button">显示密码</button>
+                    </div>
+                    <div class="password-value" id="password1">--</div>
+                </div>
+                <div class="password-card">
+                    <h2>2. ADB权限密码</h2>
+                    <div class="password-value" id="password2">--</div>
+                </div>
+            `;
+        }
+        
+        passwordGroup.innerHTML = html;
     } else if (currentCarModel === 'dasheng') {
         passwordGroup.innerHTML = `
             <div class="password-card">
@@ -180,6 +199,53 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
                 }
                 if (adbPasswordEl) {
                     adbPasswordEl.textContent = result.adbPassword;
+                }
+            } else {
+                alert('密码错误');
+            }
+        });
+    }
+    
+    // 自由者01.01.08版本显示密码按钮
+    const showZiyouzhePasswordButton = document.getElementById('showZiyouzhePasswordButton');
+    if (showZiyouzhePasswordButton) {
+        showZiyouzhePasswordButton.addEventListener('click', function() {
+            const password1El = document.getElementById('password1');
+            const password2El = document.getElementById('password2');
+            const inputPassword = prompt('请输入密码查看密码：');
+            
+            if (inputPassword === null) {
+                return;
+            }
+            
+            const correctPassword = getCdmPassword();
+            
+            if (inputPassword === correctPassword) {
+                // 密码正确，显示所有密码
+                const now = new Date();
+                const month = formatTimeUnit(now.getMonth() + 1);
+                const date = formatTimeUnit(now.getDate());
+                const hours = formatTimeUnit(now.getHours());
+                const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
+                const mmddhh = parseInt(`${month}${date}${hours}`, 10);
+                
+                const params = {
+                    dateTimeNum,
+                    hours: now.getHours(),
+                    mmddhh,
+                    year: now.getFullYear(),
+                    month: month,
+                    date: date,
+                    carModel: currentCarModel,
+                    version: currentVersion
+                };
+                
+                const result = calculatePasswords(currentCarModel, currentVersion, params);
+                if (password1El) {
+                    password1El.textContent = result.carPassword;
+                }
+                if (password2El) {
+                    password2El.textContent = result.adbPassword;
                 }
             } else {
                 alert('密码错误');
@@ -318,11 +384,21 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
         const password1El = document.getElementById('password1');
         const password2El = document.getElementById('password2');
         
-        if (password1El) {
-            password1El.textContent = carPassword || '--';
-        }
-        if (password2El) {
-            password2El.textContent = adbPassword || '--';
+        // 自由者01.01.08版本不自动显示密码，需要输入密码查看
+        if (currentCarModel === 'ziyouzhe' && currentVersion === '010108') {
+            if (password1El) {
+                password1El.textContent = '********';
+            }
+            if (password2El) {
+                password2El.textContent = '********';
+            }
+        } else {
+            if (password1El) {
+                password1El.textContent = carPassword || '--';
+            }
+            if (password2El) {
+                password2El.textContent = adbPassword || '--';
+            }
         }
     } else {
         const { passwords } = result;
