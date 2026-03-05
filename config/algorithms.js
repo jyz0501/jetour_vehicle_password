@@ -1,4 +1,4 @@
-// 固定密码配置表
+// 固定口令配置表
 const fixedPasswords = {
     traveler: {
         '0406': '*#20230730#*'
@@ -24,7 +24,7 @@ const fixedPasswords = {
     }
 };
 
-// 获取固定密码
+// 获取固定口令
 function getFixedPassword(carModel, version) {
     if (fixedPasswords[carModel] && fixedPasswords[carModel][version]) {
         return fixedPasswords[carModel][version];
@@ -32,7 +32,7 @@ function getFixedPassword(carModel, version) {
     return '*#20230730#*';
 }
 
-// 计算serialNumberDaily密码
+// 计算serialNumberDaily口令
 function calculateSerialNumberDailyPassword(year, month, date) {
     const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
     const lastDigit = yymmdd % 10;
@@ -56,11 +56,11 @@ function calculateSerialNumberDailyPassword(year, month, date) {
     return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
-// 密码算法定义
+// 口令算法定义
 export const algorithms = {
-    // 固定密码算法
+    // 固定口令算法
     fixed: {
-        name: '固定密码',
+        name: '固定口令',
         countdown: 'none',
         showSerialNumberInput: false,
         calculate: function(params) {
@@ -72,9 +72,9 @@ export const algorithms = {
         }
     },
     
-    // 捷途大圣固定密码算法
+    // 捷途大圣固定口令算法
     dashengFixed: {
-        name: '捷途大圣固定密码',
+        name: '捷途大圣固定口令',
         countdown: 'none',
         showSerialNumberInput: false,
         calculate: function(params) {

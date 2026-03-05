@@ -3,7 +3,7 @@ function formatTimeUnit(unit) {
   return String(unit).padStart(2, '0');
 }
 
-// 计算serialNumberDaily密码
+// 计算serialNumberDaily口令
 function calculateSerialNumberDailyPassword(year, month, date) {
   const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
   const lastDigit = yymmdd % 10;
@@ -27,7 +27,7 @@ function calculateSerialNumberDailyPassword(year, month, date) {
   return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
-// 获取dynamic250110的ADB密码值（用于26款验证）
+// 获取dynamic250110的ADB口令值（用于26款验证）
 function getCdmVerifyPassword(dateTimeNum) {
   const adbFull = 250110 * dateTimeNum;
   return (adbFull % 1000000).toString().padStart(6, '0');
@@ -230,7 +230,7 @@ Page({
     // 序列号输入
     serialNumber: '',
     
-    // 26款密码保护
+    // 26款口令保护
     isCdmVersion: false,
     cdmPasswordVerified: false,
     
@@ -292,7 +292,7 @@ Page({
         countdownDisplay: this.formatCountdown(this.data.countdownSeconds - 1)
       });
       
-      // 倒计时结束，更新密码
+      // 倒计时结束，更新口令
       if (this.data.countdownSeconds <= 1) {
         if (this.data.countdownTimer) {
           clearInterval(this.data.countdownTimer);
@@ -509,7 +509,7 @@ Page({
     this.updatePasswords();
   },
 
-  // 显示26款密码（需要验证）
+  // 显示26款口令（需要验证）
   showCdmPassword() {
     const now = new Date();
     const month = formatTimeUnit(now.getMonth() + 1);
@@ -520,9 +520,9 @@ Page({
     const correctPassword = getCdmVerifyPassword(dateTimeNum);
     
     wx.showModal({
-      title: '请输入密码',
+      title: '请输入口令',
       editable: true,
-      placeholderText: '请输入6位密码',
+      placeholderText: '请输入6位口令',
       success: (res) => {
         if (res.confirm) {
           const inputPassword = res.content;
@@ -536,7 +536,7 @@ Page({
             });
           } else {
             wx.showToast({
-              title: '密码错误',
+              title: '口令错误',
               icon: 'none'
             });
           }

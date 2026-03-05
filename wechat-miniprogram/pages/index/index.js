@@ -80,12 +80,12 @@ const carModels = {
     name: '大圣',
     versions: ['fixed'],
     versionNames: {
-      'fixed': '固定密码'
+      'fixed': '固定口令'
     }
   }
 };
 
-// 计算serialNumberDaily密码
+// 计算serialNumberDaily口令
 function calculateSerialNumberDailyPassword(year, month, date) {
   const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
   const lastDigit = yymmdd % 10;
@@ -109,13 +109,13 @@ function calculateSerialNumberDailyPassword(year, month, date) {
   return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
-// 获取dynamic250110的ADB密码值（用于26款验证）
+// 获取dynamic250110的ADB口令值（用于26款验证）
 function getCdmVerifyPassword(dateTimeNum) {
   const adbFull = 250110 * dateTimeNum;
   return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
-// 计算密码的核心函数
+// 计算口令的核心函数
 function calculatePasswords(carModel, version, now, serialNumber = '') {
   // 提取月日时（忽略分钟）
   const month = formatTimeUnit(now.getMonth() + 1);
@@ -149,17 +149,17 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         
         carPassword = `*#20230730#*`;
         
-        // 00x版本的下次变更时间为无（固定密码）
-        nextUpdateTime = '无（固定密码）';
+        // 00x版本的下次变更时间为无（固定口令）
+        nextUpdateTime = '无（固定口令）';
         isFixedPassword = true;
         break;
       
       case '0407':
-        // 计算ADB密码（250110 × 日期时间）
+        // 计算ADB口令（250110 × 日期时间）
         const adbFull0407 = 250110 * dateTimeNum;
         adbPassword = (adbFull0407 % 1000000).toString().padStart(6, '0');
 
-        // 计算系统动态密码（ADB密码 - 当前小时数）
+        // 计算系统动态口令（ADB口令 - 当前小时数）
         const carFull0407 = adbFull0407 - now.getHours();
         carPassword = `*#${(carFull0407 % 1000000).toString().padStart(6, '0')}#*`;
         
@@ -172,11 +172,11 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         break;
       
       case '0406':
-        // 0406版本使用固定工程模式密码
+        // 0406版本使用固定工程模式口令
         isFixedPassword = true;
         carPassword = `*#20230730#*`;
         adbPassword = '无';
-        nextUpdateTime = '无（固定密码）';
+        nextUpdateTime = '无（固定口令）';
         break;
       
       case 'other':
@@ -199,7 +199,7 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         const adbFullCdm = 215430 * dateTimeNum;
         adbPassword = (adbFullCdm % 1000000).toString().padStart(6, '0');
 
-        // 计算系统动态密码（ADB密码 - 当前小时数）
+        // 计算系统动态口令（ADB口令 - 当前小时数）
         const carFullCdm = adbFullCdm - now.getHours();
         carPassword = `*#${(carFullCdm % 1000000).toString().padStart(6, '0')}#*`;
         
@@ -228,11 +228,11 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
   }
   // 自由者车型
   else if (carModel === 'ziyouzhe') {
-    // 计算ADB密码（240910 × 日期时间）
+    // 计算ADB口令（240910 × 日期时间）
     const adbFull = 240910 * mmddhh;
     adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
     
-    // 计算系统动态密码（ADB密码 - 当前小时数）
+    // 计算系统动态口令（ADB口令 - 当前小时数）
     const carFull = adbFull - now.getHours();
     carPassword = `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`;
     
@@ -247,14 +247,14 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
   else if (carModel === 'shanhal7') {
     carPassword = `*#20230730#*`;
     adbPassword = '20201030';
-    nextUpdateTime = '无（固定密码）';
+    nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
   // 山海L9
   else if (carModel === 'shanhal9') {
     carPassword = `*#20230730#*`;
     adbPassword = '20201030';
-    nextUpdateTime = '无（固定密码）';
+    nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
   // 风云A9/T9
@@ -287,28 +287,28 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
   else if (carModel === 'x70plus') {
     carPassword = `*#20201030#*`;
     adbPassword = '无';
-    nextUpdateTime = '无（固定密码）';
+    nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
   // X90/Plus/Pro/CDM
   else if (carModel === 'x90plus') {
     carPassword = `*#20201030#*`;
     adbPassword = '无';
-    nextUpdateTime = '无（固定密码）';
+    nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
   // X95
   else if (carModel === 'x95') {
     carPassword = `*#20201030#*`;
     adbPassword = '无';
-    nextUpdateTime = '无（固定密码）';
+    nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
   // 大圣车型
   else if (carModel === 'dasheng') {
     carPassword = `*#20220730#*`;
     adbPassword = '无';
-    nextUpdateTime = '无（固定密码）';
+    nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
 
@@ -358,7 +358,7 @@ Page({
     // 当前选择的版本
     currentVersion: '0407',
     
-    // 密码相关
+    // 口令相关
     carPassword: '--',
     adbPassword: '******',
     actualAdbPassword: '',
@@ -371,13 +371,13 @@ Page({
     countdownDisplay: '',
     
     // 说明文本
-    carInstructions: '应用中心——蓝牙电话，输入上方密码',
-    adbInstructions: '加密设置——进入加密设置，输入上方密码',
+    carInstructions: '应用中心——蓝牙电话，输入上方口令',
+    adbInstructions: '加密设置——进入加密设置，输入上方口令',
     
     // 序列号输入
     serialNumber: '',
     
-    // 26款密码保护
+    // 26款口令保护
     isCdmVersion: false,
     cdmPasswordVerified: false,
     
@@ -391,7 +391,7 @@ Page({
     this.updateVersionList();
     this.updatePasswords();
     
-    // 每分钟更新一次密码
+    // 每分钟更新一次口令
     this.data.updateTimer = setInterval(() => {
       this.updatePasswords();
     }, 60000);
@@ -506,7 +506,7 @@ Page({
     });
   },
 
-  // 计算ADB密码（用于00x版本）
+  // 计算ADB口令（用于00x版本）
   calculateAdbPassword() {
     const { currentCarModel, currentVersion, serialNumber } = this.data;
     
@@ -527,7 +527,7 @@ Page({
     });
   },
 
-  // 显示26款密码（需要验证）
+  // 显示26款口令（需要验证）
   showCdmPassword() {
     const now = new Date();
     const month = formatTimeUnit(now.getMonth() + 1);
@@ -538,9 +538,9 @@ Page({
     const correctPassword = getCdmVerifyPassword(dateTimeNum);
     
     wx.showModal({
-      title: '请输入密码',
+      title: '请输入口令',
       editable: true,
-      placeholderText: '请输入6位密码',
+      placeholderText: '请输入6位口令',
       success: (res) => {
         if (res.confirm) {
           const inputPassword = res.content;
@@ -553,7 +553,7 @@ Page({
             });
           } else {
             wx.showToast({
-              title: '密码错误',
+              title: '口令错误',
               icon: 'none'
             });
           }
@@ -589,7 +589,7 @@ Page({
         countdownDisplay: this.formatCountdown(this.data.countdownSeconds - 1)
       });
       
-      // 倒计时结束，更新密码
+      // 倒计时结束，更新口令
       if (this.data.countdownSeconds <= 1) {
         if (this.data.countdownTimer) {
           clearInterval(this.data.countdownTimer);
@@ -599,7 +599,7 @@ Page({
     }, 1000);
   },
 
-  // 更新密码
+  // 更新口令
   updatePasswords() {
     const { currentCarModel, currentVersion, serialNumber } = this.data;
     const now = new Date();
@@ -607,30 +607,30 @@ Page({
     const result = calculatePasswords(currentCarModel, currentVersion, now, serialNumber);
     
     // 更新说明文本
-    let carInstructions = '应用中心——蓝牙电话，输入上方密码';
-    let adbInstructions = '加密设置——进入加密设置，输入上方密码';
+    let carInstructions = '应用中心——蓝牙电话，输入上方口令';
+    let adbInstructions = '加密设置——进入加密设置，输入上方口令';
     
     if (currentCarModel === 'traveler') {
       if (currentVersion === '00x') {
         carInstructions = '系统界面连点 8 次';
-        adbInstructions = '进入加密项输入上方计算后的密码';
+        adbInstructions = '进入加密项输入上方计算后的口令';
       } else if (currentVersion === '0406') {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        carInstructions = '应用中心——蓝牙电话，输入上方口令';
         adbInstructions = '';
       } else if (currentVersion === 'other') {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点8下';
+        carInstructions = '应用中心——蓝牙电话，输入上方口令 或者 通用—系统—右侧空白处连点8下';
         adbInstructions = '';
       } else if (currentVersion === 'cdm') {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        carInstructions = '应用中心——蓝牙电话，输入上方口令';
         adbInstructions = '';
       }
     } else if (currentCarModel === 'ziyouzhe') {
       if (currentVersion === '00x') {
         carInstructions = '系统界面连点 8 次';
-        adbInstructions = '进入加密项输入上方计算后的密码';
+        adbInstructions = '进入加密项输入上方计算后的口令';
       } else {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码';
-        adbInstructions = '加密设置——进入加密设置，输入上方密码';
+        carInstructions = '应用中心——蓝牙电话，输入上方口令';
+        adbInstructions = '加密设置——进入加密设置，输入上方口令';
       }
     } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
       carInstructions = '系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式';
@@ -638,22 +638,22 @@ Page({
     } else if (currentCarModel === 'dasheng') {
       if (currentVersion === '00x') {
         carInstructions = '系统界面连点 8 次';
-        adbInstructions = '进入加密项输入上方计算后的密码';
+        adbInstructions = '进入加密项输入上方计算后的口令';
       } else {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        carInstructions = '应用中心——蓝牙电话，输入上方口令';
         adbInstructions = '';
       }
     } else {
       if (currentVersion === '00x') {
         carInstructions = '系统界面连点 8 次';
-        adbInstructions = '进入加密项输入上方计算后的密码';
+        adbInstructions = '进入加密项输入上方计算后的口令';
       } else {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        carInstructions = '应用中心——蓝牙电话，输入上方口令';
         adbInstructions = '';
       }
     }
     
-    // 26款版本特殊处理：不自动显示ADB密码和工程密码
+    // 26款版本特殊处理：不自动显示ADB口令和工程口令
     let displayAdbPassword = result.adbPassword;
     let displayCarPassword = result.carPassword;
     

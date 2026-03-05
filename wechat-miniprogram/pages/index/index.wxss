@@ -216,7 +216,7 @@
   background-color: #1E88E5;
 }
 
-/* 小时密码组样式 */
+/* 小时口令组样式 */
 .hour-password-group {
   border: 2rpx solid #1E88E5;
   border-radius: 12rpx;
@@ -298,7 +298,7 @@
   padding: 0 20rpx;
 }
 
-/* 密码容器样式 */
+/* 口令容器样式 */
 .password-container {
   display: flex;
   flex-direction: column;
@@ -308,7 +308,7 @@
   padding: 0 20rpx;
 }
 
-/* 显示密码按钮样式 */
+/* 显示口令按钮样式 */
 .show-password-button {
   background-color: #4CAF50;
   color: white;

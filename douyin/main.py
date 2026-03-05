@@ -51,7 +51,7 @@ def run_upload():
 
 def main():
     """主函数"""
-    logger.info("=== 捷途车机动态密码自动截图上传任务 ===")
+    logger.info("=== 捷途车机动态口令自动截图上传任务 ===")
     logger.info(f"执行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # 1. 执行截图

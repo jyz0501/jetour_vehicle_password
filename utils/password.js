@@ -22,7 +22,7 @@ export function getCountdownType(carModel, version) {
     return algorithm.countdown;
 }
 
-// 计算密码
+// 计算口令
 export function calculatePasswords(carModel, version, params) {
     const algorithm = getCarModelAlgorithm(carModel, version);
     const now = new Date();
