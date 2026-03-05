@@ -36,21 +36,21 @@ const carModels = {
     name: '山海L9',
     versions: ['unknown'],
     versionNames: {
-      'unknown': '未知版本'
+      'unknown': '其他版本'
     }
   },
   fengyunA9: {
     name: '风云A9/T9',
     versions: ['unknown'],
     versionNames: {
-      'unknown': '未知版本'
+      'unknown': '其他版本'
     }
   },
   hu8: {
     name: '虎8/8L',
     versions: ['unknown'],
     versionNames: {
-      'unknown': '未知版本'
+      'unknown': '其他版本'
     }
   },
   x70plus: {
@@ -62,16 +62,17 @@ const carModels = {
   },
   x90plus: {
     name: 'X90/Plus/Pro/CDM',
-    versions: ['unknown'],
+    versions: ['040x', 'unknown'],
     versionNames: {
-      'unknown': '未知版本'
+      '040x': '04.0x',
+      'unknown': '其他版本'
     }
   },
   x95: {
     name: 'X95',
     versions: ['unknown'],
     versionNames: {
-      'unknown': '未知版本'
+      'unknown': '其他版本'
     }
   },
   dasheng: {

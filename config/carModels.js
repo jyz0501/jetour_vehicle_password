@@ -46,7 +46,7 @@ export const carModels = {
         name: '山海L9',
         versions: ['unknown'],
         versionNames: {
-            'unknown': '未知版本'
+            'unknown': '其他版本'
         },
         algorithms: {
             'unknown': 'otherCars'
@@ -56,7 +56,7 @@ export const carModels = {
         name: '风云A9/T9',
         versions: ['unknown'],
         versionNames: {
-            'unknown': '未知版本'
+            'unknown': '其他版本'
         },
         algorithms: {
             'unknown': 'serialNumberDaily'
@@ -66,7 +66,7 @@ export const carModels = {
         name: '虎8/8L',
         versions: ['unknown'],
         versionNames: {
-            'unknown': '未知版本'
+            'unknown': '其他版本'
         },
         algorithms: {
             'unknown': 'serialNumberDaily'
@@ -87,7 +87,7 @@ export const carModels = {
         versions: ['040x', 'unknown'],
         versionNames: {
             '040x': '04.0x',
-            'unknown': '未知版本'
+            'unknown': '其他版本'
         },
         algorithms: {
             '040x': 'fixed',
@@ -98,7 +98,7 @@ export const carModels = {
         name: 'X95',
         versions: ['unknown'],
         versionNames: {
-            'unknown': '未知版本'
+            'unknown': '其他版本'
         },
         algorithms: {
             'unknown': 'otherCars'
