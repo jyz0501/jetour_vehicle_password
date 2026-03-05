@@ -88,11 +88,19 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     case '0406':
-      // 0406版本使用固定工程模式口令
+      // 0406版本使用固定工程模式口令，加密项使用230830算法
       isFixedPassword = true;
       systemPassword = `*#20230730#*`;
-      adbPassword = '无';
-      nextUpdateTime = '无（固定口令）';
+      // 加密项口令：230830 × 月日时（MMDDHH）取后六位
+      const adbFull0406 = 230830 * dateTimeNum;
+      adbPassword = (adbFull0406 % 1000000).toString().padStart(6, '0');
+      
+      // 计算到下一个整点的倒计时秒数
+      const nextHour0406 = new Date(now);
+      nextHour0406.setHours(now.getHours() + 1, 0, 0, 0);
+      countdownSeconds = Math.floor((nextHour0406 - now) / 1000);
+      nextUpdateTime = '倒计时';
+      isCountdownMode = true;
       break;
     
     case 'other':
@@ -318,7 +326,7 @@ Page({
     // 对于固定口令版本，直接显示
     if (currentVersion === '0406') {
       encryptionPasswordDisplay = result.adbPassword;
-      encryptionInstructions = '';
+      encryptionInstructions = '加密设置——进入加密设置，输入上方口令';
     } else if (currentVersion === 'other') {
       encryptionPasswordDisplay = result.adbPassword;
       encryptionInstructions = '';
