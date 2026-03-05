@@ -429,8 +429,9 @@ Page({
           data: 'https://manual.qianxian.tech/',
           success() {
             wx.showToast({
-              title: '链接已复制',
-              icon: 'success'
+              title: '链接已复制，请转到 EDGE 或 Chrome 浏览器中打开',
+              icon: 'none',
+              duration: 2000
             });
           }
         });
@@ -454,8 +455,9 @@ Page({
           data: 'https://tool.qianxian.tech/',
           success() {
             wx.showToast({
-              title: '链接已复制',
-              icon: 'success'
+              title: '链接已复制，请转到 EDGE 或 Chrome 浏览器中打开',
+              icon: 'none',
+              duration: 2000
             });
           }
         });
