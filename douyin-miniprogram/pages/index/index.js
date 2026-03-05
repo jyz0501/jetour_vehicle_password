@@ -466,29 +466,19 @@ Page({
 
   // 打开使用教程
   openManual() {
-    wx.setClipboardData({
-      data: 'https://manual.qianxian.tech/',
-      success() {
-        wx.showToast({
-          title: '链接已复制，请转到 EDGE 或 Chrome 浏览器中打开',
-          icon: 'none',
-          duration: 2000
-        });
-      }
+    wx.showToast({
+      title: '功能暂未开放',
+      icon: 'none',
+      duration: 2000
     });
   },
 
   // 打开安装工具
   openTool() {
-    wx.setClipboardData({
-      data: 'https://tool.qianxian.tech/',
-      success() {
-        wx.showToast({
-          title: '链接已复制，请转到 EDGE 或 Chrome 浏览器中打开',
-          icon: 'none',
-          duration: 2000
-        });
-      }
+    wx.showToast({
+      title: '功能暂未开放',
+      icon: 'none',
+      duration: 2000
     });
   },
 
