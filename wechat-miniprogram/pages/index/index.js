@@ -6,7 +6,7 @@ function formatTimeUnit(unit) {
 // 车型配置
 const carModels = {
   traveler: {
-    name: '捷途旅行者/山海T2',
+    name: '旅行者/山海T2',
     versions: ['00x', '0406', '0407', 'other', 'cdm'],
     versionNames: {
       '00x': '00.08及以下',
@@ -75,7 +75,7 @@ const carModels = {
     }
   },
   dasheng: {
-    name: '捷途大圣',
+    name: '大圣',
     versions: ['fixed'],
     versionNames: {
       'fixed': '固定密码'
@@ -290,7 +290,7 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     nextUpdateTime = '无（固定密码）';
     isFixedPassword = true;
   }
-  // 捷途大圣车型
+  // 大圣车型
   else if (carModel === 'dasheng') {
     carPassword = `*#20220730#*`;
     adbPassword = '无';
@@ -321,7 +321,7 @@ Page({
     
     // 车型列表
     carModelList: [
-      { label: '捷途旅行者/山海T2', value: 'traveler' },
+      { label: '旅行者/山海T2', value: 'traveler' },
       { label: '自由者/山海T1', value: 'ziyouzhe' },
       { label: '山海L7/Plus/T9', value: 'shanhal7' },
       { label: '山海L9', value: 'shanhal9' },
@@ -330,7 +330,7 @@ Page({
       { label: 'X70Plus/L/Pro/CDM', value: 'x70plus' },
       { label: 'X90/Plus/Pro/CDM', value: 'x90plus' },
       { label: 'X95', value: 'x95' },
-      { label: '捷途大圣', value: 'dasheng' }
+      { label: '大圣', value: 'dasheng' }
     ],
     
     // 当前选择的车型索引
