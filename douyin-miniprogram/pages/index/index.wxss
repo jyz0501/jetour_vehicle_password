@@ -128,25 +128,44 @@ page {
   font-size: 14px;
 }
 
-/* 版本选择器样式 */
-.version-switcher {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.section-title {
-  display: block;
-  margin-bottom: 10px;
-  color: #34495e;
-  font-weight: bold;
-}
-
-.version-buttons {
+/* 选择器行样式 - 每行独立显示 */
+.selector-row {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.section-title-inline {
+  font-size: 14px;
+  font-weight: bold;
+  color: #34495e;
+  white-space: nowrap;
+  min-width: 120px;
+  text-align: right;
+}
+
+.car-picker-inline,
+.version-picker-inline {
+  flex: 1;
+}
+
+.picker-value-inline {
+  background-color: #FF9800;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.version-picker-inline .picker-value-inline {
+  background-color: #3498db;
 }
 
 .version-button {
