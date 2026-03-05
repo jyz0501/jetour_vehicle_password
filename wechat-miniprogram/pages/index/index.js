@@ -664,7 +664,7 @@ Page({
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
         adbInstructions = '';
       } else if (currentVersion === 'other') {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+        carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点8下';
         adbInstructions = '';
       } else if (currentVersion === 'cdm') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';

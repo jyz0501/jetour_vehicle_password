@@ -84,11 +84,13 @@ export const carModels = {
     },
     x90plus: {
         name: 'X90/Plus/Pro/CDM',
-        versions: ['unknown'],
+        versions: ['040x', 'unknown'],
         versionNames: {
+            '040x': '04.0x',
             'unknown': '未知版本'
         },
         algorithms: {
+            '040x': 'fixed',
             'unknown': 'otherCars'
         }
     },
