@@ -11,13 +11,12 @@
   </view>
   
   <view class="header">
-    <text class="title">车机密码工具 v1.138.0</text>
+    <text class="title">车机口令工具 v1.138.0</text>
   </view>
   
   <view class="link-buttons">
     <button class="link-button" bindtap="openManual">使用教程</button>
     <button class="link-button" bindtap="openTool">安装工具</button>
-    <button class="link-button" bindtap="copyId">关注大伦哥</button>
   </view>
   
   <!-- 车型选择 -->
@@ -58,14 +57,14 @@
   
   <view class="hour-password-group">
     <view class="hour-indicator">
-      密码有效期：
+      口令有效期：
       <text wx:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
       <text wx:else class="highlight countdown">{{countdownDisplay}}</text>
     </view>
     
     <view class="password-group">
       <view class="password-card">
-        <text class="card-title">1. 工程模式密码</text>
+        <text class="card-title">1. 工程模式口令</text>
         <view class="password-container">
           <text class="password-value">{{carPassword}}</text>
           <button 
@@ -73,14 +72,14 @@
             class="show-password-button"
             bindtap="showCdmPassword"
           >
-            显示密码
+            显示口令
           </button>
         </view>
         <text class="instructions">{{carInstructions}}</text>
       </view>
       
       <view class="password-card">
-        <text class="card-title">2. ADB权限密码</text>
+        <text class="card-title">2. 加密项口令</text>
         
         <view wx:if="{{currentVersion === '00x'}}" class="serial-number-input">
           <input 
@@ -89,7 +88,7 @@
             bindinput="inputSerialNumber"
             maxlength="6"
           />
-          <button class="calculate-button" bindtap="calculateAdbPassword">计算密码</button>
+          <button class="calculate-button" bindtap="calculateAdbPassword">计算口令</button>
         </view>
         
         <view class="password-container">
@@ -99,7 +98,7 @@
             class="show-password-button"
             bindtap="showCdmPassword"
           >
-            显示密码
+            显示口令
           </button>
         </view>
         

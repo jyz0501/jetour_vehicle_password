@@ -432,20 +432,6 @@ Page({
     });
   },
 
-  // 复制ID关注大伦哥
-  copyId() {
-    wx.setClipboardData({
-      data: 'JetourTravel',
-      success() {
-        wx.showToast({
-          title: 'ID已复制，请前往平台搜索关注',
-          icon: 'none',
-          duration: 2000
-        });
-      }
-    });
-  },
-
   // 车型下拉菜单变化
   onCarModelChange(e) {
     const index = parseInt(e.detail.value);
@@ -721,8 +707,8 @@ Page({
   // 转发给朋友
   onShareAppMessage() {
     return {
-      title: '车机密码工具',
-      desc: '专业的车机工程模式密码计算工具',
+      title: '车机口令工具',
+      desc: '专业的车机工程模式口令计算工具',
       path: '/pages/index/index'
     };
   },
@@ -730,7 +716,7 @@ Page({
   // 分享到朋友圈
   onShareTimeline() {
     return {
-      title: '车机密码工具 - 专业的车机工程模式密码计算',
+      title: '车机口令工具 - 专业的车机工程模式口令计算',
       query: {}
     };
   }

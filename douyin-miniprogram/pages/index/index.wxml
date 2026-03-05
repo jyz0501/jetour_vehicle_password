@@ -17,7 +17,6 @@
   <view class="link-buttons">
     <button class="link-button" bindtap="openManual">使用教程</button>
     <button class="link-button" bindtap="openTool">安装工具</button>
-    <button class="link-button" bindtap="copyId">关注大伦哥</button>
   </view>
   
   <!-- 车型选择 -->
@@ -58,7 +57,7 @@
   
   <view class="hour-password-group">
     <view class="hour-indicator">
-      密码有效期：
+      口令有效期：
       <text wx:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
       <text wx:else class="highlight countdown">{{countdownDisplay}}</text>
     </view>
