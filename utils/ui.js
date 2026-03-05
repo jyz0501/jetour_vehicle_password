@@ -37,7 +37,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     <button id="showCdmPasswordButton" class="toggle-button">显示密码</button>
                 </div>
                 <div class="password-value" id="adbPassword">--</div>
-                <div id="adbInstructions">进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码</div>
+                <div id="adbInstructions">加密设置——进入加密设置，输入上方密码</div>
             </div>
         `;
         
@@ -262,12 +262,15 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
     if (!carInstructionsEl || !adbInstructionsEl) return;
     
     let carInstructions = '应用中心——蓝牙电话，输入上方密码';
-    let adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+    let adbInstructions = '加密设置——进入加密设置，输入上方密码';
     
     if (currentCarModel === 'traveler') {
-        if (currentVersion === '00x' || currentVersion === 'other') {
-            carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用——系统——右侧空白处连点10下';
+        if (currentVersion === '00x') {
+            carInstructions = '系统界面连点 8 次';
             adbInstructions = '进入加密项输入上方计算后的密码';
+        } else if (currentVersion === 'other') {
+            carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用——系统——右侧空白处连点10下';
+            adbInstructions = '';
         } else if (currentVersion === '0406') {
             carInstructions = '应用中心——蓝牙电话，输入上方密码';
             adbInstructions = '';
@@ -276,14 +279,32 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
             adbInstructions = '';
         }
     } else if (currentCarModel === 'ziyouzhe') {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码';
-        adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+        if (currentVersion === '00x') {
+            carInstructions = '系统界面连点 8 次';
+            adbInstructions = '进入加密项输入上方计算后的密码';
+        } else {
+            carInstructions = '应用中心——蓝牙电话，输入上方密码';
+            adbInstructions = '加密设置——进入加密设置，输入上方密码';
+        }
     } else if (currentCarModel === 'dasheng') {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码';
-        adbInstructions = '';
+        if (currentVersion === '00x') {
+            carInstructions = '系统界面连点 8 次';
+            adbInstructions = '进入加密项输入上方计算后的密码';
+        } else {
+            carInstructions = '应用中心——蓝牙电话，输入上方密码';
+            adbInstructions = '';
+        }
     } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
         carInstructions = '系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式';
         adbInstructions = '';
+    } else {
+        if (currentVersion === '00x') {
+            carInstructions = '系统界面连点 8 次';
+            adbInstructions = '进入加密项输入上方计算后的密码';
+        } else {
+            carInstructions = '应用中心——蓝牙电话，输入上方密码';
+            adbInstructions = '';
+        }
     }
     
     carInstructionsEl.textContent = carInstructions;

@@ -370,7 +370,7 @@ Page({
     
     // 说明文本
     carInstructions: '应用中心——蓝牙电话，输入上方密码',
-    adbInstructions: '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码',
+    adbInstructions: '加密设置——进入加密设置，输入上方密码',
     
     // 序列号输入
     serialNumber: '',
@@ -654,11 +654,11 @@ Page({
     
     // 更新说明文本
     let carInstructions = '应用中心——蓝牙电话，输入上方密码';
-    let adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+    let adbInstructions = '加密设置——进入加密设置，输入上方密码';
     
     if (currentCarModel === 'traveler') {
       if (currentVersion === '00x') {
-        carInstructions = '应用中心——蓝牙电话，输入上方密码 或者 通用—系统—右侧空白处连点10下';
+        carInstructions = '系统界面连点 8 次';
         adbInstructions = '进入加密项输入上方计算后的密码';
       } else if (currentVersion === '0406') {
         carInstructions = '应用中心——蓝牙电话，输入上方密码';
@@ -671,17 +671,32 @@ Page({
         adbInstructions = '';
       }
     } else if (currentCarModel === 'ziyouzhe') {
-      carInstructions = '应用中心——蓝牙电话，输入上方密码';
-      adbInstructions = '进入工程模式之后，下滑到最下方——加密设置——进入加密设置，输入上方密码';
+      if (currentVersion === '00x') {
+        carInstructions = '系统界面连点 8 次';
+        adbInstructions = '进入加密项输入上方计算后的密码';
+      } else {
+        carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        adbInstructions = '加密设置——进入加密设置，输入上方密码';
+      }
     } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
       carInstructions = '系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式';
       adbInstructions = '';
     } else if (currentCarModel === 'dasheng') {
-      carInstructions = '应用中心——蓝牙电话，输入上方密码';
-      adbInstructions = '';
+      if (currentVersion === '00x') {
+        carInstructions = '系统界面连点 8 次';
+        adbInstructions = '进入加密项输入上方计算后的密码';
+      } else {
+        carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        adbInstructions = '';
+      }
     } else {
-      carInstructions = '应用中心——蓝牙电话，输入上方密码';
-      adbInstructions = '';
+      if (currentVersion === '00x') {
+        carInstructions = '系统界面连点 8 次';
+        adbInstructions = '进入加密项输入上方计算后的密码';
+      } else {
+        carInstructions = '应用中心——蓝牙电话，输入上方密码';
+        adbInstructions = '';
+      }
     }
     
     // 26款版本特殊处理：不自动显示ADB密码和工程密码
