@@ -397,8 +397,8 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
         const password1El = document.getElementById('password1');
         const password2El = document.getElementById('password2');
         
-        // 自由者01.01.08和00.04.02版本不自动显示口令，需要输入口令查看
-        if (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402')) {
+        // 自由者11.01.04、01.01.08和00.04.02版本不自动显示口令，需要输入口令查看
+        if (currentCarModel === 'ziyouzhe' && (currentVersion === '11010x' || currentVersion === '010108' || currentVersion === '000402')) {
             if (password1El) {
                 password1El.textContent = '********';
             }

@@ -530,7 +530,7 @@ Page({
     wx.showModal({
       title: '请输入口令',
       editable: true,
-      placeholderText: '请输入6位口令',
+      placeholderText: '请输入密码',
       success: (res) => {
         if (res.confirm) {
           const inputPassword = res.content;
