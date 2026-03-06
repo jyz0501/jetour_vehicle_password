@@ -211,6 +211,22 @@ export const algorithms = {
         }
     },
     
+    // 230830动态算法（0406版本加密项，按小时更新）
+    dynamic230830: {
+        name: '230830动态算法（0406版本）',
+        countdown: 'hourly',
+        showSerialNumberInput: false,
+        calculate: function(params) {
+            const { dateTimeNum } = params;
+            const adbFull = 230830 * dateTimeNum;
+            
+            return {
+                carPassword: '*#20230730#*',
+                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+            };
+        }
+    },
+    
     // 其他车型算法
     otherCars: {
         name: '其他车型算法',
