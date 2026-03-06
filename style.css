@@ -74,15 +74,27 @@ body {
     text-align: center;
 }
 
-.douyin-info {
-    background-color: #e74c3c;
+.floating-watermark {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(231, 76, 60, 0.8);
     color: white;
-    padding: 8px;
+    padding: 8px 15px;
     border-radius: 8px;
-    margin-bottom: 10px;
     font-weight: bold;
-    display: inline-block;
     font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.floating-watermark:hover {
+    background-color: rgba(231, 76, 60, 1);
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 h1 {
