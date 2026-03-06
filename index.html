@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>捷途车机口令工具——抖音@大伦哥的CDM</title>
+    <title>大伦车机口令工具——抖音@大伦哥的CDM</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -24,13 +24,35 @@
         </div>
     </div>
     
+    <!-- 全局显示口令按钮 -->
+    <button id="showPasswordOverlay" class="show-password-overlay" style="display: none;">显示口令</button>
+    
+    <!-- 密码验证弹窗 -->
+    <div id="passwordVerifyPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <h3>请输入口令查看口令</h3>
+            <div class="popup-message">
+                <input type="text" id="verifyPasswordInput" maxlength="6" placeholder="请输入6位口令" style="width: 100%; padding: 10px; font-size: 16px; text-align: center; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                <p id="verifyError" style="color: #e74c3c; margin-top: 10px; display: none;">口令错误</p>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="cancelVerify" class="popup-button" style="background-color: #95a5a6;">取消</button>
+                <button id="confirmVerify" class="popup-button">确认</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
-        <h1>捷途车机口令工具<span id="app-version" style="font-size: 12px; color: #999;">v1.158.0</span></h1>
+        <h1>大伦车机口令工具<span id="app-version" style="font-size: 12px; color: #999;">v1.158.0</span></h1>
         <div class="link-buttons">
             <a href="https://manual.qianxian.tech/" target="_self" class="link-button">使用教程</a>
             <a href="https://tool.qianxian.tech/" target="_self" class="link-button">安装工具</a>
         </div>
-        <div class="floating-watermark">交流反馈：抖音@大伦哥的CDM</div>
+        <!-- 斜放水印层 -->
+        <div class="watermark-container">
+            <div class="watermark-diagonal">交流反馈：抖音@大伦哥的CDM</div>
+            <div class="watermark-diagonal">大伦车机口令工具</div>
+        </div>
         
         <div class="car-selector">
             <label for="carModel">选择车型：</label>

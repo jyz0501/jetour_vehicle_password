@@ -19,6 +19,13 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
 // 渲染口令区域
 export function renderPasswordGroup(currentCarModel, currentVersion) {
     const passwordGroup = document.getElementById('passwordGroup');
+    const showPasswordOverlay = document.getElementById('showPasswordOverlay');
+    
+    // 判断是否需要显示全局口令按钮
+    const needsPasswordOverlay = isEncryptedVersion(currentCarModel, currentVersion);
+    if (showPasswordOverlay) {
+        showPasswordOverlay.style.display = needsPasswordOverlay ? 'block' : 'none';
+    }
     
     if (currentCarModel === 'traveler') {
         passwordGroup.innerHTML = `
@@ -33,22 +40,16 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     <input type="text" id="serialNumber" maxlength="6" placeholder="请输入序列号后六位">
                     <button id="calculateAdbButton" class="toggle-button">计算口令</button>
                 </div>
-                <div id="cdmPasswordInput" style="display: none; margin-bottom: 15px;">
-                    <button id="showCdmPasswordButton" class="toggle-button">显示口令</button>
-                </div>
                 <div class="password-value" id="adbPassword">--</div>
                 <div id="adbInstructions">加密设置——进入加密设置，输入上方口令</div>
             </div>
         `;
         
-        // 根据版本显示/隐藏序列号输入框或CDM口令输入框
+        // 根据版本显示/隐藏序列号输入框
         const serialNumberInput = document.getElementById('serialNumberInput');
-        const cdmPasswordInput = document.getElementById('cdmPasswordInput');
         
         if (currentVersion === '00x') {
             serialNumberInput.style.display = 'block';
-        } else if (currentVersion === 'cdm') {
-            cdmPasswordInput.style.display = 'block';
         }
     } else if (currentCarModel === 'ziyouzhe') {
         let html = `
@@ -61,23 +62,6 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div class="password-value" id="password2">--</div>
             </div>
         `;
-        
-        // 01.01.08和00.04.02版本需要显示口令按钮
-        if (currentVersion === '010108' || currentVersion === '000402') {
-            html = `
-                <div class="password-card">
-                    <h2>1. 工程模式口令</h2>
-                    <div id="ziyouzhePasswordInput" style="margin-bottom: 15px;">
-                        <button id="showZiyouzhePasswordButton" class="toggle-button">显示口令</button>
-                    </div>
-                    <div class="password-value" id="password1">--</div>
-                </div>
-                <div class="password-card">
-                    <h2>2. ADB权限口令</h2>
-                    <div class="password-value" id="password2">--</div>
-                </div>
-            `;
-        }
         
         passwordGroup.innerHTML = html;
     } else if (currentCarModel === 'dasheng') {
@@ -131,6 +115,19 @@ function getCdmPassword() {
     return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
+// 判断是否为加密版本
+function isEncryptedVersion(currentCarModel, currentVersion) {
+    // 旅行者26款
+    if (currentCarModel === 'traveler' && currentVersion === 'cdm') {
+        return true;
+    }
+    // 自由者01.01.08和00.04.02版本
+    if (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402' || currentVersion === '11010x')) {
+        return true;
+    }
+    return false;
+}
+
 // 设置口令区域事件监听器
 function setupPasswordEventListeners(currentCarModel, currentVersion) {
     const calculateAdbButton = document.getElementById('calculateAdbButton');
@@ -161,67 +158,42 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
         });
     }
     
-    // CDM版本显示口令按钮
-    const showCdmPasswordButton = document.getElementById('showCdmPasswordButton');
-    if (showCdmPasswordButton) {
-        showCdmPasswordButton.addEventListener('click', function() {
-            const carPasswordEl = document.getElementById('carPassword');
-            const adbPasswordEl = document.getElementById('adbPassword');
-            const inputPassword = prompt('请输入口令查看口令：');
-            
-            if (inputPassword === null) {
-                return;
-            }
-            
-            const correctPassword = getCdmPassword();
-            
-            if (inputPassword === correctPassword) {
-                // 口令正确，显示所有口令
-                const now = new Date();
-                const month = formatTimeUnit(now.getMonth() + 1);
-                const date = formatTimeUnit(now.getDate());
-                const hours = formatTimeUnit(now.getHours());
-                const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-                
-                const params = {
-                    dateTimeNum,
-                    hours: now.getHours(),
-                    year: now.getFullYear(),
-                    month: month,
-                    date: date,
-                    carModel: currentCarModel,
-                    version: currentVersion
-                };
-                
-                const result = calculatePasswords(currentCarModel, currentVersion, params);
-                if (carPasswordEl) {
-                    carPasswordEl.textContent = result.carPassword;
-                }
-                if (adbPasswordEl) {
-                    adbPasswordEl.textContent = result.adbPassword;
-                }
-            } else {
-                alert('口令错误');
-            }
-        });
-    }
+    // 全局显示口令按钮（覆盖层）
+    const showPasswordOverlay = document.getElementById('showPasswordOverlay');
+    const passwordVerifyPopup = document.getElementById('passwordVerifyPopup');
+    const verifyPasswordInput = document.getElementById('verifyPasswordInput');
+    const verifyError = document.getElementById('verifyError');
+    const confirmVerify = document.getElementById('confirmVerify');
+    const cancelVerify = document.getElementById('cancelVerify');
     
-    // 自由者01.01.08版本显示口令按钮
-    const showZiyouzhePasswordButton = document.getElementById('showZiyouzhePasswordButton');
-    if (showZiyouzhePasswordButton) {
-        showZiyouzhePasswordButton.addEventListener('click', function() {
-            const password1El = document.getElementById('password1');
-            const password2El = document.getElementById('password2');
-            const inputPassword = prompt('请输入口令查看口令：');
-            
-            if (inputPassword === null) {
-                return;
-            }
-            
+    if (showPasswordOverlay && passwordVerifyPopup) {
+        // 移除旧的事件监听器（如果有的话）
+        const newOverlay = showPasswordOverlay.cloneNode(true);
+        showPasswordOverlay.parentNode.replaceChild(newOverlay, showPasswordOverlay);
+        
+        // 显示验证弹窗
+        function showVerifyPopup() {
+            passwordVerifyPopup.style.display = 'flex';
+            verifyPasswordInput.value = '';
+            verifyError.style.display = 'none';
+            verifyPasswordInput.focus();
+        }
+        
+        // 隐藏验证弹窗
+        function hideVerifyPopup() {
+            passwordVerifyPopup.style.display = 'none';
+        }
+        
+        // 验证口令
+        function verifyAndShowPassword() {
+            const inputPassword = verifyPasswordInput.value;
             const correctPassword = getCdmPassword();
             
             if (inputPassword === correctPassword) {
-                // 口令正确，显示所有口令
+                // 口令正确，隐藏覆盖层按钮和弹窗，并显示所有口令
+                hideVerifyPopup();
+                newOverlay.style.display = 'none';
+                
                 const now = new Date();
                 const month = formatTimeUnit(now.getMonth() + 1);
                 const date = formatTimeUnit(now.getDate());
@@ -241,14 +213,34 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
                 };
                 
                 const result = calculatePasswords(currentCarModel, currentVersion, params);
-                if (password1El) {
-                    password1El.textContent = result.carPassword;
-                }
-                if (password2El) {
-                    password2El.textContent = result.adbPassword;
+                
+                // 根据车型更新对应的口令显示
+                if (currentCarModel === 'traveler') {
+                    const carPasswordEl = document.getElementById('carPassword');
+                    const adbPasswordEl = document.getElementById('adbPassword');
+                    if (carPasswordEl) carPasswordEl.textContent = result.carPassword;
+                    if (adbPasswordEl) adbPasswordEl.textContent = result.adbPassword;
+                } else if (currentCarModel === 'ziyouzhe') {
+                    const password1El = document.getElementById('password1');
+                    const password2El = document.getElementById('password2');
+                    if (password1El) password1El.textContent = result.carPassword;
+                    if (password2El) password2El.textContent = result.adbPassword;
                 }
             } else {
-                alert('口令错误');
+                verifyError.style.display = 'block';
+                verifyPasswordInput.value = '';
+                verifyPasswordInput.focus();
+            }
+        }
+        
+        newOverlay.addEventListener('click', showVerifyPopup);
+        confirmVerify.addEventListener('click', verifyAndShowPassword);
+        cancelVerify.addEventListener('click', hideVerifyPopup);
+        
+        // 输入框回车确认
+        verifyPasswordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyAndShowPassword();
             }
         });
     }
