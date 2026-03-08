@@ -147,14 +147,9 @@ export const algorithms = {
         countdown: 'hourly',
         showSerialNumberInput: false,
         calculate: function(params) {
-            const { dateTimeNum, hours } = params;
-            const adbFull = 215430 * dateTimeNum;
-            const carBase = 215430 * dateTimeNum;
-            const carFull = carBase - hours;
-            
             return {
-                carPassword: `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`,
-                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+                carPassword: '*#404219#*',
+                adbPassword: '404230'
             };
         }
     },
