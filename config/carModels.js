@@ -29,7 +29,7 @@ export const carModels = {
         algorithms: {
             '11010x': 'dynamic240910_encrypted',
             '01010x': 'dynamic240910_encrypted',
-            '000402': 'dynamic240910_encrypted'
+            '000402': 'ziyouzhe000402'
         }
     },
     shanhal7: {

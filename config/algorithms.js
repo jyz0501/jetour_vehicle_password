@@ -171,6 +171,19 @@ export const algorithms = {
         }
     },
     
+    // 自由者00.04.02版本固定口令
+    ziyouzhe000402: {
+        name: '自由者00.04.02固定口令',
+        countdown: 'none',
+        showSerialNumberInput: false,
+        calculate: function(params) {
+            return {
+                carPassword: '*#20241130#*',
+                adbPassword: '无'
+            };
+        }
+    },
+    
     // 240910动态算法（加密版，按小时更新）
     dynamic240910_encrypted: {
         name: '240910动态算法（加密版）',
