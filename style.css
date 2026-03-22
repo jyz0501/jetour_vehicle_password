@@ -101,13 +101,16 @@ body {
 }
 
 .watermark-diagonal:nth-child(1) {
-    top: 30%;
-    left: -10%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .watermark-diagonal:nth-child(2) {
-    top: 60%;
-    right: -10%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    display: none;
 }
 
 /* 全局显示口令按钮 */
