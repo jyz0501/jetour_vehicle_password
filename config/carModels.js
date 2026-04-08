@@ -15,7 +15,7 @@ export const carModels = {
             '0406': 'dynamic230830',
             '0407': 'dynamic250110',
             'other': 'serialNumberDaily',
-            'cdm': 'dynamic215430'
+            'cdm': 'dynamic250930'
         }
     },
     ziyouzhe: {
