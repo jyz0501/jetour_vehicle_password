@@ -118,9 +118,9 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     case 'cdm':
-      // 26款版本使用215430算法
+      // 26款版本使用250930算法
       isCdmVersion = true;
-      const adbFullCdm = 215430 * dateTimeNum;
+      const adbFullCdm = 250930 * dateTimeNum;
       adbPassword = (adbFullCdm % 1000000).toString().padStart(6, '0');
 
       // 计算系统动态口令（ADB口令 - 当前小时数）
@@ -136,8 +136,9 @@ function calculatePasswords(version, now, serialNumber = '') {
       break;
     
     case '010108':
+    case '01010x':
     case '000402':
-      // 01.01.08和00.04.02版本使用240910算法
+      // 01.01.08、01.01.0x和00.04.02版本使用240910算法
       isCdmVersion = true;
       const adbFull010108 = 240910 * dateTimeNum;
       adbPassword = (adbFull010108 % 1000000).toString().padStart(6, '0');
@@ -317,30 +318,23 @@ Page({
     
     const result = calculatePasswords(currentVersion, now, serialNumber);
     
-    let encryptionPasswordDisplay = '******';
+    let encryptionPasswordDisplay = result.adbPassword;
     let systemPasswordDisplay = result.systemPassword;
     let actualEncryptionPassword = result.adbPassword;
     let systemInstructions = '应用中心——蓝牙电话，输入上方口令';
     let encryptionInstructions = '进入加密项输入上方计算后的口令';
     
-    // 对于固定口令版本，直接显示
+    // 对于固定口令版本的特殊处理
     if (currentVersion === '0406') {
-      encryptionPasswordDisplay = result.adbPassword;
       encryptionInstructions = '加密设置——进入加密设置，输入上方口令';
     } else if (currentVersion === 'other') {
-      encryptionPasswordDisplay = result.adbPassword;
       encryptionInstructions = '';
     } else if (currentVersion === '00x') {
       systemInstructions = '系统界面连点 8 次';
       encryptionInstructions = '进入加密项输入上方计算后的口令';
-    } else if (currentVersion === 'cdm' || currentVersion === '010108' || currentVersion === '000402') {
+    } else if (currentVersion === 'cdm' || currentVersion === '010108' || currentVersion === '01010x' || currentVersion === '000402') {
       systemInstructions = '应用中心——蓝牙电话，输入上方口令';
       encryptionInstructions = '';
-      // 26款和01.01.08版本需要验证后才显示
-      if (!this.data.cdmPasswordVerified) {
-        encryptionPasswordDisplay = '********';
-        systemPasswordDisplay = '********';
-      }
     }
     
     // 倒计时模式处理
@@ -408,7 +402,7 @@ Page({
       case 'ziyouzhe':
         versionList = [
           { label: '11.01.04及以上', version: '11010x' },
-          { label: '01.01.08', version: '010108' },
+          { label: '01.01.0x', version: '01010x' },
           { label: '00.04.02', version: '000402' }
         ];
         break;
