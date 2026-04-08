@@ -27,8 +27,8 @@ export const carModels = {
             '000402': '00.04.02'
         },
         algorithms: {
-            '11010x': 'dynamic240910_encrypted',
-            '01010x': 'dynamic240910_encrypted',
+            '11010x': 'dynamic240910',
+            '01010x': 'dynamic240910',
             '000402': 'ziyouzhe000402'
         }
     },

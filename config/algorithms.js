@@ -141,18 +141,6 @@ export const algorithms = {
         }
     },
     
-    // 215430动态算法（CDM系统，按小时更新）
-    dynamic215430: {
-        name: '215430动态算法（CDM系统）',
-        countdown: 'hourly',
-        showSerialNumberInput: false,
-        calculate: function(params) {
-            return {
-                carPassword: '*#404219#*',
-                adbPassword: '404230'
-            };
-        }
-    },
     
     // 240910动态算法（按小时更新）
     dynamic240910: {
@@ -180,24 +168,6 @@ export const algorithms = {
             return {
                 carPassword: '*#20241130#*',
                 adbPassword: '无'
-            };
-        }
-    },
-    
-    // 240910动态算法（加密版，按小时更新）
-    dynamic240910_encrypted: {
-        name: '240910动态算法（加密版）',
-        countdown: 'hourly',
-        showSerialNumberInput: false,
-        isEncrypted: true,
-        calculate: function(params) {
-            const { mmddhh, hours } = params;
-            const adbFull = 240910 * mmddhh;
-            const carFull = (240910 * mmddhh) - hours;
-            
-            return {
-                carPassword: `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`,
-                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
             };
         }
     },
