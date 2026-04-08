@@ -117,14 +117,12 @@ function getCdmPassword() {
 
 // 判断是否为加密版本
 function isEncryptedVersion(currentCarModel, currentVersion) {
-    // 旅行者26款
-    if (currentCarModel === 'traveler' && currentVersion === 'cdm') {
-        return true;
+    // 使用配置文件中的encrypted字段判断
+    const carModel = carModels[currentCarModel];
+    if (carModel && carModel.encrypted && carModel.encrypted[currentVersion] !== undefined) {
+        return carModel.encrypted[currentVersion];
     }
-    // 自由者01.01.08和00.04.02版本
-    if (currentCarModel === 'ziyouzhe' && (currentVersion === '01010x' || currentVersion === '11010x')) {
-        return true;
-    }
+    // 默认不加密
     return false;
 }
 
@@ -356,21 +354,12 @@ export function updateTravelerPasswords(dateTimeNum, currentVersion, serialNumbe
     const carPasswordEl = document.getElementById('carPassword');
     const adbPasswordEl = document.getElementById('adbPassword');
     
-    // CDM版本不自动显示口令，需要输入口令查看
-    if (currentVersion === 'cdm') {
-        if (carPasswordEl) {
-            carPasswordEl.textContent = '********';
-        }
-        if (adbPasswordEl) {
-            adbPasswordEl.textContent = '********';
-        }
-    } else {
-        if (carPasswordEl) {
-            carPasswordEl.textContent = result.carPassword || '--';
-        }
-        if (adbPasswordEl) {
-            adbPasswordEl.textContent = result.adbPassword || '--';
-        }
+    // 直接显示所有版本的口令，无需验证
+    if (carPasswordEl) {
+        carPasswordEl.textContent = result.carPassword || '--';
+    }
+    if (adbPasswordEl) {
+        adbPasswordEl.textContent = result.adbPassword || '--';
     }
 }
 
@@ -397,21 +386,12 @@ export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVer
         const password1El = document.getElementById('password1');
         const password2El = document.getElementById('password2');
         
-        // 自由者11.01.04和01.01.0x版本不自动显示口令，需要输入口令查看
-        if (currentCarModel === 'ziyouzhe' && (currentVersion === '11010x' || currentVersion === '01010x')) {
-            if (password1El) {
-                password1El.textContent = '********';
-            }
-            if (password2El) {
-                password2El.textContent = '********';
-            }
-        } else {
-            if (password1El) {
-                password1El.textContent = carPassword || '--';
-            }
-            if (password2El) {
-                password2El.textContent = adbPassword || '--';
-            }
+        // 直接显示所有版本的口令，无需验证
+        if (password1El) {
+            password1El.textContent = carPassword || '--';
+        }
+        if (password2El) {
+            password2El.textContent = adbPassword || '--';
         }
     } else {
         const { passwords } = result;

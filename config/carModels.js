@@ -16,6 +16,13 @@ export const carModels = {
             '0407': 'dynamic250110',
             'other': 'serialNumberDaily',
             'cdm': 'dynamic250930'
+        },
+        encrypted: {
+            '00x': false,
+            '0406': false,
+            '0407': false,
+            'other': false,
+            'cdm': false
         }
     },
     ziyouzhe: {
@@ -30,6 +37,11 @@ export const carModels = {
             '11010x': 'dynamic240910',
             '01010x': 'dynamic240910',
             '000402': 'ziyouzhe000402'
+        },
+        encrypted: {
+            '11010x': false,
+            '01010x': false,
+            '000402': false
         }
     },
     shanhal7: {
@@ -42,6 +54,10 @@ export const carModels = {
         algorithms: {
             'os10201': 'otherCars',
             'os1201000': 'otherCars'
+        },
+        encrypted: {
+            'os10201': false,
+            'os1201000': false
         }
     },
     shanhal9: {
@@ -52,6 +68,9 @@ export const carModels = {
         },
         algorithms: {
             'unknown': 'otherCars'
+        },
+        encrypted: {
+            'unknown': false
         }
     },
     fengyunA9: {
@@ -62,6 +81,9 @@ export const carModels = {
         },
         algorithms: {
             'unknown': 'serialNumberDaily'
+        },
+        encrypted: {
+            'unknown': false
         }
     },
     hu8: {
@@ -72,6 +94,9 @@ export const carModels = {
         },
         algorithms: {
             'unknown': 'serialNumberDaily'
+        },
+        encrypted: {
+            'unknown': false
         }
     },
     x70plus: {
@@ -82,6 +107,9 @@ export const carModels = {
         },
         algorithms: {
             'unknown': 'otherCars'
+        },
+        encrypted: {
+            'unknown': false
         }
     },
     x90plus: {
@@ -94,6 +122,10 @@ export const carModels = {
         algorithms: {
             '040x': 'fixed',
             'unknown': 'otherCars'
+        },
+        encrypted: {
+            '040x': false,
+            'unknown': false
         }
     },
     x95: {
@@ -104,6 +136,9 @@ export const carModels = {
         },
         algorithms: {
             'unknown': 'otherCars'
+        },
+        encrypted: {
+            'unknown': false
         }
     },
     dasheng: {
@@ -114,6 +149,9 @@ export const carModels = {
         },
         algorithms: {
             'fixed': 'dashengFixed'
+        },
+        encrypted: {
+            'fixed': false
         }
     }
 };
