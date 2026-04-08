@@ -146,7 +146,7 @@ export const algorithms = {
         name: '250930动态算法（CDM系统）',
         countdown: 'hourly',
         showSerialNumberInput: false,
-        isEncrypted: true,
+        isEncrypted: false,
         calculate: function(params) {
             const { dateTimeNum, hours } = params;
             const adbFull = 250930 * dateTimeNum;
