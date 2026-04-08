@@ -137,3 +137,9 @@ douyin-miniprogram/coverage/
 douyin-miniprogram/.eslintcache/
 douyin-miniprogram/.tmp/
 douyin-miniprogram/.log/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
