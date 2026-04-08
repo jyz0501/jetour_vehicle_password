@@ -18,10 +18,10 @@ const carModels = {
   },
   ziyouzhe: {
     name: '自由者/山海T1',
-    versions: ['11010x', '010108', '000402'],
+    versions: ['11010x', '01010x', '000402'],
     versionNames: {
       '11010x': '11.01.04及以上',
-      '010108': '01.01.08',
+      '01010x': '01.01.0x',
       '000402': '00.04.02'
     }
   },
@@ -202,9 +202,9 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
         break;
       
       case 'cdm':
-        // 26款版本使用215430算法
+        // 26款版本使用250930算法
         isCdmVersion = true;
-        const adbFullCdm = 215430 * dateTimeNum;
+        const adbFullCdm = 250930 * dateTimeNum;
         adbPassword = (adbFullCdm % 1000000).toString().padStart(6, '0');
 
         // 计算系统动态口令（ADB口令 - 当前小时数）
@@ -661,23 +661,9 @@ Page({
       }
     }
     
-    // 26款版本特殊处理：不自动显示ADB口令和工程口令
+    // 取消加密验证，所有口令直接显示
     let displayAdbPassword = result.adbPassword;
     let displayCarPassword = result.carPassword;
-    
-    if (result.isCdmVersion && !this.data.cdmPasswordVerified) {
-      displayAdbPassword = '********';
-      displayCarPassword = '********';
-    } else if (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402') && !this.data.cdmPasswordVerified) {
-      displayAdbPassword = '********';
-      displayCarPassword = '********';
-    } else if (result.isFixedPassword) {
-      displayAdbPassword = result.adbPassword;
-      displayCarPassword = result.carPassword;
-    } else if (!result.isCdmVersion) {
-      displayAdbPassword = result.adbPassword;
-      displayCarPassword = result.carPassword;
-    }
     
     // 倒计时模式处理
     let displayNextUpdateTime = result.nextUpdateTime;
