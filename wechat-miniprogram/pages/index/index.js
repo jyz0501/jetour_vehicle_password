@@ -109,12 +109,6 @@ function calculateSerialNumberDailyPassword(year, month, date) {
   return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
-// 获取dynamic250110的ADB口令值（用于26款验证）
-function getCdmVerifyPassword(dateTimeNum) {
-  const adbFull = 250110 * dateTimeNum;
-  return (adbFull % 1000000).toString().padStart(6, '0');
-}
-
 // 计算口令的核心函数
 function calculatePasswords(carModel, version, now, serialNumber = '') {
   // 提取月日时（忽略分钟）
@@ -384,11 +378,7 @@ Page({
     
     // 序列号输入
     serialNumber: '',
-    
-    // 26款口令保护
-    isCdmVersion: false,
-    cdmPasswordVerified: false,
-    
+
     // 定时器
     updateTimer: null,
     countdownTimer: null
@@ -461,7 +451,6 @@ Page({
       currentVersion: defaultVersion,
       versionIndex: 0,
       serialNumber: '',
-      cdmPasswordVerified: false,
       isCountdownMode: false,
       countdownSeconds: 0,
       countdownDisplay: ''
@@ -485,7 +474,6 @@ Page({
       versionIndex: index,
       currentVersion: version,
       serialNumber: '',
-      cdmPasswordVerified: false,
       isCountdownMode: false,
       countdownSeconds: 0,
       countdownDisplay: ''
@@ -532,41 +520,6 @@ Page({
     this.setData({
       adbPassword: result.adbPassword,
       actualAdbPassword: result.adbPassword
-    });
-  },
-
-  // 显示26款口令（需要验证）
-  showCdmPassword() {
-    const now = new Date();
-    const month = formatTimeUnit(now.getMonth() + 1);
-    const date = formatTimeUnit(now.getDate());
-    const hours = formatTimeUnit(now.getHours());
-    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-    
-    const correctPassword = getCdmVerifyPassword(dateTimeNum);
-    
-    wx.showModal({
-      title: '请输入口令',
-      editable: true,
-      placeholderText: '请输入密码',
-      success: (res) => {
-        if (res.confirm) {
-          const inputPassword = res.content;
-          if (inputPassword === correctPassword) {
-            const result = calculatePasswords(this.data.currentCarModel, this.data.currentVersion, now, '');
-            this.setData({
-              adbPassword: result.adbPassword,
-              actualAdbPassword: result.adbPassword,
-              cdmPasswordVerified: true
-            });
-          } else {
-            wx.showToast({
-              title: '口令错误',
-              icon: 'none'
-            });
-          }
-        }
-      }
     });
   },
 

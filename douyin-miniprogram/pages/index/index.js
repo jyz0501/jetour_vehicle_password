@@ -27,14 +27,8 @@ function calculateSerialNumberDailyPassword(year, month, date) {
   return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
-// 获取dynamic250110的ADB口令值（用于26款验证）
-function getCdmVerifyPassword(dateTimeNum) {
-  const adbFull = 250110 * dateTimeNum;
-  return (adbFull % 1000000).toString().padStart(6, '0');
-}
-
 // 计算口令的核心函数
-function calculatePasswords(version, now, serialNumber = '') {
+function calculatePasswords(carModel, version, now, serialNumber = '') {
   // 提取月日时（忽略分钟）
   const month = formatTimeUnit(now.getMonth() + 1);
   const date = formatTimeUnit(now.getDate());
@@ -45,129 +39,204 @@ function calculatePasswords(version, now, serialNumber = '') {
   // 组合日期时间字符串
   const dateTimeKey = `${month}${date}${hours}`;
   const dateTimeNum = parseInt(dateTimeKey, 10);
+  const mmddhh = parseInt(`${month}${date}${hours}`, 10);
 
   let adbPassword, systemPassword, nextUpdateTime, countdownSeconds;
   let isFixedPassword = false;
   let isCdmVersion = false;
   let isCountdownMode = false;
 
-  // 根据不同版本计算口令
-  switch(version) {
-    case '00x':
-      // 00x版本使用serialNumber算法（序列号 * 802018）
-      if (serialNumber && serialNumber.length === 6) {
-        const serialNum = parseInt(serialNumber, 10);
-        const adbFull = serialNum * 802018;
-        adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
-      } else {
-        adbPassword = '';
-      }
-      
-      systemPassword = `*#20230730#*`;
-      
-      // 00x版本的下次变更时间为无（固定口令）
-      nextUpdateTime = '无（固定口令）';
-      isFixedPassword = true;
-      break;
-    
-    case '0407':
-      // 计算ADB口令（250110 × 日期时间）
-      const adbFull = 250110 * dateTimeNum;
-      adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
+  // 旅行者车型
+  if (carModel === 'traveler') {
+    switch(version) {
+      case '00x':
+        // 00x版本使用serialNumber算法（序列号 * 802018）
+        if (serialNumber && serialNumber.length === 6) {
+          const serialNum = parseInt(serialNumber, 10);
+          const adbFull = serialNum * 802018;
+          adbPassword = (adbFull % 1000000).toString().padStart(6, '0');
+        } else {
+          adbPassword = '';
+        }
 
-      // 计算系统动态口令（ADB口令 - 当前小时数）
-      const systemFull = adbFull - now.getHours();
-      systemPassword = `*#${(systemFull % 1000000).toString().padStart(6, '0')}#*`;
-      
-      // 计算到下一个整点的倒计时秒数
-      const nextHour0407 = new Date(now);
-      nextHour0407.setHours(now.getHours() + 1, 0, 0, 0);
-      countdownSeconds = Math.floor((nextHour0407 - now) / 1000);
-      nextUpdateTime = '倒计时';
-      isCountdownMode = true;
-      break;
-    
-    case '0406':
-      // 0406版本使用固定工程模式口令，加密项使用230830算法
-      isFixedPassword = true;
-      systemPassword = `*#20230730#*`;
-      // 加密项口令：230830 × 月日时（MMDDHH）取后六位
-      const adbFull0406 = 230830 * dateTimeNum;
-      adbPassword = (adbFull0406 % 1000000).toString().padStart(6, '0');
-      
-      // 计算到下一个整点的倒计时秒数
-      const nextHour0406 = new Date(now);
-      nextHour0406.setHours(now.getHours() + 1, 0, 0, 0);
-      countdownSeconds = Math.floor((nextHour0406 - now) / 1000);
-      nextUpdateTime = '倒计时';
-      isCountdownMode = true;
-      break;
-    
-    case 'other':
-      // other版本使用serialNumberDaily算法（基于日期YYMMDD）
-      systemPassword = `*#20230730#*`;
-      adbPassword = calculateSerialNumberDailyPassword(year, month, date);
-      
-      // 计算到明天00:00:00的倒计时秒数
-      const tomorrowOther = new Date();
-      tomorrowOther.setDate(tomorrowOther.getDate() + 1);
-      tomorrowOther.setHours(0, 0, 0, 0);
-      countdownSeconds = Math.floor((tomorrowOther - now) / 1000);
-      nextUpdateTime = '倒计时';
-      isCountdownMode = true;
-      break;
-    
-    case 'cdm':
-      // 26款版本使用250930算法
-      isCdmVersion = true;
-      const adbFullCdm = 250930 * dateTimeNum;
-      adbPassword = (adbFullCdm % 1000000).toString().padStart(6, '0');
+        systemPassword = `*#20230730#*`;
 
-      // 计算系统动态口令（ADB口令 - 当前小时数）
-      const systemFullCdm = adbFullCdm - now.getHours();
-      systemPassword = `*#${(systemFullCdm % 1000000).toString().padStart(6, '0')}#*`;
-      
-      // 计算到下一个整点的倒计时秒数
-      const nextHourCdm = new Date(now);
-      nextHourCdm.setHours(now.getHours() + 1, 0, 0, 0);
-      countdownSeconds = Math.floor((nextHourCdm - now) / 1000);
-      nextUpdateTime = '倒计时';
-      isCountdownMode = true;
-      break;
-    
-    case '010108':
-    case '01010x':
-    case '000402':
-      // 01.01.08、01.01.0x和00.04.02版本使用240910算法
-      isCdmVersion = true;
-      const adbFull010108 = 240910 * dateTimeNum;
-      adbPassword = (adbFull010108 % 1000000).toString().padStart(6, '0');
+        // 00x版本的下次变更时间为无（固定口令）
+        nextUpdateTime = '无（固定口令）';
+        isFixedPassword = true;
+        break;
 
-      // 计算系统动态口令（ADB口令 - 当前小时数）
-      const systemFull010108 = adbFull010108 - now.getHours();
-      systemPassword = `*#${(systemFull010108 % 1000000).toString().padStart(6, '0')}#*`;
-      
-      // 计算到下一个整点的倒计时秒数
-      const nextHour010108 = new Date(now);
-      nextHour010108.setHours(now.getHours() + 1, 0, 0, 0);
-      countdownSeconds = Math.floor((nextHour010108 - now) / 1000);
-      nextUpdateTime = '倒计时';
-      isCountdownMode = true;
-      break;
-    
-    default:
-        // 默认使用0407版本的逻辑
-        const adbFullDefault = 250110 * dateTimeNum;
-        adbPassword = (adbFullDefault % 1000000).toString().padStart(6, '0');
-        const systemFullDefault = adbFullDefault - now.getHours();
-        systemPassword = `*#${(systemFullDefault % 1000000).toString().padStart(6, '0')}#*`;
-        
+      case '0407':
+        // 计算ADB口令（250110 × 日期时间）
+        const adbFull0407 = 250110 * dateTimeNum;
+        adbPassword = (adbFull0407 % 1000000).toString().padStart(6, '0');
+
+        // 计算系统动态口令（ADB口令 - 当前小时数）
+        const systemFull0407 = adbFull0407 - now.getHours();
+        systemPassword = `*#${(systemFull0407 % 1000000).toString().padStart(6, '0')}#*`;
+
         // 计算到下一个整点的倒计时秒数
-        const nextHourDefault = new Date(now);
-        nextHourDefault.setHours(now.getHours() + 1, 0, 0, 0);
-        countdownSeconds = Math.floor((nextHourDefault - now) / 1000);
+        const nextHour0407 = new Date(now);
+        nextHour0407.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHour0407 - now) / 1000);
         nextUpdateTime = '倒计时';
         isCountdownMode = true;
+        break;
+
+      case '0406':
+        // 0406版本使用固定工程模式口令，加密项使用230830算法
+        isFixedPassword = true;
+        systemPassword = `*#20230730#*`;
+        // 加密项口令：230830 × 月日时（MMDDHH）取后六位
+        const adbFull0406 = 230830 * dateTimeNum;
+        adbPassword = (adbFull0406 % 1000000).toString().padStart(6, '0');
+
+        // 计算到下一个整点的倒计时秒数
+        const nextHour0406 = new Date(now);
+        nextHour0406.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHour0406 - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
+        break;
+
+      case 'other':
+        // other版本使用serialNumberDaily算法（基于日期YYMMDD）
+        systemPassword = `*#20230730#*`;
+        adbPassword = calculateSerialNumberDailyPassword(year, month, date);
+
+        // 计算到明天00:00:00的倒计时秒数
+        const tomorrowOther = new Date();
+        tomorrowOther.setDate(tomorrowOther.getDate() + 1);
+        tomorrowOther.setHours(0, 0, 0, 0);
+        countdownSeconds = Math.floor((tomorrowOther - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
+        break;
+
+      case 'cdm':
+        // 26款版本使用250930算法
+        isCdmVersion = true;
+        const adbFullCdm = 250930 * dateTimeNum;
+        adbPassword = (adbFullCdm % 1000000).toString().padStart(6, '0');
+
+        // 计算系统动态口令（ADB口令 - 当前小时数）
+        const systemFullCdm = adbFullCdm - now.getHours();
+        systemPassword = `*#${(systemFullCdm % 1000000).toString().padStart(6, '0')}#*`;
+
+        // 计算到下一个整点的倒计时秒数
+        const nextHourCdm = new Date(now);
+        nextHourCdm.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHourCdm - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
+        break;
+
+      default:
+        // 默认使用0407版本的逻辑
+        const adbFullTravelerDefault = 250110 * dateTimeNum;
+        adbPassword = (adbFullTravelerDefault % 1000000).toString().padStart(6, '0');
+        const systemFullTravelerDefault = adbFullTravelerDefault - now.getHours();
+        systemPassword = `*#${(systemFullTravelerDefault % 1000000).toString().padStart(6, '0')}#*`;
+
+        // 计算到下一个整点的倒计时秒数
+        const nextHourTravelerDefault = new Date(now);
+        nextHourTravelerDefault.setHours(now.getHours() + 1, 0, 0, 0);
+        countdownSeconds = Math.floor((nextHourTravelerDefault - now) / 1000);
+        nextUpdateTime = '倒计时';
+        isCountdownMode = true;
+    }
+  }
+  // 自由者车型
+  else if (carModel === 'ziyouzhe') {
+    // 计算ADB口令（240910 × 日期时间）
+    const adbFullZiyouzhe = 240910 * mmddhh;
+    adbPassword = (adbFullZiyouzhe % 1000000).toString().padStart(6, '0');
+
+    // 计算系统动态口令（ADB口令 - 当前小时数）
+    const systemFullZiyouzhe = adbFullZiyouzhe - now.getHours();
+    systemPassword = `*#${(systemFullZiyouzhe % 1000000).toString().padStart(6, '0')}#*`;
+
+    // 计算到下一个整点的倒计时秒数
+    const nextHourZiyouzhe = new Date(now);
+    nextHourZiyouzhe.setHours(now.getHours() + 1, 0, 0, 0);
+    countdownSeconds = Math.floor((nextHourZiyouzhe - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
+  }
+  // 山海L7/Plus/T9
+  else if (carModel === 'shanhal7') {
+    systemPassword = `*#20230730#*`;
+    adbPassword = '20201030';
+    nextUpdateTime = '无（固定口令）';
+    isFixedPassword = true;
+  }
+  // 山海L9
+  else if (carModel === 'shanhal9') {
+    systemPassword = `*#20230730#*`;
+    adbPassword = '20201030';
+    nextUpdateTime = '无（固定口令）';
+    isFixedPassword = true;
+  }
+  // 风云A9/T9
+  else if (carModel === 'fengyunA9') {
+    systemPassword = `*#20230730#*`;
+    adbPassword = calculateSerialNumberDailyPassword(year, month, date);
+
+    // 计算到明天00:00:00的倒计时秒数
+    const tomorrowFengyun = new Date();
+    tomorrowFengyun.setDate(tomorrowFengyun.getDate() + 1);
+    tomorrowFengyun.setHours(0, 0, 0, 0);
+    countdownSeconds = Math.floor((tomorrowFengyun - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
+  }
+  // 虎8/8L
+  else if (carModel === 'hu8') {
+    systemPassword = `*#20230730#*`;
+    adbPassword = calculateSerialNumberDailyPassword(year, month, date);
+
+    // 计算到明天00:00:00的倒计时秒数
+    const tomorrowHu8 = new Date();
+    tomorrowHu8.setDate(tomorrowHu8.getDate() + 1);
+    tomorrowHu8.setHours(0, 0, 0, 0);
+    countdownSeconds = Math.floor((tomorrowHu8 - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
+  }
+  // X70Plus/L/Pro/CDM
+  else if (carModel === 'x70plus') {
+    systemPassword = `*#20201030#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定口令）';
+    isFixedPassword = true;
+  }
+  // X90/Plus/Pro/CDM
+  else if (carModel === 'x90plus') {
+    systemPassword = `*#20201030#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定口令）';
+    isFixedPassword = true;
+  }
+  // X95
+  else if (carModel === 'x95') {
+    systemPassword = `*#20201030#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定口令）';
+    isFixedPassword = true;
+  }
+  // 大圣车型
+  else if (carModel === 'dasheng') {
+    systemPassword = `*#20220730#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定口令）';
+    isFixedPassword = true;
+  }
+  // 其他车型
+  else {
+    systemPassword = `*#20230730#*`;
+    adbPassword = '无';
+    nextUpdateTime = '无（固定口令）';
+    isFixedPassword = true;
   }
 
   // 生成更新时间字符串
@@ -193,23 +262,25 @@ Page({
     
     // 车型列表
     carModelList: [
-      { label: '旅行者/山海T2', value: 'lvxingzhe' },
+      { label: '旅行者/山海T2', value: 'traveler' },
       { label: '自由者/山海T1', value: 'ziyouzhe' },
-      { label: '大圣', value: 'dasheng' },
-      { label: 'X70系列', value: 'x70' },
-      { label: 'X90系列', value: 'x90' },
-      { label: '山海L7/Plus/T9', value: 'l7' },
-      { label: '山海L9', value: 'l9' },
-      { label: '其他', value: 'other' }
+      { label: '山海L7/Plus/T9', value: 'shanhal7' },
+      { label: '山海L9', value: 'shanhal9' },
+      { label: '风云A9/T9', value: 'fengyunA9' },
+      { label: '虎8/8L', value: 'hu8' },
+      { label: 'X70Plus/L/Pro/CDM', value: 'x70plus' },
+      { label: 'X90/Plus/Pro/CDM', value: 'x90plus' },
+      { label: 'X95', value: 'x95' },
+      { label: '大圣', value: 'dasheng' }
     ],
     
     // 当前选择的车型索引
     carModelIndex: 0,
-    
+
     // 当前选择的车型
-    currentCarModel: 'lvxingzhe',
-    
-    // 版本列表
+    currentCarModel: 'traveler',
+
+    // 版本列表（根据车型动态更新）
     versionList: [
       { label: '4.06及以下', version: '0406' },
       { label: '00.08及以下', version: '00x' },
@@ -238,11 +309,7 @@ Page({
     
     // 序列号输入
     serialNumber: '',
-    
-    // 26款口令保护
-    isCdmVersion: false,
-    cdmPasswordVerified: false,
-    
+
     // 倒计时相关
     isCountdownMode: false,
     countdownSeconds: 0,
@@ -314,16 +381,16 @@ Page({
   // 更新口令
   updatePasswords() {
     const now = new Date();
-    const { currentVersion, serialNumber } = this.data;
-    
-    const result = calculatePasswords(currentVersion, now, serialNumber);
-    
+    const { currentCarModel, currentVersion, serialNumber } = this.data;
+
+    const result = calculatePasswords(currentCarModel, currentVersion, now, serialNumber);
+
     let encryptionPasswordDisplay = result.adbPassword;
     let systemPasswordDisplay = result.systemPassword;
     let actualEncryptionPassword = result.adbPassword;
     let systemInstructions = '应用中心——蓝牙电话，输入上方口令';
     let encryptionInstructions = '进入加密项输入上方计算后的口令';
-    
+
     // 对于固定口令版本的特殊处理
     if (currentVersion === '0406') {
       encryptionInstructions = '加密设置——进入加密设置，输入上方口令';
@@ -332,11 +399,23 @@ Page({
     } else if (currentVersion === '00x') {
       systemInstructions = '系统界面连点 8 次';
       encryptionInstructions = '进入加密项输入上方计算后的口令';
-    } else if (currentVersion === 'cdm' || currentVersion === '010108' || currentVersion === '01010x' || currentVersion === '000402') {
+    } else if (currentVersion === 'cdm') {
+      systemInstructions = '应用中心——蓝牙电话，输入上方口令';
+      encryptionInstructions = '';
+    } else if (currentCarModel === 'ziyouzhe') {
+      systemInstructions = '应用中心——蓝牙电话，输入上方口令';
+      encryptionInstructions = '加密设置——进入加密设置，输入上方口令';
+    } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus' || currentCarModel === 'x95') {
+      systemInstructions = '系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式';
+      encryptionInstructions = '';
+    } else if (currentCarModel === 'dasheng') {
+      systemInstructions = '应用中心——蓝牙电话，输入上方口令';
+      encryptionInstructions = '';
+    } else if (currentCarModel === 'shanhal7' || currentCarModel === 'shanhal9') {
       systemInstructions = '应用中心——蓝牙电话，输入上方口令';
       encryptionInstructions = '';
     }
-    
+
     // 倒计时模式处理
     let displayNextUpdateTime = result.nextUpdateTime;
     let countdownDisplay = '';
@@ -376,8 +455,7 @@ Page({
     const version = e.currentTarget.dataset.version;
     this.setData({
       currentVersion: version,
-      serialNumber: '',
-      cdmPasswordVerified: false
+      serialNumber: ''
     });
     this.updatePasswords();
   },
@@ -390,10 +468,10 @@ Page({
     // 根据车型更新版本列表
     let versionList = [];
     switch(carModel) {
-      case 'lvxingzhe':
+      case 'traveler':
         versionList = [
-          { label: '4.06及以下', version: '0406' },
           { label: '00.08及以下', version: '00x' },
+          { label: '4.06及以下', version: '0406' },
           { label: '4.07以上', version: '0407' },
           { label: '其他', version: 'other' },
           { label: '26款', version: 'cdm' }
@@ -406,32 +484,46 @@ Page({
           { label: '00.04.02', version: '000402' }
         ];
         break;
-      case 'dasheng':
+      case 'shanhal7':
         versionList = [
-          { label: 'OS1-02.01', version: '0201' },
-          { label: 'OS1_20.10.00', version: '201000' }
+          { label: 'OS1-02.01', version: 'os10201' },
+          { label: 'OS1_20.10.00', version: 'os1201000' }
         ];
         break;
-      case 'x70':
+      case 'shanhal9':
         versionList = [
-          { label: '其他', version: 'other' }
+          { label: '其他版本', version: 'unknown' }
         ];
         break;
-      case 'x90':
+      case 'fengyunA9':
+        versionList = [
+          { label: '其他版本', version: 'unknown' }
+        ];
+        break;
+      case 'hu8':
+        versionList = [
+          { label: '其他版本', version: 'unknown' }
+        ];
+        break;
+      case 'x70plus':
+        versionList = [
+          { label: '00.01.0x', version: 'unknown' }
+        ];
+        break;
+      case 'x90plus':
         versionList = [
           { label: '04.0x', version: '040x' },
-          { label: '其他', version: 'other' }
+          { label: '其他版本', version: 'unknown' }
         ];
         break;
-      case 'l7':
+      case 'x95':
         versionList = [
-          { label: 'OS1-02.01', version: '0201' },
-          { label: 'OS1_20.10.00', version: '201000' }
+          { label: '其他版本', version: 'unknown' }
         ];
         break;
-      case 'l9':
+      case 'dasheng':
         versionList = [
-          { label: '11.01.04及以上', version: '11010x' }
+          { label: '固定口令', version: 'fixed' }
         ];
         break;
       default:
@@ -446,8 +538,7 @@ Page({
       versionList: versionList,
       versionIndex: 0,
       currentVersion: versionList[0].version,
-      serialNumber: '',
-      cdmPasswordVerified: false
+      serialNumber: ''
     });
 
     this.updatePasswords();
@@ -461,8 +552,7 @@ Page({
     this.setData({
       versionIndex: index,
       currentVersion: version,
-      serialNumber: '',
-      cdmPasswordVerified: false
+      serialNumber: ''
     });
 
     this.updatePasswords();
@@ -496,10 +586,10 @@ Page({
 
   // 计算加密项口令（00x版本）
   calculateEncryptionPassword() {
-    const { serialNumber, currentVersion } = this.data;
-    
-    if (currentVersion !== '00x') return;
-    
+    const { serialNumber, currentCarModel, currentVersion } = this.data;
+
+    if (currentCarModel !== 'traveler' || currentVersion !== '00x') return;
+
     if (serialNumber.length !== 6) {
       wx.showToast({
         title: '请输入系统序列号后六位',
@@ -507,44 +597,8 @@ Page({
       });
       return;
     }
-    
-    this.updatePasswords();
-  },
 
-  // 显示26款口令（需要验证）
-  showCdmPassword() {
-    const now = new Date();
-    const month = formatTimeUnit(now.getMonth() + 1);
-    const date = formatTimeUnit(now.getDate());
-    const hours = formatTimeUnit(now.getHours());
-    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-    
-    const correctPassword = getCdmVerifyPassword(dateTimeNum);
-    
-    wx.showModal({
-      title: '请输入口令',
-      editable: true,
-      placeholderText: '请输入密码',
-      success: (res) => {
-        if (res.confirm) {
-          const inputPassword = res.content;
-          if (inputPassword === correctPassword) {
-            const result = calculatePasswords(this.data.currentVersion, now, '');
-            this.setData({
-              systemPassword: result.systemPassword,
-              encryptionPassword: result.adbPassword,
-              actualEncryptionPassword: result.adbPassword,
-              cdmPasswordVerified: true
-            });
-          } else {
-            wx.showToast({
-              title: '口令错误',
-              icon: 'none'
-            });
-          }
-        }
-      }
-    });
+    this.updatePasswords();
   },
 
   // 切换加密项口令显示/隐藏
