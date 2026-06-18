@@ -9,22 +9,22 @@
       <button bindtap="closePopup" class="popup-button">我知道了</button>
     </view>
   </view>
-  
+
   <view class="header">
-    <text class="title">车机口令工具 v1.138.0</text>
+    <text class="title">车机口令工具</text>
   </view>
-  
+
   <view class="link-buttons">
     <button class="link-button" bindtap="openManual">使用教程</button>
     <button class="link-button" bindtap="openTool">安装工具</button>
   </view>
-  
+
   <!-- 车型选择 -->
   <view class="selector-row">
     <text class="section-title-inline">车型：</text>
-    <picker 
-      mode="selector" 
-      range="{{carModelList}}" 
+    <picker
+      mode="selector"
+      range="{{carModelList}}"
       range-key="label"
       value="{{carModelIndex}}"
       bindchange="onCarModelChange"
@@ -36,13 +36,13 @@
       </view>
     </picker>
   </view>
-  
+
   <!-- 车机系统版本选择 -->
   <view class="selector-row">
     <text class="section-title-inline">车机系统版本：</text>
-    <picker 
-      mode="selector" 
-      range="{{versionList}}" 
+    <picker
+      mode="selector"
+      range="{{versionList}}"
       range-key="label"
       value="{{versionIndex}}"
       bindchange="onVersionChange"
@@ -54,59 +54,41 @@
       </view>
     </picker>
   </view>
-  
+
   <view class="hour-password-group">
     <view class="hour-indicator">
       口令有效期：
       <text wx:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
       <text wx:else class="highlight countdown">{{countdownDisplay}}</text>
     </view>
-    
+
     <view class="password-group">
       <view class="password-card">
         <text class="card-title">1. 工程模式口令</text>
-        <view class="password-container">
-          <text class="password-value">{{carPassword}}</text>
-          <button 
-            wx:if="{{(isCdmVersion || (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402'))) && !cdmPasswordVerified}}"
-            class="show-password-button"
-            bindtap="showCdmPassword"
-          >
-            显示口令
-          </button>
-        </view>
+        <text class="password-value">{{carPassword}}</text>
         <text class="instructions">{{carInstructions}}</text>
       </view>
-      
+
       <view class="password-card">
         <text class="card-title">2. 加密项口令</text>
-        
+
         <view wx:if="{{currentVersion === '00x'}}" class="serial-number-input">
-          <input 
-            type="text" 
-            placeholder="请输入序列号后六位" 
+          <input
+            type="text"
+            placeholder="请输入序列号后六位"
             bindinput="inputSerialNumber"
             maxlength="6"
           />
           <button class="calculate-button" bindtap="calculateAdbPassword">计算口令</button>
         </view>
-        
-        <view class="password-container">
-          <text class="password-value">{{adbPassword}}</text>
-          <button 
-            wx:if="{{(isCdmVersion || (currentCarModel === 'ziyouzhe' && (currentVersion === '010108' || currentVersion === '000402'))) && !cdmPasswordVerified}}"
-            class="show-password-button"
-            bindtap="showCdmPassword"
-          >
-            显示口令
-          </button>
-        </view>
-        
+
+        <text class="password-value">{{adbPassword}}</text>
+
         <text class="instructions">{{adbInstructions}}</text>
       </view>
     </view>
   </view>
-  
+
   <view class="update-info">
     <text>最后更新时间：{{updateTime}}</text>
   </view>
