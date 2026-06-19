@@ -4,7 +4,7 @@
     <view class="popup-content">
       <text class="popup-title">使用说明</text>
       <view class="popup-message">
-        <rich-text nodes="<p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他系统内容，否则后果自负。</p><p><strong>重要说明：</strong>本内容仅在原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p><p><strong>适用范围：</strong>本内容仅适用于旅行者部分车型，已知适配旅行者CDM(T2)、7DCT、8AT、7座加长款。</p><p><strong>特别提醒：</strong>自由者、L9、大圣、风云、瑞虎、艾瑞泽等车型请自测。</p><p><strong>不支持：</strong>【银龙之翼】不支持。</p>"></rich-text>
+        <rich-text nodes="<p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他系统内容，否则后果自负。</p><p><strong>重要说明：</strong>本内容仅在原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p><p><strong>适用范围：</strong>本内容仅适用于旅行者部分车型，已知适配旅行者CDM(T2)、7DCT、8AT、7座加长款。</p><p><strong>特别提醒：</strong>自由者、L9、大圣、风云、瑞虎、艾瑞泽等车型请自测。</p><p><strong>银龙之翼：</strong>仅支持 4.11 系统版本。</p>"></rich-text>
       </view>
       <button bindtap="closePopup" class="popup-button">我知道了</button>
     </view>
