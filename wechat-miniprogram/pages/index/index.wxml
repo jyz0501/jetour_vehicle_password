@@ -4,7 +4,7 @@
     <view class="popup-content">
       <text class="popup-title">使用说明</text>
       <view class="popup-message">
-        <rich-text nodes="<p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他车机内容，否则后果自负。</p><p><strong>重要说明：</strong>本内容仅在车机原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p><p><strong>适用范围：</strong>本内容适用于旅行者、自由者、大圣、G700等车型。</p><p><strong>特别提醒：</strong>不同车型和版本使用不同的算法，请选择正确的车型和版本。</p><p><strong>银龙之翼：</strong>仅支持 4.11 系统版本。</p><p><strong>G700：</strong>ADB权限密码需要验证查看，仅支持3.30-3.35版本。</p>"></rich-text>
+        <rich-text nodes="<p><strong>⚠️警示：</strong>刷机有风险，请严格按照教程操作，不要修改其他车机内容，否则后果自负。</p><p><strong>重要说明：</strong>本内容仅在车机原系统上加装第三方管理工具，<strong>不对原系统修改，不影响终身质保</strong>；如需恢复，请执行恢复出厂设置操作。</p><p><strong>适用范围：</strong>本内容适用于旅行者、自由者、大圣、G700等车型。</p><p><strong>特别提醒：</strong>不同车型和版本使用不同的算法，请选择正确的车型和版本。</p><p><strong>银龙之翼：</strong>仅支持 4.11 系统版本。</p><p><strong>G700：</strong>仅支持3.30-3.35版本。</p>"></rich-text>
       </view>
       <button bindtap="closePopup" class="popup-button">我知道了</button>
     </view>
