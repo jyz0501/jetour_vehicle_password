@@ -1,35 +1,32 @@
 import { carModels } from './config/carModels.js';
-import { calculatePasswords, getCountdownType } from './utils/password.js';
+import { fetchPasswordsWithRetry } from './utils/api.js';
 import { 
     renderVersionButtons, 
     renderPasswordGroup,
     updateCarInstructions, 
     updateCountdown,
-    updateTravelerPasswords,
-    updateOtherCarPasswords,
-    calculateAdbPassword
+    updatePasswordsFromApi
 } from './utils/ui.js';
 
 let currentCarModel = 'traveler';
 let currentVersion = '0407';
 
-function updatePasswords() {
+async function updatePasswords() {
     const now = new Date();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const date = String(now.getDate()).padStart(2, '0');
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     
-    const dateTimeKey = `${month}${date}${hours}`;
-    const dateTimeNum = parseInt(dateTimeKey, 10);
-    
     document.getElementById('updateTime').textContent = 
         `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`;
     
-    if (currentCarModel === 'traveler') {
-        updateTravelerPasswords(dateTimeNum, currentVersion, document.getElementById('serialNumber')?.value);
-    } else {
-        updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVersion);
+    const serialNumber = document.getElementById('serialNumber')?.value || '';
+    
+    const result = await fetchPasswordsWithRetry(currentCarModel, currentVersion, serialNumber);
+    
+    if (result !== null) {
+        updatePasswordsFromApi(result, currentCarModel, currentVersion);
     }
 }
 
@@ -65,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCarInstructions(currentCarModel, currentVersion);
     updatePasswords();
     
-    // 版本按钮点击事件
     document.querySelector('.version-buttons').addEventListener('click', function(e) {
         if (e.target.classList.contains('version-button')) {
             document.querySelectorAll('.version-button').forEach(btn => btn.classList.remove('active'));
@@ -78,10 +74,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// 每秒更新倒计时
 setInterval(() => {
     updateCountdown(currentCarModel, currentVersion);
 }, 1000);
 
-// 每分钟更新口令
 setInterval(updatePasswords, 60000);

@@ -1,0 +1,16 @@
+name = "jetour-password-api"
+type = "javascript"
+
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+API_KEY = "jetour_password_2026"
+
+[env.production]
+name = "jetour-password-api"
+route = "api.qianxian.tech/*"
+
+[site]
+bucket = "./public"
+entry-point = "workers-site"

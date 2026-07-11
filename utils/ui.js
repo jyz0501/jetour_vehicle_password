@@ -1,7 +1,7 @@
 import { carModels } from '../config/carModels.js';
-import { calculatePasswords, getCountdownType, formatTimeUnit } from './password.js';
+import { fetchPasswordsWithRetry } from './api.js';
+import { getCountdownType, formatTimeUnit } from './password.js';
 
-// 渲染版本按钮
 export function renderVersionButtons(currentCarModel, currentVersion) {
     const versionButtonsContainer = document.querySelector('.version-buttons');
     versionButtonsContainer.innerHTML = '';
@@ -16,16 +16,8 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
     });
 }
 
-// 渲染口令区域
 export function renderPasswordGroup(currentCarModel, currentVersion) {
     const passwordGroup = document.getElementById('passwordGroup');
-    const showPasswordOverlay = document.getElementById('showPasswordOverlay');
-    
-    // 判断是否需要显示全局口令按钮
-    const needsPasswordOverlay = isEncryptedVersion(currentCarModel, currentVersion);
-    if (showPasswordOverlay) {
-        showPasswordOverlay.style.display = needsPasswordOverlay ? 'block' : 'none';
-    }
     
     if (currentCarModel === 'traveler') {
         passwordGroup.innerHTML = `
@@ -45,7 +37,6 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             </div>
         `;
         
-        // 根据版本显示/隐藏序列号输入框
         const serialNumberInput = document.getElementById('serialNumberInput');
         
         if (currentVersion === '00x') {
@@ -117,42 +108,6 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
     setupPasswordEventListeners(currentCarModel, currentVersion);
 }
 
-// 获取dynamic250110的ADB口令值（旅行者车型）
-function getCdmPassword() {
-    const now = new Date();
-    const month = formatTimeUnit(now.getMonth() + 1);
-    const date = formatTimeUnit(now.getDate());
-    const hours = formatTimeUnit(now.getHours());
-    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-    
-    const adbFull = 250110 * dateTimeNum;
-    return (adbFull % 1000000).toString().padStart(6, '0');
-}
-
-// 获取G700车型的ADB口令值
-function getG700Password() {
-    const now = new Date();
-    const month = formatTimeUnit(now.getMonth() + 1);
-    const date = formatTimeUnit(now.getDate());
-    const hours = formatTimeUnit(now.getHours());
-    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-    
-    const adbFull = 250530 * dateTimeNum - now.getHours();
-    return (adbFull % 1000000).toString().padStart(6, '0');
-}
-
-// 判断是否为加密版本
-function isEncryptedVersion(currentCarModel, currentVersion) {
-    // 使用配置文件中的encrypted字段判断
-    const carModel = carModels[currentCarModel];
-    if (carModel && carModel.encrypted && carModel.encrypted[currentVersion] !== undefined) {
-        return carModel.encrypted[currentVersion];
-    }
-    // 默认不加密
-    return false;
-}
-
-// 设置口令区域事件监听器
 function setupPasswordEventListeners(currentCarModel, currentVersion) {
     const calculateAdbButton = document.getElementById('calculateAdbButton');
     if (calculateAdbButton) {
@@ -163,125 +118,14 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
                 return;
             }
             
-            const now = new Date();
-            const month = formatTimeUnit(now.getMonth() + 1);
-            const date = formatTimeUnit(now.getDate());
-            const hours = formatTimeUnit(now.getHours());
-            const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-            
-            const params = {
-                dateTimeNum,
-                hours: now.getHours(),
-                serialNumber
-            };
-            
-            const result = calculatePasswords(currentCarModel, currentVersion, params);
-            
-            const adbPasswordElement = document.getElementById('adbPassword');
-            adbPasswordElement.textContent = result.adbPassword;
-        });
-    }
-    
-    // 全局显示口令按钮（覆盖层）
-    const showPasswordOverlay = document.getElementById('showPasswordOverlay');
-    const passwordVerifyPopup = document.getElementById('passwordVerifyPopup');
-    const verifyPasswordInput = document.getElementById('verifyPasswordInput');
-    const verifyError = document.getElementById('verifyError');
-    const confirmVerify = document.getElementById('confirmVerify');
-    const cancelVerify = document.getElementById('cancelVerify');
-    
-    if (showPasswordOverlay && passwordVerifyPopup) {
-        // 移除旧的事件监听器（如果有的话）
-        const newOverlay = showPasswordOverlay.cloneNode(true);
-        showPasswordOverlay.parentNode.replaceChild(newOverlay, showPasswordOverlay);
-        
-        // 显示验证弹窗
-        function showVerifyPopup() {
-            passwordVerifyPopup.style.display = 'flex';
-            verifyPasswordInput.value = '';
-            verifyError.style.display = 'none';
-            verifyPasswordInput.focus();
-        }
-        
-        // 隐藏验证弹窗
-        function hideVerifyPopup() {
-            passwordVerifyPopup.style.display = 'none';
-        }
-        
-        // 验证口令
-        function verifyAndShowPassword() {
-            const inputPassword = verifyPasswordInput.value;
-            
-            let correctPassword;
-            if (currentCarModel === 'g700') {
-                correctPassword = getG700Password();
-            } else {
-                correctPassword = getCdmPassword();
-            }
-            
-            if (inputPassword === correctPassword) {
-                // 口令正确，隐藏覆盖层按钮和弹窗，并显示所有口令
-                hideVerifyPopup();
-                newOverlay.style.display = 'none';
-                
-                const now = new Date();
-                const month = formatTimeUnit(now.getMonth() + 1);
-                const date = formatTimeUnit(now.getDate());
-                const hours = formatTimeUnit(now.getHours());
-                const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-                const mmddhh = parseInt(`${month}${date}${hours}`, 10);
-                
-                const params = {
-                    dateTimeNum,
-                    hours: now.getHours(),
-                    mmddhh,
-                    year: now.getFullYear(),
-                    month: month,
-                    date: date,
-                    carModel: currentCarModel,
-                    version: currentVersion
-                };
-                
-                const result = calculatePasswords(currentCarModel, currentVersion, params);
-                
-                // 根据车型更新对应的口令显示
-                if (currentCarModel === 'traveler') {
-                    const carPasswordEl = document.getElementById('carPassword');
-                    const adbPasswordEl = document.getElementById('adbPassword');
-                    if (carPasswordEl) carPasswordEl.textContent = result.carPassword;
-                    if (adbPasswordEl) adbPasswordEl.textContent = result.adbPassword;
-                } else if (currentCarModel === 'ziyouzhe') {
-                    const password1El = document.getElementById('password1');
-                    const password2El = document.getElementById('password2');
-                    if (password1El) password1El.textContent = result.carPassword;
-                    if (password2El) password2El.textContent = result.adbPassword;
-                } else if (currentCarModel === 'g700') {
-                    const carPasswordEl = document.getElementById('carPassword');
-                    const adbPasswordEl = document.getElementById('adbPassword');
-                    if (carPasswordEl) carPasswordEl.textContent = result.carPassword;
-                    if (adbPasswordEl) adbPasswordEl.textContent = result.adbPassword;
-                }
-            } else {
-                verifyError.style.display = 'block';
-                verifyPasswordInput.value = '';
-                verifyPasswordInput.focus();
-            }
-        }
-        
-        newOverlay.addEventListener('click', showVerifyPopup);
-        confirmVerify.addEventListener('click', verifyAndShowPassword);
-        cancelVerify.addEventListener('click', hideVerifyPopup);
-        
-        // 输入框回车确认
-        verifyPasswordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                verifyAndShowPassword();
-            }
+            const event = new CustomEvent('passwordUpdate', { 
+                detail: { serialNumber } 
+            });
+            document.dispatchEvent(event);
         });
     }
 }
 
-// 更新车型说明
 export function updateCarInstructions(currentCarModel, currentVersion) {
     const carInstructionsEl = document.getElementById('carInstructions');
     const adbInstructionsEl = document.getElementById('adbInstructions');
@@ -338,7 +182,6 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
     adbInstructionsEl.textContent = adbInstructions;
 }
 
-// 更新倒计时
 export function updateCountdown(currentCarModel, currentVersion) {
     const now = new Date();
     const countdownEl = document.getElementById('nextUpdateTime');
@@ -372,101 +215,61 @@ export function updateCountdown(currentCarModel, currentVersion) {
     }
 }
 
-// 更新旅行者车型口令
-export function updateTravelerPasswords(dateTimeNum, currentVersion, serialNumber) {
-    const now = new Date();
-    const params = {
-        dateTimeNum,
-        hours: now.getHours(),
-        serialNumber,
-        year: now.getFullYear(),
-        month: formatTimeUnit(now.getMonth() + 1),
-        date: formatTimeUnit(now.getDate()),
-        carModel: 'traveler',
-        version: currentVersion
-    };
-    
-    const result = calculatePasswords('traveler', currentVersion, params);
-    
-    const carPasswordEl = document.getElementById('carPassword');
-    const adbPasswordEl = document.getElementById('adbPassword');
-    
-    // 直接显示所有版本的口令，无需验证
-    if (carPasswordEl) {
-        carPasswordEl.textContent = result.carPassword || '--';
-    }
-    if (adbPasswordEl) {
-        adbPasswordEl.textContent = result.adbPassword || '--';
-    }
-}
-
-// 更新其他车型口令
-export function updateOtherCarPasswords(dateTimeNum, currentCarModel, currentVersion) {
-    const now = new Date();
-    const mmddhh = parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10);
-    
-    const params = {
-        dateTimeNum,
-        hours: now.getHours(),
-        mmddhh,
-        year: now.getFullYear(),
-        month: formatTimeUnit(now.getMonth() + 1),
-        date: formatTimeUnit(now.getDate()),
-        carModel: currentCarModel,
-        version: currentVersion
-    };
-    
-    const result = calculatePasswords(currentCarModel, currentVersion, params);
-    
-    if (currentCarModel === 'ziyouzhe' || currentCarModel === 'dasheng') {
-        const { carPassword, adbPassword } = result;
+export function updatePasswordsFromApi(result, currentCarModel, currentVersion) {
+    if (currentCarModel === 'traveler') {
+        const carPasswordEl = document.getElementById('carPassword');
+        const adbPasswordEl = document.getElementById('adbPassword');
+        
+        if (carPasswordEl) {
+            carPasswordEl.textContent = result.carPassword || '--';
+        }
+        if (adbPasswordEl) {
+            adbPasswordEl.textContent = result.adbPassword || '--';
+        }
+    } else if (currentCarModel === 'ziyouzhe') {
         const password1El = document.getElementById('password1');
         const password2El = document.getElementById('password2');
         
-        // 直接显示所有版本的口令，无需验证
         if (password1El) {
-            password1El.textContent = carPassword || '--';
+            password1El.textContent = result.carPassword || '--';
         }
         if (password2El) {
-            password2El.textContent = adbPassword || '--';
+            password2El.textContent = result.adbPassword || '--';
+        }
+    } else if (currentCarModel === 'dasheng') {
+        const password1El = document.getElementById('password1');
+        
+        if (password1El) {
+            password1El.textContent = result.carPassword || '--';
+        }
+    } else if (currentCarModel === 'g700') {
+        const carPasswordEl = document.getElementById('carPassword');
+        const adbPasswordEl = document.getElementById('adbPassword');
+        
+        if (carPasswordEl) {
+            carPasswordEl.textContent = result.carPassword || '--';
+        }
+        if (adbPasswordEl) {
+            adbPasswordEl.textContent = result.adbPassword || '--';
         }
     } else {
-        const { passwords } = result;
-        for (let i = 1; i <= 3; i++) {
-            const el = document.getElementById(`password${i}`);
-            if (el) {
-                el.textContent = passwords[i - 1] || '--';
+        if (result.passwords && Array.isArray(result.passwords)) {
+            for (let i = 1; i <= 3; i++) {
+                const el = document.getElementById(`password${i}`);
+                if (el) {
+                    el.textContent = result.passwords[i - 1] || '--';
+                }
+            }
+        } else {
+            const password1El = document.getElementById('password1');
+            const password2El = document.getElementById('password2');
+            
+            if (password1El) {
+                password1El.textContent = result.carPassword || '--';
+            }
+            if (password2El) {
+                password2El.textContent = result.adbPassword || '--';
             }
         }
-    }
-}
-
-// 计算ADB口令（用于00x和other版本）
-export function calculateAdbPassword(serialNumber, currentCarModel, currentVersion) {
-    if (!serialNumber || serialNumber.length !== 6) {
-        alert('请输入6位序列号');
-        return;
-    }
-    
-    const now = new Date();
-    const month = formatTimeUnit(now.getMonth() + 1);
-    const date = formatTimeUnit(now.getDate());
-    const hours = formatTimeUnit(now.getHours());
-    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
-    
-    const params = {
-        dateTimeNum,
-        hours: now.getHours(),
-        serialNumber,
-        year: now.getFullYear(),
-        month: formatTimeUnit(now.getMonth() + 1),
-        date: formatTimeUnit(now.getDate())
-    };
-    
-    const result = calculatePasswords(currentCarModel, currentVersion, params);
-    
-    const adbPasswordEl = document.getElementById('adbPassword');
-    if (adbPasswordEl) {
-        adbPasswordEl.textContent = result.adbPassword;
     }
 }
