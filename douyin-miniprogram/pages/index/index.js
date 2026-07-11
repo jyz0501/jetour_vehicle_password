@@ -234,7 +234,7 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
   // G700车型
   else if (carModel === 'g700') {
     systemPassword = `*#20240730#*`;
-    const adbFullG700 = 240730 * dateTimeNum;
+    const adbFullG700 = 250530 * dateTimeNum - now.getHours();
     adbPassword = (adbFullG700 % 1000000).toString().padStart(6, '0');
 
     const nextHourG700 = new Date(now);
