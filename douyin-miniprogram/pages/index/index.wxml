@@ -85,11 +85,11 @@
         <view class="password-container">
           <text class="password-value">{{encryptionPassword}}</text>
           <button 
-            wx:if="{{currentVersion !== '0406' && currentVersion !== 'other'}}"
+            wx:if="{{currentCarModel === 'g700' && !g700PasswordVisible}}"
             class="toggle-button"
-            bindtap="toggleEncryptionPassword"
+            bindtap="showG700Password"
           >
-            {{encryptionPasswordVisible ? '隐藏口令' : '显示口令'}}
+            显示口令
           </button>
         </view>
         
