@@ -1,5 +1,18 @@
 // 车型配置
 export const carModels = {
+    g700: {
+        name: '捷途G700',
+        versions: ['330335'],
+        versionNames: {
+            '330335': '3.30-3.35'
+        },
+        algorithms: {
+            '330335': 'dynamic240730'
+        },
+        encrypted: {
+            '330335': true
+        }
+    },
     traveler: {
         name: '旅行者/山海T2',
         versions: ['00x', '0406', '0407', 'other', 'cdm'],
@@ -152,19 +165,6 @@ export const carModels = {
         },
         encrypted: {
             'fixed': false
-        }
-    },
-    g700: {
-        name: '捷途G700',
-        versions: ['330335'],
-        versionNames: {
-            '330335': '3.30-3.35'
-        },
-        algorithms: {
-            '330335': 'dynamic240730'
-        },
-        encrypted: {
-            '330335': true
         }
     }
 };
