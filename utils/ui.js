@@ -118,7 +118,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
     setupPasswordEventListeners(currentCarModel, currentVersion);
 }
 
-// 获取dynamic250110的ADB口令值
+// 获取dynamic250110的ADB口令值（旅行者车型）
 function getCdmPassword() {
     const now = new Date();
     const month = formatTimeUnit(now.getMonth() + 1);
@@ -126,15 +126,19 @@ function getCdmPassword() {
     const hours = formatTimeUnit(now.getHours());
     const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
     
-    const currentCarModel = document.getElementById('carModel').value;
-    const currentVersion = document.getElementById('version').value;
-    
-    if (currentCarModel === 'g700') {
-        const adbFull = 250530 * dateTimeNum - now.getHours();
-        return (adbFull % 1000000).toString().padStart(6, '0');
-    }
-    
     const adbFull = 250110 * dateTimeNum;
+    return (adbFull % 1000000).toString().padStart(6, '0');
+}
+
+// 获取G700车型的ADB口令值
+function getG700Password() {
+    const now = new Date();
+    const month = formatTimeUnit(now.getMonth() + 1);
+    const date = formatTimeUnit(now.getDate());
+    const hours = formatTimeUnit(now.getHours());
+    const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
+    
+    const adbFull = 250530 * dateTimeNum - now.getHours();
     return (adbFull % 1000000).toString().padStart(6, '0');
 }
 
@@ -208,7 +212,13 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
         // 验证口令
         function verifyAndShowPassword() {
             const inputPassword = verifyPasswordInput.value;
-            const correctPassword = getCdmPassword();
+            
+            let correctPassword;
+            if (currentCarModel === 'g700') {
+                correctPassword = getG700Password();
+            } else {
+                correctPassword = getCdmPassword();
+            }
             
             if (inputPassword === correctPassword) {
                 // 口令正确，隐藏覆盖层按钮和弹窗，并显示所有口令
