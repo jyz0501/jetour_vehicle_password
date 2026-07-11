@@ -141,3 +141,7 @@ douyin-miniprogram/.log/
 # Cloudflare Wrangler
 server/.wrangler/
 .wrangler/
+
+.dev.vars*
+!.dev.vars.example
+!.env.example
