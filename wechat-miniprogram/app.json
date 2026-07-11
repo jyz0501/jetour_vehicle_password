@@ -5,7 +5,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "我的方盒",
+    "navigationBarTitleText": "车机工具",
     "navigationBarTextStyle": "black"
   },
   "lazyCodeLoading": "requiredComponents",
