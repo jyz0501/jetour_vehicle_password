@@ -1,7 +1,7 @@
 // 车型配置
 export const carModels = {
     traveler: {
-        name: '捷途旅行者/山海T2',
+        name: '旅行者/山海T2',
         versions: ['00x', '0406', '0407', 'other', 'cdm'],
         versionNames: {
             '00x': '00.08及以下',
