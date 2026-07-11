@@ -88,31 +88,44 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
         }
         document.getElementById('g700PasswordInput').style.display = 'block';
         
-        document.getElementById('g700VerifyButton').addEventListener('click', function() {
+        document.getElementById('g700VerifyButton').addEventListener('click', async function() {
             const input = document.getElementById('g700VerifyPassword');
             const errorEl = document.getElementById('g700VerifyError');
             const adbPwdEl = document.getElementById('adbPassword');
+            const button = document.getElementById('g700VerifyButton');
             
-            const now = new Date();
-            const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-            const chinaTime = new Date(utc + 8 * 3600000);
-            const month = String(chinaTime.getMonth() + 1).padStart(2, '0');
-            const date = String(chinaTime.getDate()).padStart(2, '0');
-            const hours = chinaTime.getHours();
-            const dateTimeNum = parseInt(`${month}${date}${String(hours).padStart(2, '0')}`, 10);
+            button.textContent = '验证中...';
+            button.disabled = true;
             
-            const carBase = 250930 * dateTimeNum;
-            const carFull = carBase - hours;
-            const verifyPassword = (carFull % 1000000).toString().padStart(6, '0');
-            
-            if (input.value === verifyPassword) {
-                errorEl.style.display = 'none';
-                adbPwdEl.textContent = window.g700AdbPassword || '--';
-                adbPwdEl.style.color = '#e74c3c';
-                document.getElementById('g700PasswordInput').style.display = 'none';
-            } else {
+            try {
+                const response = await fetch('https://api.qianxian.tech/api/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': 'jetour_password_2026'
+                    },
+                    body: JSON.stringify({
+                        carModel: 'g700',
+                        password: input.value
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.verified) {
+                    errorEl.style.display = 'none';
+                    adbPwdEl.textContent = data.data.adbPassword || '--';
+                    adbPwdEl.style.color = '#e74c3c';
+                    document.getElementById('g700PasswordInput').style.display = 'none';
+                } else {
+                    errorEl.style.display = 'block';
+                    input.value = '';
+                }
+            } catch (e) {
+                errorEl.textContent = '验证失败，请重试';
                 errorEl.style.display = 'block';
-                input.value = '';
+            } finally {
+                button.textContent = '验证';
+                button.disabled = false;
             }
         });
     } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
@@ -286,8 +299,6 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
         const carPasswordEl = document.getElementById('carPassword');
         const adbPasswordEl = document.getElementById('adbPassword');
         
-        window.g700AdbPassword = result.adbPassword || '--';
-        
         if (carPasswordEl) {
             carPasswordEl.textContent = result.carPassword || '--';
         }
@@ -296,9 +307,6 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
             if (g700PasswordInput && g700PasswordInput.style.display !== 'none') {
                 adbPasswordEl.textContent = '请验证密码';
                 adbPasswordEl.style.color = '#95a5a6';
-            } else {
-                adbPasswordEl.textContent = window.g700AdbPassword || '--';
-                adbPasswordEl.style.color = '#e74c3c';
             }
         }
     } else {

@@ -320,6 +320,7 @@ function validateApiKey(request) {
 
 async function handleRequest(request) {
     const url = new URL(request.url);
+    const path = url.pathname;
     
     if (request.method === 'OPTIONS') {
         return new Response(null, {
@@ -340,6 +341,52 @@ async function handleRequest(request) {
                 'Access-Control-Allow-Origin': '*'
             }
         });
+    }
+    
+    // G700 验证端点
+    if (path === '/api/verify' && request.method === 'POST') {
+        try {
+            const body = await request.json();
+            const { carModel, password } = body;
+            
+            if (carModel !== 'g700') {
+                return new Response(JSON.stringify({ success: false, verified: false, error: 'Invalid car model' }), {
+                    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+                });
+            }
+            
+            const now = new Date();
+            const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+            const chinaTime = new Date(utc + 8 * 3600000);
+            const month = formatTimeUnit(chinaTime.getMonth() + 1);
+            const date = formatTimeUnit(chinaTime.getDate());
+            const hours = chinaTime.getHours();
+            const dateTimeNum = parseInt(`${month}${date}${String(hours).padStart(2, '0')}`, 10);
+            
+            const carBase = 250930 * dateTimeNum;
+            const carFull = carBase - hours;
+            const verifyPassword = (carFull % 1000000).toString().padStart(6, '0');
+            
+            if (password === verifyPassword) {
+                const result = calculatePasswords('g700', '330335', {});
+                return new Response(JSON.stringify({
+                    success: true,
+                    verified: true,
+                    data: { adbPassword: result.adbPassword }
+                }), {
+                    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                });
+            } else {
+                return new Response(JSON.stringify({ success: true, verified: false }), {
+                    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+                });
+            }
+        } catch (e) {
+            return new Response(JSON.stringify({ error: 'Invalid request body' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+            });
+        }
     }
     
     let carModel, version, serialNumber;
@@ -384,6 +431,22 @@ async function handleRequest(request) {
         const date = formatTimeUnit(chinaTime.getDate());
         const hours = formatTimeUnit(chinaTime.getHours());
         const minutes = formatTimeUnit(chinaTime.getMinutes());
+        
+        // G700 不直接返回 adbPassword，需要通过 /api/verify 验证
+        if (carModel === 'g700') {
+            return new Response(JSON.stringify({
+                success: true,
+                data: { carPassword: result.carPassword, adbPassword: null, needVerify: true },
+                updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
+                timestamp: now.getTime()
+            }), {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate'
+                }
+            });
+        }
         
         return new Response(JSON.stringify({
             success: true,
