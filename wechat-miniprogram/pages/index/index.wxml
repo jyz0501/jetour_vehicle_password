@@ -82,6 +82,17 @@
           <button class="calculate-button" bindtap="calculatePassword">计算口令</button>
         </view>
 
+        <view wx:if="{{currentCarModel === 'g700' && !g700ShowAdb}}" class="serial-number-input">
+          <input
+            type="text"
+            placeholder="请输入密码"
+            bindinput="inputG700VerifyPassword"
+            maxlength="6"
+          />
+          <button class="calculate-button" bindtap="verifyG700Password">验证</button>
+          <text wx:if="{{g700VerifyError}}" class="error-text">密码错误</text>
+        </view>
+
         <text class="password-value">{{settingPassword}}</text>
 
         

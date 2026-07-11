@@ -176,6 +176,11 @@ Page({
     
     serialNumber: '',
 
+    g700VerifyPassword: '',
+    g700ShowAdb: false,
+    g700AdbPassword: '',
+    g700VerifyError: false,
+    
     isCountdownMode: false,
     countdownSeconds: 0,
     countdownDisplay: '',
@@ -320,9 +325,15 @@ Page({
             countdownDisplay = this.formatCountdown(countdownSeconds);
           }
           
-          this.setData({
+          let encryptionPassword = result.adbPassword || '--';
+            if (currentCarModel === 'g700' && !this.data.g700ShowAdb) {
+              encryptionPassword = '请验证密码';
+            }
+            
+            this.setData({
             systemPassword: result.carPassword || '--',
-            encryptionPassword: result.adbPassword || '--',
+            g700AdbPassword: result.adbPassword || '',
+            encryptionPassword: encryptionPassword,
             actualEncryptionPassword: result.adbPassword || '',
             nextUpdateTime: nextUpdateTime,
             updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
@@ -476,6 +487,31 @@ Page({
     this.setData({
       serialNumber: serialNumber
     });
+  },
+
+  inputG700VerifyPassword(e) {
+    const g700VerifyPassword = e.detail.value;
+    this.setData({
+      g700VerifyPassword: g700VerifyPassword,
+      g700VerifyError: false
+    });
+  },
+
+  verifyG700Password() {
+    const { g700VerifyPassword, g700AdbPassword } = this.data;
+    
+    if (g700VerifyPassword === '202407') {
+      this.setData({
+        g700ShowAdb: true,
+        encryptionPassword: g700AdbPassword || '--',
+        g700VerifyError: false
+      });
+    } else {
+      this.setData({
+        g700VerifyError: true,
+        g700VerifyPassword: ''
+      });
+    }
   },
 
   calculateEncryptionPassword() {
