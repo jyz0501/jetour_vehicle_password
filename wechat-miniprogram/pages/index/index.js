@@ -158,8 +158,8 @@ Page({
     currentVersion: '0407',
     
     carPassword: '--',
-    adbPassword: '--',
-    actualAdbPassword: '',
+    settingPassword: '--',
+    actualSettingPassword: '',
     nextUpdateTime: '--',
     updateTime: '--',
     
@@ -167,8 +167,8 @@ Page({
     countdownSeconds: 0,
     countdownDisplay: '',
     
-    carInstructions: '应用中心——蓝牙电话，输入上方口令',
-    adbInstructions: '加密设置——进入加密设置，输入上方口令',
+    carInstructions: '应用中心——蓝牙电话，输入对应口令',
+    settingInstructions: '系统设置——输入对应口令',
     
     serialNumber: '',
     
@@ -280,7 +280,7 @@ Page({
     });
   },
 
-  calculateAdbPassword() {
+  calculatePassword() {
     const { currentCarModel, currentVersion, serialNumber } = this.data;
     
     if (!serialNumber || serialNumber.length !== 6) {
@@ -394,49 +394,49 @@ Page({
           const hours = formatTimeUnit(now.getHours());
           const minutes = formatTimeUnit(now.getMinutes());
           
-          let carInstructions = '应用中心——蓝牙电话，输入上方口令';
-          let adbInstructions = '加密设置——进入加密设置，输入上方口令';
+          let carInstructions = '应用中心——蓝牙电话，输入对应口令';
+          let settingInstructions = '系统设置——输入对应口令';
           
           if (currentCarModel === 'traveler') {
             if (currentVersion === '00x') {
-              carInstructions = '系统界面连点 8 次';
-              adbInstructions = '进入加密项输入上方计算后的口令';
+              carInstructions = '系统界面连续点击 8 次';
+              settingInstructions = '设置项输入计算后的口令';
             } else if (currentVersion === '0406') {
-              carInstructions = '应用中心——蓝牙电话，输入上方口令';
-              adbInstructions = '加密设置——进入加密设置，输入上方口令';
+              carInstructions = '应用中心——蓝牙电话，输入对应口令';
+              settingInstructions = '系统设置——输入对应口令';
             } else if (currentVersion === 'other') {
-              carInstructions = '应用中心——蓝牙电话，输入上方口令 或者 通用—系统—右侧空白处连点8下';
-              adbInstructions = '';
+              carInstructions = '应用中心——蓝牙电话，输入对应口令';
+              settingInstructions = '';
             } else if (currentVersion === 'cdm') {
-              carInstructions = '应用中心——蓝牙电话，输入上方口令';
-              adbInstructions = '';
+              carInstructions = '应用中心——蓝牙电话，输入对应口令';
+              settingInstructions = '';
             }
           } else if (currentCarModel === 'ziyouzhe') {
             if (currentVersion === '00x') {
-              carInstructions = '系统界面连点 8 次';
-              adbInstructions = '进入加密项输入上方计算后的口令';
+              carInstructions = '系统界面连续点击 8 次';
+              settingInstructions = '设置项输入计算后的口令';
             } else {
-              carInstructions = '应用中心——蓝牙电话，输入上方口令';
-              adbInstructions = '加密设置——进入加密设置，输入上方口令';
+              carInstructions = '应用中心——蓝牙电话，输入对应口令';
+              settingInstructions = '系统设置——输入对应口令';
             }
           } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
-            carInstructions = '系统界面点击系统升级——快速点击8次系统版本——ADB切换——ADB模式';
-            adbInstructions = '';
+            carInstructions = '系统界面点击系统升级——快速点击8次系统版本';
+            settingInstructions = '';
           } else if (currentCarModel === 'dasheng') {
             if (currentVersion === '00x') {
-              carInstructions = '系统界面连点 8 次';
-              adbInstructions = '进入加密项输入上方计算后的口令';
+              carInstructions = '系统界面连续点击 8 次';
+              settingInstructions = '设置项输入计算后的口令';
             } else {
-              carInstructions = '应用中心——蓝牙电话，输入上方口令';
-              adbInstructions = '';
+              carInstructions = '应用中心——蓝牙电话，输入对应口令';
+              settingInstructions = '';
             }
           } else {
             if (currentVersion === '00x') {
-              carInstructions = '系统界面连点 8 次';
-              adbInstructions = '进入加密项输入上方计算后的口令';
+              carInstructions = '系统界面连续点击 8 次';
+              settingInstructions = '设置项输入计算后的口令';
             } else {
-              carInstructions = '应用中心——蓝牙电话，输入上方口令';
-              adbInstructions = '';
+              carInstructions = '应用中心——蓝牙电话，输入对应口令';
+              settingInstructions = '';
             }
           }
           
@@ -467,12 +467,12 @@ Page({
           
           this.setData({
             carPassword: result.carPassword || '--',
-            actualAdbPassword: result.adbPassword || '',
-            adbPassword: result.adbPassword || '--',
+            actualSettingPassword: result.adbPassword || '',
+            settingPassword: result.adbPassword || '--',
             nextUpdateTime: nextUpdateTime,
             updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
             carInstructions: carInstructions,
-            adbInstructions: adbInstructions,
+            settingInstructions: settingInstructions,
             isCountdownMode: isCountdownMode,
             countdownSeconds: countdownSeconds,
             countdownDisplay: countdownDisplay
@@ -493,15 +493,15 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '车机口令工具',
-      desc: '专业的车机工程模式口令计算工具',
+      title: '车机工具',
+      desc: '便捷的车机技术信息查询工具',
       path: '/pages/index/index'
     };
   },
 
   onShareTimeline() {
     return {
-      title: '车机口令工具 - 专业的车机工程模式口令计算',
+      title: '车机工具 - 便捷的车机技术信息查询',
       query: {}
     };
   }
