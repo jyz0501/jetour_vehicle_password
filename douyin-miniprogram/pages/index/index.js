@@ -274,6 +274,7 @@ Page({
     
     // 车型列表
     carModelList: [
+      { label: '捷途G700', value: 'g700' },
       { label: '旅行者/山海T2', value: 'traveler' },
       { label: '自由者/山海T1', value: 'ziyouzhe' },
       { label: '山海L7/Plus/T9', value: 'shanhal7' },
@@ -283,12 +284,11 @@ Page({
       { label: 'X70Plus/L/Pro/CDM', value: 'x70plus' },
       { label: 'X90/Plus/Pro/CDM', value: 'x90plus' },
       { label: 'X95', value: 'x95' },
-      { label: '大圣', value: 'dasheng' },
-      { label: 'G700', value: 'g700' }
+      { label: '大圣', value: 'dasheng' }
     ],
     
     // 当前选择的车型索引
-    carModelIndex: 0,
+    carModelIndex: 1,
 
     // 当前选择的车型
     currentCarModel: 'traveler',
