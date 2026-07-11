@@ -295,14 +295,17 @@ function calculatePasswords(carModel, version, params) {
     const algorithm = getCarModelAlgorithm(carModel, version);
     const now = new Date();
     
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const chinaTime = new Date(utc + 8 * 3600000);
+    
     const fullParams = {
         ...params,
-        year: now.getFullYear(),
-        month: formatTimeUnit(now.getMonth() + 1),
-        date: formatTimeUnit(now.getDate()),
-        hours: now.getHours(),
-        dateTimeNum: parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10),
-        mmddhh: parseInt(`${formatTimeUnit(now.getMonth() + 1)}${formatTimeUnit(now.getDate())}${formatTimeUnit(now.getHours())}`, 10),
+        year: chinaTime.getFullYear(),
+        month: formatTimeUnit(chinaTime.getMonth() + 1),
+        date: formatTimeUnit(chinaTime.getDate()),
+        hours: chinaTime.getHours(),
+        dateTimeNum: parseInt(`${formatTimeUnit(chinaTime.getMonth() + 1)}${formatTimeUnit(chinaTime.getDate())}${formatTimeUnit(chinaTime.getHours())}`, 10),
+        mmddhh: parseInt(`${formatTimeUnit(chinaTime.getMonth() + 1)}${formatTimeUnit(chinaTime.getDate())}${formatTimeUnit(chinaTime.getHours())}`, 10),
         carModel,
         version
     };
@@ -375,15 +378,17 @@ async function handleRequest(request) {
     try {
         const result = calculatePasswords(carModel, version, { serialNumber });
         const now = new Date();
-        const month = formatTimeUnit(now.getMonth() + 1);
-        const date = formatTimeUnit(now.getDate());
-        const hours = formatTimeUnit(now.getHours());
-        const minutes = formatTimeUnit(now.getMinutes());
+        const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        const chinaTime = new Date(utc + 8 * 3600000);
+        const month = formatTimeUnit(chinaTime.getMonth() + 1);
+        const date = formatTimeUnit(chinaTime.getDate());
+        const hours = formatTimeUnit(chinaTime.getHours());
+        const minutes = formatTimeUnit(chinaTime.getMinutes());
         
         return new Response(JSON.stringify({
             success: true,
             data: result,
-            updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
+            updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
             timestamp: now.getTime()
         }), {
             headers: {
