@@ -82,6 +82,13 @@ const carModels = {
     versionNames: {
       'fixed': '固定口令'
     }
+  },
+  g700: {
+    name: 'G700',
+    versions: ['330335'],
+    versionNames: {
+      '330335': '3.30-3.35'
+    }
   }
 };
 
@@ -313,6 +320,18 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
+  // G700车型
+  else if (carModel === 'g700') {
+    carPassword = `*#20240730#*`;
+    const adbFullG700 = 240730 * dateTimeNum;
+    adbPassword = (adbFullG700 % 1000000).toString().padStart(6, '0');
+    
+    const nextHourG700 = new Date(now);
+    nextHourG700.setHours(now.getHours() + 1, 0, 0, 0);
+    countdownSeconds = Math.floor((nextHourG700 - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
+  }
 
   // 生成更新时间字符串
   const updateTime = `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`;
@@ -346,7 +365,8 @@ Page({
       { label: 'X70Plus/L/Pro/CDM', value: 'x70plus' },
       { label: 'X90/Plus/Pro/CDM', value: 'x90plus' },
       { label: 'X95', value: 'x95' },
-      { label: '大圣', value: 'dasheng' }
+      { label: '大圣', value: 'dasheng' },
+      { label: 'G700', value: 'g700' }
     ],
     
     // 当前选择的车型索引

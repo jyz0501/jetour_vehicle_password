@@ -223,6 +223,22 @@ export const algorithms = {
         }
     },
     
+    // 240730动态算法（G700车型，3.30-3.35版本，按小时更新）
+    dynamic240730: {
+        name: '240730动态算法（G700车型）',
+        countdown: 'hourly',
+        showSerialNumberInput: false,
+        calculate: function(params) {
+            const { dateTimeNum } = params;
+            const adbFull = 240730 * dateTimeNum;
+            
+            return {
+                carPassword: '*#20240730#*',
+                adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+            };
+        }
+    },
+    
     // 其他车型算法
     otherCars: {
         name: '其他车型算法',
