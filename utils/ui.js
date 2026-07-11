@@ -71,6 +71,20 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div class="password-value" id="password1">--</div>
             </div>
         `;
+    } else if (currentCarModel === 'g700') {
+        passwordGroup.innerHTML = `
+            <div class="password-card">
+                <h2>1. 工程模式口令</h2>
+                <div class="password-value" id="carPassword">--</div>
+                <div id="carInstructions">应用中心——蓝牙电话，输入上方口令</div>
+            </div>
+            <div class="password-card">
+                <h2>2. ADB权限口令</h2>
+                <div class="password-value" id="adbPassword">******</div>
+                <button id="showAdbPassword" class="toggle-button">显示口令</button>
+                <div id="adbInstructions">进入加密项输入上方计算后的口令</div>
+            </div>
+        `;
     } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
         let html = '';
         for (let i = 1; i <= 3; i++) {

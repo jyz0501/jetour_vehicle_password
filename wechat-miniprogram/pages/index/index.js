@@ -399,6 +399,9 @@ Page({
     // 序列号输入
     serialNumber: '',
 
+    // G700加密口令显示状态
+    g700PasswordVisible: false,
+
     // 定时器
     updateTimer: null,
     countdownTimer: null
@@ -473,7 +476,8 @@ Page({
       serialNumber: '',
       isCountdownMode: false,
       countdownSeconds: 0,
-      countdownDisplay: ''
+      countdownDisplay: '',
+      g700PasswordVisible: false
     }, () => {
       this.updateVersionList();
       this.updatePasswords();
@@ -634,9 +638,13 @@ Page({
       }
     }
     
-    // 取消加密验证，所有口令直接显示
+    // G700车型加密处理
     let displayAdbPassword = result.adbPassword;
     let displayCarPassword = result.carPassword;
+    
+    if (currentCarModel === 'g700' && !this.data.g700PasswordVisible) {
+      displayAdbPassword = '******';
+    }
     
     // 倒计时模式处理
     let displayNextUpdateTime = result.nextUpdateTime;
@@ -687,5 +695,34 @@ Page({
       title: '车机口令工具 - 专业的车机工程模式口令计算',
       query: {}
     };
+  },
+
+  // G700车型显示口令验证
+  showG700Password() {
+    const that = this;
+    wx.showModal({
+      title: '验证口令',
+      editable: true,
+      placeholderText: '请输入验证口令',
+      success(res) {
+        if (res.confirm) {
+          const inputPassword = res.content;
+          const actualPassword = that.data.adbPassword;
+          
+          if (inputPassword === actualPassword) {
+            that.setData({
+              g700PasswordVisible: true,
+              adbPassword: actualPassword
+            });
+          } else {
+            wx.showToast({
+              title: '口令错误',
+              icon: 'none',
+              duration: 2000
+            });
+          }
+        }
+      }
+    });
   }
 });

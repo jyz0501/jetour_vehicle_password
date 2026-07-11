@@ -164,7 +164,7 @@ export const carModels = {
             '330335': 'dynamic240730'
         },
         encrypted: {
-            '330335': false
+            '330335': true
         }
     }
 };

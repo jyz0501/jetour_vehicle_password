@@ -228,6 +228,7 @@ export const algorithms = {
         name: '250530动态算法（G700车型）',
         countdown: 'hourly',
         showSerialNumberInput: false,
+        isEncrypted: true,
         calculate: function(params) {
             const { dateTimeNum, hours } = params;
             const adbFull = 250530 * dateTimeNum - hours;
