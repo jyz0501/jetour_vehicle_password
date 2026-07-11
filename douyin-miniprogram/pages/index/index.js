@@ -231,6 +231,18 @@ function calculatePasswords(carModel, version, now, serialNumber = '') {
     nextUpdateTime = '无（固定口令）';
     isFixedPassword = true;
   }
+  // G700车型
+  else if (carModel === 'g700') {
+    systemPassword = `*#20240730#*`;
+    const adbFullG700 = 240730 * dateTimeNum;
+    adbPassword = (adbFullG700 % 1000000).toString().padStart(6, '0');
+
+    const nextHourG700 = new Date(now);
+    nextHourG700.setHours(now.getHours() + 1, 0, 0, 0);
+    countdownSeconds = Math.floor((nextHourG700 - now) / 1000);
+    nextUpdateTime = '倒计时';
+    isCountdownMode = true;
+  }
   // 其他车型
   else {
     systemPassword = `*#20230730#*`;
@@ -271,7 +283,8 @@ Page({
       { label: 'X70Plus/L/Pro/CDM', value: 'x70plus' },
       { label: 'X90/Plus/Pro/CDM', value: 'x90plus' },
       { label: 'X95', value: 'x95' },
-      { label: '大圣', value: 'dasheng' }
+      { label: '大圣', value: 'dasheng' },
+      { label: 'G700', value: 'g700' }
     ],
     
     // 当前选择的车型索引
@@ -524,6 +537,11 @@ Page({
       case 'dasheng':
         versionList = [
           { label: '固定口令', version: 'fixed' }
+        ];
+        break;
+      case 'g700':
+        versionList = [
+          { label: '3.30-3.35', version: '330335' }
         ];
         break;
       default:

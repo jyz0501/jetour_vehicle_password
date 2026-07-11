@@ -153,5 +153,18 @@ export const carModels = {
         encrypted: {
             'fixed': false
         }
+    },
+    g700: {
+        name: '捷途G700',
+        versions: ['330335'],
+        versionNames: {
+            '330335': '3.30-3.35'
+        },
+        algorithms: {
+            '330335': 'dynamic240730'
+        },
+        encrypted: {
+            '330335': false
+        }
     }
 };
