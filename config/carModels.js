@@ -7,7 +7,7 @@ export const carModels = {
             '330335': '3.30-3.35'
         },
         algorithms: {
-            '330335': 'dynamic240730'
+            '330335': 'dynamic250530'
         },
         encrypted: {
             '330335': true

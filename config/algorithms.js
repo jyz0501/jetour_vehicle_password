@@ -224,7 +224,7 @@ export const algorithms = {
     },
     
     // 250530动态算法（G700车型，3.30-3.35版本，按小时更新）
-    dynamic240730: {
+    dynamic250530: {
         name: '250530动态算法（G700车型）',
         countdown: 'hourly',
         showSerialNumberInput: false,
