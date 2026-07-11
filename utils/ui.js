@@ -72,9 +72,37 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             <div class="password-card">
                 <h2>2. ADB权限口令</h2>
                 <div class="password-value" id="adbPassword">--</div>
+                <div id="g700PasswordInput" style="display: none; margin-top: 10px;">
+                    <input type="text" id="g700VerifyPassword" maxlength="6" placeholder="请输入密码" style="width: 100%; padding: 8px; font-size: 14px; text-align: center; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                    <button id="g700VerifyButton" class="toggle-button" style="margin-top: 8px;">验证</button>
+                    <p id="g700VerifyError" style="color: #e74c3c; margin-top: 8px; display: none; font-size: 12px;">密码错误</p>
+                </div>
                 <div id="adbInstructions">进入加密项输入上方计算后的口令</div>
             </div>
         `;
+        
+        const adbPasswordEl = document.getElementById('adbPassword');
+        if (adbPasswordEl) {
+            adbPasswordEl.textContent = '请验证密码';
+            adbPasswordEl.style.color = '#95a5a6';
+        }
+        document.getElementById('g700PasswordInput').style.display = 'block';
+        
+        document.getElementById('g700VerifyButton').addEventListener('click', function() {
+            const input = document.getElementById('g700VerifyPassword');
+            const errorEl = document.getElementById('g700VerifyError');
+            const adbPwdEl = document.getElementById('adbPassword');
+            
+            if (input.value === '202407') {
+                errorEl.style.display = 'none';
+                adbPwdEl.textContent = window.g700AdbPassword || '--';
+                adbPwdEl.style.color = '#e74c3c';
+                document.getElementById('g700PasswordInput').style.display = 'none';
+            } else {
+                errorEl.style.display = 'block';
+                input.value = '';
+            }
+        });
     } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
         let html = '';
         for (let i = 1; i <= 3; i++) {
@@ -246,11 +274,20 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
         const carPasswordEl = document.getElementById('carPassword');
         const adbPasswordEl = document.getElementById('adbPassword');
         
+        window.g700AdbPassword = result.adbPassword || '--';
+        
         if (carPasswordEl) {
             carPasswordEl.textContent = result.carPassword || '--';
         }
         if (adbPasswordEl) {
-            adbPasswordEl.textContent = result.adbPassword || '--';
+            const g700PasswordInput = document.getElementById('g700PasswordInput');
+            if (g700PasswordInput && g700PasswordInput.style.display !== 'none') {
+                adbPasswordEl.textContent = '请验证密码';
+                adbPasswordEl.style.color = '#95a5a6';
+            } else {
+                adbPasswordEl.textContent = window.g700AdbPassword || '--';
+                adbPasswordEl.style.color = '#e74c3c';
+            }
         }
     } else {
         if (result.passwords && Array.isArray(result.passwords)) {
