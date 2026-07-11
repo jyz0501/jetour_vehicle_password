@@ -137,3 +137,7 @@ douyin-miniprogram/coverage/
 douyin-miniprogram/.eslintcache/
 douyin-miniprogram/.tmp/
 douyin-miniprogram/.log/
+
+# Cloudflare Wrangler
+server/.wrangler/
+.wrangler/
