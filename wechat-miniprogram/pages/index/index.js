@@ -707,7 +707,7 @@ Page({
       success(res) {
         if (res.confirm) {
           const inputPassword = res.content;
-          const actualPassword = that.data.adbPassword;
+          const actualPassword = that.data.actualAdbPassword;
           
           if (inputPassword === actualPassword) {
             that.setData({
