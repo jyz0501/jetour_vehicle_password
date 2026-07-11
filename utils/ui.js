@@ -125,6 +125,15 @@ function getCdmPassword() {
     const date = formatTimeUnit(now.getDate());
     const hours = formatTimeUnit(now.getHours());
     const dateTimeNum = parseInt(`${month}${date}${hours}`, 10);
+    
+    const currentCarModel = document.getElementById('carModel').value;
+    const currentVersion = document.getElementById('version').value;
+    
+    if (currentCarModel === 'g700') {
+        const adbFull = 250530 * dateTimeNum - now.getHours();
+        return (adbFull % 1000000).toString().padStart(6, '0');
+    }
+    
     const adbFull = 250110 * dateTimeNum;
     return (adbFull % 1000000).toString().padStart(6, '0');
 }
@@ -237,6 +246,11 @@ function setupPasswordEventListeners(currentCarModel, currentVersion) {
                     const password2El = document.getElementById('password2');
                     if (password1El) password1El.textContent = result.carPassword;
                     if (password2El) password2El.textContent = result.adbPassword;
+                } else if (currentCarModel === 'g700') {
+                    const carPasswordEl = document.getElementById('carPassword');
+                    const adbPasswordEl = document.getElementById('adbPassword');
+                    if (carPasswordEl) carPasswordEl.textContent = result.carPassword;
+                    if (adbPasswordEl) adbPasswordEl.textContent = result.adbPassword;
                 }
             } else {
                 verifyError.style.display = 'block';
