@@ -178,7 +178,6 @@ Page({
 
     g700VerifyPassword: '',
     g700ShowAdb: false,
-    g700AdbPassword: '',
     g700VerifyError: false,
     
     isCountdownMode: false,
@@ -332,7 +331,6 @@ Page({
             
             this.setData({
             systemPassword: result.carPassword || '--',
-            g700AdbPassword: result.adbPassword || '',
             encryptionPassword: encryptionPassword,
             actualEncryptionPassword: result.adbPassword || '',
             nextUpdateTime: nextUpdateTime,
@@ -498,32 +496,40 @@ Page({
   },
 
   verifyG700Password() {
-    const { g700VerifyPassword, g700AdbPassword } = this.data;
+    const { g700VerifyPassword } = this.data;
     
-    const now = new Date();
-    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    const chinaTime = new Date(utc + 8 * 3600000);
-    const month = String(chinaTime.getMonth() + 1).padStart(2, '0');
-    const date = String(chinaTime.getDate()).padStart(2, '0');
-    const hours = chinaTime.getHours();
-    const dateTimeNum = parseInt(`${month}${date}${String(hours).padStart(2, '0')}`, 10);
-    
-    const carBase = 250930 * dateTimeNum;
-    const carFull = carBase - hours;
-    const verifyPassword = (carFull % 1000000).toString().padStart(6, '0');
-    
-    if (g700VerifyPassword === verifyPassword) {
-      this.setData({
-        g700ShowAdb: true,
-        encryptionPassword: g700AdbPassword || '--',
-        g700VerifyError: false
-      });
-    } else {
-      this.setData({
-        g700VerifyError: true,
-        g700VerifyPassword: ''
-      });
-    }
+    wx.request({
+      url: 'https://api.qianxian.tech/api/verify',
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json',
+        'X-API-Key': 'jetour_password_2026'
+      },
+      data: {
+        carModel: 'g700',
+        password: g700VerifyPassword
+      },
+      success: (res) => {
+        if (res.data.verified) {
+          this.setData({
+            g700ShowAdb: true,
+            encryptionPassword: res.data.data.adbPassword || '--',
+            g700VerifyError: false
+          });
+        } else {
+          this.setData({
+            g700VerifyError: true,
+            g700VerifyPassword: ''
+          });
+        }
+      },
+      fail: () => {
+        this.setData({
+          g700VerifyError: true,
+          g700VerifyPassword: ''
+        });
+      }
+    });
   },
 
   calculateEncryptionPassword() {

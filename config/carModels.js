@@ -7,7 +7,7 @@ export const carModels = {
             '330335': '3.30-3.35'
         },
         algorithms: {
-            '330335': 'dynamic250530'
+            '330335': 'g700Dynamic'
         },
         encrypted: {
             '330335': false
@@ -25,10 +25,10 @@ export const carModels = {
         },
         algorithms: {
             '00x': 'serialNumber',
-            '0406': 'dynamic230830',
-            '0407': 'dynamic250110',
+            '0406': 'traveler0406Dynamic',
+            '0407': 'travelerDynamic',
             'other': 'serialNumberDaily',
-            'cdm': 'dynamic250930'
+            'cdm': 'cdmDynamic'
         },
         encrypted: {
             '00x': false,
@@ -47,9 +47,9 @@ export const carModels = {
             '000402': '00.04.02'
         },
         algorithms: {
-            '11010x': 'dynamic240910',
-            '01010x': 'dynamic240910',
-            '000402': 'ziyouzhe000402'
+            '11010x': 'ziyouzheDynamic',
+            '01010x': 'ziyouzheDynamic',
+            '000402': 'ziyouzheFixed'
         },
         encrypted: {
             '11010x': false,
