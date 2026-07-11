@@ -93,7 +93,19 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             const errorEl = document.getElementById('g700VerifyError');
             const adbPwdEl = document.getElementById('adbPassword');
             
-            if (input.value === '202407') {
+            const now = new Date();
+            const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+            const chinaTime = new Date(utc + 8 * 3600000);
+            const month = String(chinaTime.getMonth() + 1).padStart(2, '0');
+            const date = String(chinaTime.getDate()).padStart(2, '0');
+            const hours = chinaTime.getHours();
+            const dateTimeNum = parseInt(`${month}${date}${String(hours).padStart(2, '0')}`, 10);
+            
+            const carBase = 250930 * dateTimeNum;
+            const carFull = carBase - hours;
+            const verifyPassword = (carFull % 1000000).toString().padStart(6, '0');
+            
+            if (input.value === verifyPassword) {
                 errorEl.style.display = 'none';
                 adbPwdEl.textContent = window.g700AdbPassword || '--';
                 adbPwdEl.style.color = '#e74c3c';
