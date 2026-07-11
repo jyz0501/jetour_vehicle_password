@@ -10,7 +10,7 @@ export const carModels = {
             '330335': 'dynamic250530'
         },
         encrypted: {
-            '330335': true
+            '330335': false
         }
     },
     traveler: {

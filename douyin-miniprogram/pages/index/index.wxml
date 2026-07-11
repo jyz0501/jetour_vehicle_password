@@ -82,16 +82,7 @@
           <button class="calculate-button" bindtap="calculateEncryptionPassword">计算口令</button>
         </view>
         
-        <view class="password-container">
-          <text class="password-value">{{encryptionPassword}}</text>
-          <button 
-            wx:if="{{currentCarModel === 'g700' && !g700PasswordVisible}}"
-            class="toggle-button"
-            bindtap="showG700Password"
-          >
-            显示口令
-          </button>
-        </view>
+        <text class="password-value">{{encryptionPassword}}</text>
         
         <text class="instructions">{{encryptionInstructions}}</text>
       </view>

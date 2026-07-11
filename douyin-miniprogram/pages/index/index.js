@@ -323,9 +323,6 @@ Page({
     // 序列号输入
     serialNumber: '',
 
-    // G700加密口令显示状态
-    g700PasswordVisible: false,
-
     // 倒计时相关
     isCountdownMode: false,
     countdownSeconds: 0,
@@ -406,11 +403,6 @@ Page({
     let actualEncryptionPassword = result.adbPassword;
     let systemInstructions = '应用中心——蓝牙电话，输入上方口令';
     let encryptionInstructions = '进入加密项输入上方计算后的口令';
-
-    // G700车型加密处理
-    if (currentCarModel === 'g700' && !this.data.g700PasswordVisible) {
-      encryptionPasswordDisplay = '******';
-    }
 
     // 对于固定口令版本的特殊处理
     if (currentVersion === '0406') {
@@ -564,8 +556,7 @@ Page({
       versionList: versionList,
       versionIndex: 0,
       currentVersion: versionList[0].version,
-      serialNumber: '',
-      g700PasswordVisible: false
+      serialNumber: ''
     });
 
     this.updatePasswords();
@@ -662,32 +653,4 @@ Page({
     };
   },
 
-  // G700车型显示口令验证
-  showG700Password() {
-    const that = this;
-    wx.showModal({
-      title: '验证口令',
-      editable: true,
-      placeholderText: '请输入验证口令',
-      success(res) {
-        if (res.confirm) {
-          const inputPassword = res.content;
-          const actualPassword = that.data.actualEncryptionPassword;
-          
-          if (inputPassword === actualPassword) {
-            that.setData({
-              g700PasswordVisible: true,
-              encryptionPassword: actualPassword
-            });
-          } else {
-            wx.showToast({
-              title: '口令错误',
-              icon: 'none',
-              duration: 2000
-            });
-          }
-        }
-      }
-    });
-  }
-});
+  });
