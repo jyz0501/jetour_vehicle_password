@@ -80,8 +80,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             </div>
             <div class="password-card">
                 <h2>2. ADB权限口令</h2>
-                <div class="password-value" id="adbPassword">******</div>
-                <button id="showAdbPassword" class="toggle-button">显示口令</button>
+                <div class="password-value" id="adbPassword">--</div>
                 <div id="adbInstructions">进入加密项输入上方计算后的口令</div>
             </div>
         `;

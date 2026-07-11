@@ -399,8 +399,7 @@ Page({
     // 序列号输入
     serialNumber: '',
 
-    // G700加密口令显示状态
-    g700PasswordVisible: false,
+    
 
     // 定时器
     updateTimer: null,
@@ -476,8 +475,7 @@ Page({
       serialNumber: '',
       isCountdownMode: false,
       countdownSeconds: 0,
-      countdownDisplay: '',
-      g700PasswordVisible: false
+      countdownDisplay: ''
     }, () => {
       this.updateVersionList();
       this.updatePasswords();
@@ -638,14 +636,6 @@ Page({
       }
     }
     
-    // G700车型加密处理
-    let displayAdbPassword = result.adbPassword;
-    let displayCarPassword = result.carPassword;
-    
-    if (currentCarModel === 'g700' && !this.data.g700PasswordVisible) {
-      displayAdbPassword = '******';
-    }
-    
     // 倒计时模式处理
     let displayNextUpdateTime = result.nextUpdateTime;
     let countdownDisplay = '';
@@ -656,9 +646,9 @@ Page({
     }
     
     this.setData({
-      carPassword: displayCarPassword,
+      carPassword: result.carPassword,
       actualAdbPassword: result.adbPassword,
-      adbPassword: displayAdbPassword,
+      adbPassword: result.adbPassword,
       nextUpdateTime: displayNextUpdateTime,
       updateTime: result.updateTime,
       carInstructions: carInstructions,
@@ -697,32 +687,4 @@ Page({
     };
   },
 
-  // G700车型显示口令验证
-  showG700Password() {
-    const that = this;
-    wx.showModal({
-      title: '验证口令',
-      editable: true,
-      placeholderText: '请输入验证口令',
-      success(res) {
-        if (res.confirm) {
-          const inputPassword = res.content;
-          const actualPassword = that.data.actualAdbPassword;
-          
-          if (inputPassword === actualPassword) {
-            that.setData({
-              g700PasswordVisible: true,
-              adbPassword: actualPassword
-            });
-          } else {
-            wx.showToast({
-              title: '口令错误',
-              icon: 'none',
-              duration: 2000
-            });
-          }
-        }
-      }
-    });
-  }
-});
+  });

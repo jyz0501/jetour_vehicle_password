@@ -84,7 +84,7 @@
 
         <text class="password-value">{{adbPassword}}</text>
 
-        <button wx:if="{{currentCarModel === 'g700' && !g700PasswordVisible}}" class="toggle-button" bindtap="showG700Password">显示口令</button>
+        
 
         <text class="instructions">{{adbInstructions}}</text>
       </view>
