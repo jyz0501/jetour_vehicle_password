@@ -117,12 +117,14 @@ const carModels = {
   },
   g700: {
     name: 'G700',
-    versions: ['330335'],
+    versions: ['330335', '4.0x-4.4x'],
     versionNames: {
-      '330335': '3.30-3.35'
+      '330335': '3.30-3.35',
+      '4.0x-4.4x': '4.0x-4.4x'
     },
     countdownType: {
-      '330335': 'hourly'
+      '330335': 'hourly',
+      '4.0x-4.4x': 'hourly'
     }
   }
 };
@@ -262,7 +264,8 @@ Page({
       data: {
         carModel: currentCarModel,
         version: currentVersion,
-        serialNumber: serialNumber
+        serialNumber: serialNumber,
+        timezoneOffset: new Date().getTimezoneOffset()
       },
       success: (res) => {
         if (res.data && res.data.success) {
@@ -334,7 +337,7 @@ Page({
             encryptionPassword: encryptionPassword,
             actualEncryptionPassword: result.adbPassword || '',
             nextUpdateTime: nextUpdateTime,
-            updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
+            updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes} UTC`,
             systemInstructions: systemInstructions,
             encryptionInstructions: encryptionInstructions,
             isCountdownMode: isCountdownMode,
@@ -359,7 +362,9 @@ Page({
     const version = e.currentTarget.dataset.version;
     this.setData({
       currentVersion: version,
-      serialNumber: ''
+      serialNumber: '',
+      g700VerifyPassword: '',
+      g700ShowAdb: false
     });
     this.updatePasswords();
   },
@@ -430,7 +435,8 @@ Page({
         break;
       case 'g700':
         versionList = [
-          { label: '3.30-3.35', version: '330335' }
+          { label: '3.30-3.35', version: '330335' },
+          { label: '4.0x-4.4x', version: '4.0x-4.4x' }
         ];
         break;
       default:
@@ -445,7 +451,9 @@ Page({
       versionList: versionList,
       versionIndex: 0,
       currentVersion: versionList[0].version,
-      serialNumber: ''
+      serialNumber: '',
+      g700VerifyPassword: '',
+      g700ShowAdb: false
     });
 
     this.updatePasswords();
@@ -458,7 +466,9 @@ Page({
     this.setData({
       versionIndex: index,
       currentVersion: version,
-      serialNumber: ''
+      serialNumber: '',
+      g700VerifyPassword: '',
+      g700ShowAdb: false
     });
 
     this.updatePasswords();
@@ -496,7 +506,7 @@ Page({
   },
 
   verifyG700Password() {
-    const { g700VerifyPassword } = this.data;
+    const { g700VerifyPassword, currentVersion } = this.data;
     
     wx.request({
       url: 'https://api.qianxian.tech/api/verify',
@@ -507,7 +517,9 @@ Page({
       },
       data: {
         carModel: 'g700',
-        password: g700VerifyPassword
+        password: g700VerifyPassword,
+        version: currentVersion,
+        timezoneOffset: new Date().getTimezoneOffset()
       },
       success: (res) => {
         if (res.data.verified) {
