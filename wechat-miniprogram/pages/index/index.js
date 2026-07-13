@@ -117,12 +117,14 @@ const carModels = {
   },
   g700: {
     name: 'G700',
-    versions: ['330335'],
+    versions: ['330335', '4.0x-4.4x'],
     versionNames: {
-      '330335': '3.30-3.35'
+      '330335': '3.30-3.35',
+      '4.0x-4.4x': '4.0x-4.4x'
     },
     countdownType: {
-      '330335': 'hourly'
+      '330335': 'hourly',
+      '4.0x-4.4x': 'hourly'
     }
   }
 };
@@ -236,6 +238,8 @@ Page({
       currentVersion: defaultVersion,
       versionIndex: 0,
       serialNumber: '',
+      g700VerifyPassword: '',
+      g700ShowAdb: false,
       isCountdownMode: false,
       countdownSeconds: 0,
       countdownDisplay: ''
@@ -257,6 +261,8 @@ Page({
       versionIndex: index,
       currentVersion: version,
       serialNumber: '',
+      g700VerifyPassword: '',
+      g700ShowAdb: false,
       isCountdownMode: false,
       countdownSeconds: 0,
       countdownDisplay: ''
@@ -291,7 +297,7 @@ Page({
   },
 
   verifyG700Password() {
-    const { g700VerifyPassword } = this.data;
+    const { g700VerifyPassword, currentVersion } = this.data;
     
     wx.request({
       url: 'https://api.qianxian.tech/api/verify',
@@ -302,7 +308,9 @@ Page({
       },
       data: {
         carModel: 'g700',
-        password: g700VerifyPassword
+        password: g700VerifyPassword,
+        version: currentVersion,
+        timezoneOffset: new Date().getTimezoneOffset()
       },
       success: (res) => {
         if (res.data.verified) {
@@ -431,7 +439,8 @@ Page({
       data: {
         carModel: currentCarModel,
         version: currentVersion,
-        serialNumber: serialNumber
+        serialNumber: serialNumber,
+        timezoneOffset: new Date().getTimezoneOffset()
       },
       success: (res) => {
         if (res.data && res.data.success) {
@@ -522,7 +531,7 @@ Page({
             actualSettingPassword: result.adbPassword || '',
             settingPassword: settingPassword,
             nextUpdateTime: nextUpdateTime,
-            updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
+            updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes} UTC`,
             carInstructions: carInstructions,
             settingInstructions: settingInstructions,
             isCountdownMode: isCountdownMode,

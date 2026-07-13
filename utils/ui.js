@@ -106,7 +106,8 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     },
                     body: JSON.stringify({
                         carModel: 'g700',
-                        password: input.value
+                        password: input.value,
+                        version: currentVersion
                     })
                 });
                 const data = await response.json();

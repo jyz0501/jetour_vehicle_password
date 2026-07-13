@@ -120,6 +120,17 @@ const algorithms = {
             adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
         };
     },
+
+    dynamic250830: function(params) {
+        const { dateTimeNum, hours } = params;
+        const adbFull = 250830 * dateTimeNum;
+        const carFull = adbFull - hours;
+
+        return {
+            carPassword: `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`,
+            adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
+        };
+    },
     
     dynamic240910: function(params) {
         const { mmddhh, hours } = params;
@@ -268,9 +279,10 @@ const carModels = {
         }
     },
     g700: {
-        versions: ['330335'],
+        versions: ['330335', '4.0x-4.4x'],
         algorithms: {
-            '330335': 'dynamic250530'
+            '330335': 'dynamic250530',
+            '4.0x-4.4x': 'dynamic250830'
         }
     }
 };
@@ -296,16 +308,22 @@ function calculatePasswords(carModel, version, params) {
     const now = new Date();
     
     const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    const chinaTime = new Date(utc + 8 * 3600000);
+    
+    let localTime;
+    if (params.timezoneOffset !== undefined && params.timezoneOffset !== null) {
+        localTime = new Date(utc - params.timezoneOffset * 60000);
+    } else {
+        localTime = new Date(utc + 8 * 3600000);
+    }
     
     const fullParams = {
         ...params,
-        year: chinaTime.getFullYear(),
-        month: formatTimeUnit(chinaTime.getMonth() + 1),
-        date: formatTimeUnit(chinaTime.getDate()),
-        hours: chinaTime.getHours(),
-        dateTimeNum: parseInt(`${formatTimeUnit(chinaTime.getMonth() + 1)}${formatTimeUnit(chinaTime.getDate())}${formatTimeUnit(chinaTime.getHours())}`, 10),
-        mmddhh: parseInt(`${formatTimeUnit(chinaTime.getMonth() + 1)}${formatTimeUnit(chinaTime.getDate())}${formatTimeUnit(chinaTime.getHours())}`, 10),
+        year: localTime.getFullYear(),
+        month: formatTimeUnit(localTime.getMonth() + 1),
+        date: formatTimeUnit(localTime.getDate()),
+        hours: localTime.getHours(),
+        dateTimeNum: parseInt(`${formatTimeUnit(localTime.getMonth() + 1)}${formatTimeUnit(localTime.getDate())}${formatTimeUnit(localTime.getHours())}`, 10),
+        mmddhh: parseInt(`${formatTimeUnit(localTime.getMonth() + 1)}${formatTimeUnit(localTime.getDate())}${formatTimeUnit(localTime.getHours())}`, 10),
         carModel,
         version
     };
@@ -347,7 +365,7 @@ async function handleRequest(request) {
     if (path === '/api/verify' && request.method === 'POST') {
         try {
             const body = await request.json();
-            const { carModel, password } = body;
+            const { carModel, password, timezoneOffset, version } = body;
             
             if (carModel !== 'g700') {
                 return new Response(JSON.stringify({ success: false, verified: false, error: 'Invalid car model' }), {
@@ -357,10 +375,17 @@ async function handleRequest(request) {
             
             const now = new Date();
             const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-            const chinaTime = new Date(utc + 8 * 3600000);
-            const month = formatTimeUnit(chinaTime.getMonth() + 1);
-            const date = formatTimeUnit(chinaTime.getDate());
-            const hours = chinaTime.getHours();
+            
+            let localTime;
+            if (timezoneOffset !== undefined && timezoneOffset !== null) {
+                localTime = new Date(utc - timezoneOffset * 60000);
+            } else {
+                localTime = new Date(utc + 8 * 3600000);
+            }
+            
+            const month = formatTimeUnit(localTime.getMonth() + 1);
+            const date = formatTimeUnit(localTime.getDate());
+            const hours = localTime.getHours();
             const dateTimeNum = parseInt(`${month}${date}${String(hours).padStart(2, '0')}`, 10);
             
             const carBase = 250930 * dateTimeNum;
@@ -368,7 +393,8 @@ async function handleRequest(request) {
             const verifyPassword = (carFull % 1000000).toString().padStart(6, '0');
             
             if (password === verifyPassword) {
-                const result = calculatePasswords('g700', '330335', {});
+                const verifyVersion = version || '330335';
+                const result = calculatePasswords('g700', verifyVersion, { timezoneOffset });
                 return new Response(JSON.stringify({
                     success: true,
                     verified: true,
@@ -389,7 +415,7 @@ async function handleRequest(request) {
         }
     }
     
-    let carModel, version, serialNumber;
+    let carModel, version, serialNumber, timezoneOffset;
     
     if (request.method === 'POST') {
         try {
@@ -397,6 +423,7 @@ async function handleRequest(request) {
             carModel = body.carModel;
             version = body.version;
             serialNumber = body.serialNumber || '';
+            timezoneOffset = body.timezoneOffset;
         } catch (e) {
             return new Response(JSON.stringify({ error: 'Invalid request body' }), {
                 status: 400,
@@ -410,6 +437,7 @@ async function handleRequest(request) {
         carModel = url.searchParams.get('carModel');
         version = url.searchParams.get('version');
         serialNumber = url.searchParams.get('serialNumber') || '';
+        timezoneOffset = url.searchParams.get('timezoneOffset');
     }
     
     if (!carModel || !version) {
@@ -423,7 +451,7 @@ async function handleRequest(request) {
     }
     
     try {
-        const result = calculatePasswords(carModel, version, { serialNumber });
+        const result = calculatePasswords(carModel, version, { serialNumber, timezoneOffset });
         const now = new Date();
         const utc = now.getTime() + now.getTimezoneOffset() * 60000;
         const chinaTime = new Date(utc + 8 * 3600000);
@@ -437,7 +465,7 @@ async function handleRequest(request) {
             return new Response(JSON.stringify({
                 success: true,
                 data: { carPassword: result.carPassword, adbPassword: null, needVerify: true },
-                updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
+                updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes} UTC`,
                 timestamp: now.getTime()
             }), {
                 headers: {
@@ -451,7 +479,7 @@ async function handleRequest(request) {
         return new Response(JSON.stringify({
             success: true,
             data: result,
-            updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes}`,
+            updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes} UTC`,
             timestamp: now.getTime()
         }), {
             headers: {
