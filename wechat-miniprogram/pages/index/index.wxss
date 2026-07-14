@@ -165,6 +165,14 @@
   background-color: #1E88E5;
 }
 
+.timezone-picker-inline {
+  flex: 1;
+}
+
+.timezone-picker-inline .picker-value-inline {
+  background-color: #4CAF50;
+}
+
 /* 车型选择器样式 */
 .car-selector {
   margin-bottom: 30rpx;

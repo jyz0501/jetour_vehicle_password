@@ -1,6 +1,7 @@
 import { carModels } from '../config/carModels.js';
 import { fetchPasswordsWithRetry } from './api.js';
 import { getCountdownType, formatTimeUnit } from './password.js';
+import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';
 
 export function renderVersionButtons(currentCarModel, currentVersion) {
     const versionButtonsContainer = document.querySelector('.version-buttons');
@@ -107,13 +108,18 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     body: JSON.stringify({
                         carModel: 'g700',
                         password: input.value,
-                        version: currentVersion
+                        version: currentVersion,
+                        timezoneOffset: currentTimezoneOffset
                     })
                 });
                 const data = await response.json();
                 
                 if (data.verified) {
                     errorEl.style.display = 'none';
+                    const carPwdEl = document.getElementById('carPassword');
+                    const adbPwdEl = document.getElementById('adbPassword');
+                    carPwdEl.textContent = data.data.carPassword || '--';
+                    carPwdEl.style.color = '';
                     adbPwdEl.textContent = data.data.adbPassword || '--';
                     adbPwdEl.style.color = '#e74c3c';
                     document.getElementById('g700PasswordInput').style.display = 'none';
@@ -237,34 +243,28 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
 }
 
 export function updateCountdown(currentCarModel, currentVersion) {
-    const now = new Date();
     const countdownEl = document.getElementById('nextUpdateTime');
     if (!countdownEl) return;
-    
+
     const countdownType = getCountdownType(currentCarModel, currentVersion);
-    
+
     if (countdownType === 'none') {
         countdownEl.textContent = '无（固定口令）';
         return;
-    } else if (countdownType === 'daily') {
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        const diff = tomorrow - now;
-        
+    }
+
+    const diff = getCountdownMs(currentTimezoneOffset, countdownType);
+
+    if (countdownType === 'daily') {
         const hours = Math.floor(diff / 3600000);
         const minutes = Math.floor((diff % 3600000) / 60000);
         const seconds = Math.floor((diff % 60000) / 1000);
-        
+
         countdownEl.textContent = `${hours}时${minutes}分${seconds.toString().padStart(2, '0')}秒`;
-    } else if (countdownType === 'hourly') {
-        const nextHour = new Date(now);
-        nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-        const diff = nextHour - now;
-        
+    } else {
         const minutes = Math.floor(diff / 60000);
         const seconds = Math.floor((diff % 60000) / 1000);
-        
+
         countdownEl.textContent = `${minutes}分${seconds.toString().padStart(2, '0')}秒`;
     }
 }
@@ -301,13 +301,23 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
         const adbPasswordEl = document.getElementById('adbPassword');
         
         if (carPasswordEl) {
-            carPasswordEl.textContent = result.carPassword || '--';
+            const g700PasswordInput = document.getElementById('g700PasswordInput');
+            if (g700PasswordInput && g700PasswordInput.style.display !== 'none') {
+                carPasswordEl.textContent = '请验证密码';
+                carPasswordEl.style.color = '#95a5a6';
+            } else {
+                carPasswordEl.textContent = result.carPassword || '--';
+                carPasswordEl.style.color = '';
+            }
         }
         if (adbPasswordEl) {
             const g700PasswordInput = document.getElementById('g700PasswordInput');
             if (g700PasswordInput && g700PasswordInput.style.display !== 'none') {
                 adbPasswordEl.textContent = '请验证密码';
                 adbPasswordEl.style.color = '#95a5a6';
+            } else {
+                adbPasswordEl.textContent = result.adbPassword || '--';
+                adbPasswordEl.style.color = '';
             }
         }
     } else {

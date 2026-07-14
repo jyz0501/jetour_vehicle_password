@@ -1,3 +1,5 @@
+import { currentTimezoneOffset } from '../config/timezones.js';
+
 const API_BASE_URL = 'https://api.qianxian.tech';
 const API_KEY = 'jetour_password_2026';
 
@@ -12,7 +14,8 @@ export async function fetchPasswords(carModel, version, serialNumber = '') {
             body: JSON.stringify({
                 carModel,
                 version,
-                serialNumber
+                serialNumber,
+                timezoneOffset: currentTimezoneOffset
             })
         });
         
