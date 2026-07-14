@@ -1,5 +1,14 @@
 const API_KEY = 'jetour_password_2026';
 
+const MUL_A = 250110;
+const MUL_B = 250930;
+const MUL_C = 250830;
+const MUL_D = 240910;
+const MUL_E = 231030;
+const MUL_F = 230830;
+const MUL_G = 250530;
+const MUL_SN = 802018;
+
 const fixedPasswords = {
     traveler: {
         '0406': '*#20230730#*'
@@ -32,7 +41,7 @@ function getFixedPassword(carModel, version) {
     return '*#20230730#*';
 }
 
-function calculateSerialNumberDailyPassword(year, month, date) {
+function calcDailySnPwd(year, month, date) {
     const yymmdd = parseInt(`${year.toString().slice(-2)}${month}${date}`, 10);
     const lastDigit = yymmdd % 10;
     
@@ -56,7 +65,7 @@ function calculateSerialNumberDailyPassword(year, month, date) {
 }
 
 const algorithms = {
-    fixed: function(params) {
+    algo_12: function(params) {
         const { carModel, version } = params;
         return {
             carPassword: getFixedPassword(carModel, version),
@@ -64,18 +73,18 @@ const algorithms = {
         };
     },
     
-    dashengFixed: function(params) {
+    algo_10: function(params) {
         return {
             carPassword: '*#20220730#*',
             adbPassword: '无'
         };
     },
     
-    serialNumber: function(params) {
+    algo_08: function(params) {
         const { serialNumber } = params;
         if (serialNumber && serialNumber.length >= 6) {
             const snLastSix = serialNumber.slice(-6);
-            const adbFull = 802018 * parseInt(snLastSix, 10);
+            const adbFull = MUL_SN * parseInt(snLastSix, 10);
             return {
                 carPassword: '*#20230730#*',
                 adbPassword: (adbFull % 1000000).toString().padStart(6, '0')
@@ -88,19 +97,19 @@ const algorithms = {
         }
     },
     
-    serialNumberDaily: function(params) {
+    algo_09: function(params) {
         const { year, month, date } = params;
-        const adbPassword = calculateSerialNumberDailyPassword(year, month, date);
+        const adbPassword = calcDailySnPwd(year, month, date);
         return {
             carPassword: '*#20230730#*',
             adbPassword: adbPassword
         };
     },
     
-    dynamic250110: function(params) {
+    algo_01: function(params) {
         const { dateTimeNum, hours } = params;
-        const adbFull = 250110 * dateTimeNum;
-        const carBase = 250110 * dateTimeNum;
+        const adbFull = MUL_A * dateTimeNum;
+        const carBase = MUL_A * dateTimeNum;
         const carFull = carBase - hours;
         
         return {
@@ -109,10 +118,10 @@ const algorithms = {
         };
     },
     
-    dynamic250930: function(params) {
+    algo_02: function(params) {
         const { dateTimeNum, hours } = params;
-        const adbFull = 250930 * dateTimeNum;
-        const carBase = 250930 * dateTimeNum;
+        const adbFull = MUL_B * dateTimeNum;
+        const carBase = MUL_B * dateTimeNum;
         const carFull = carBase - hours;
         
         return {
@@ -121,9 +130,9 @@ const algorithms = {
         };
     },
 
-    dynamic250830: function(params) {
+    algo_03: function(params) {
         const { dateTimeNum, hours } = params;
-        const adbFull = 250830 * dateTimeNum;
+        const adbFull = MUL_C * dateTimeNum;
         const carFull = adbFull - hours;
 
         return {
@@ -132,10 +141,10 @@ const algorithms = {
         };
     },
     
-    dynamic240910: function(params) {
+    algo_04: function(params) {
         const { mmddhh, hours } = params;
-        const adbFull = 240910 * mmddhh;
-        const carFull = (240910 * mmddhh) - hours;
+        const adbFull = MUL_D * mmddhh;
+        const carFull = (MUL_D * mmddhh) - hours;
         
         return {
             carPassword: `*#${(carFull % 1000000).toString().padStart(6, '0')}#*`,
@@ -143,16 +152,16 @@ const algorithms = {
         };
     },
     
-    ziyouzhe000402: function(params) {
+    algo_11: function(params) {
         return {
             carPassword: '*#20241130#*',
             adbPassword: '无'
         };
     },
     
-    dynamic231030: function(params) {
+    algo_05: function(params) {
         const { dateTimeNum, hours } = params;
-        const adbFull = 231030 * dateTimeNum;
+        const adbFull = MUL_E * dateTimeNum;
         const carFull = adbFull - hours;
         
         return {
@@ -161,9 +170,9 @@ const algorithms = {
         };
     },
     
-    dynamic230830: function(params) {
+    algo_06: function(params) {
         const { dateTimeNum } = params;
-        const adbFull = 230830 * dateTimeNum;
+        const adbFull = MUL_F * dateTimeNum;
         
         return {
             carPassword: '*#20230730#*',
@@ -171,9 +180,9 @@ const algorithms = {
         };
     },
     
-    dynamic250530: function(params) {
+    algo_07: function(params) {
         const { dateTimeNum, hours } = params;
-        const adbFull = 250530 * dateTimeNum - hours;
+        const adbFull = MUL_G * dateTimeNum - hours;
         
         return {
             carPassword: '*#20240730#*',
@@ -181,23 +190,23 @@ const algorithms = {
         };
     },
     
-    otherCars: function(params) {
+    algo_13: function(params) {
         const { carModel, version, year, month, date, dateTimeNum, hours, mmddhh } = params;
         const passwords = [];
         
         if (carModel === 'ziyouzhe' && version === '11010x') {
-            const adbPwd = (240910 * mmddhh) % 1000000;
-            const carPwd = ((240910 * mmddhh) - hours) % 1000000;
+            const adbPwd = (MUL_D * mmddhh) % 1000000;
+            const carPwd = ((MUL_D * mmddhh) - hours) % 1000000;
             passwords.push(`*#${carPwd.toString().padStart(6, '0')}#*`);
             passwords.push(adbPwd.toString().padStart(6, '0'));
             passwords.push('--');
         } else if (carModel === 'shanhal7') {
-            const p3 = (231030 * dateTimeNum) - hours;
+            const p3 = (MUL_E * dateTimeNum) - hours;
             passwords.push(`*#20201030#*`);
-            passwords.push(calculateSerialNumberDailyPassword(year, month, date));
+            passwords.push(calcDailySnPwd(year, month, date));
             passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
         } else {
-            const p3 = (231030 * dateTimeNum) - hours;
+            const p3 = (MUL_E * dateTimeNum) - hours;
             passwords.push(`*#20201030#*`);
             passwords.push(`*#20230730#*`);
             passwords.push(`*#${(p3 % 1000000).toString().padStart(6, '0')}#*`);
@@ -213,82 +222,82 @@ const carModels = {
     traveler: {
         versions: ['00x', '0406', '0407', 'other', 'cdm'],
         algorithms: {
-            '00x': 'serialNumber',
-            '0406': 'dynamic230830',
-            '0407': 'dynamic250110',
-            'other': 'serialNumberDaily',
-            'cdm': 'dynamic250930'
+            '00x': 'algo_08',
+            '0406': 'algo_06',
+            '0407': 'algo_01',
+            'other': 'algo_09',
+            'cdm': 'algo_02'
         }
     },
     ziyouzhe: {
         versions: ['11010x', '01010x', '000402'],
         algorithms: {
-            '11010x': 'dynamic240910',
-            '01010x': 'dynamic240910',
-            '000402': 'ziyouzhe000402'
+            '11010x': 'algo_04',
+            '01010x': 'algo_04',
+            '000402': 'algo_11'
         }
     },
     shanhal7: {
         versions: ['os10201', 'os1201000'],
         algorithms: {
-            'os10201': 'otherCars',
-            'os1201000': 'otherCars'
+            'os10201': 'algo_13',
+            'os1201000': 'algo_13'
         }
     },
     shanhal9: {
         versions: ['unknown'],
         algorithms: {
-            'unknown': 'fixed'
+            'unknown': 'algo_12'
         }
     },
     fengyunA9: {
         versions: ['unknown'],
         algorithms: {
-            'unknown': 'serialNumberDaily'
+            'unknown': 'algo_09'
         }
     },
     hu8: {
         versions: ['unknown'],
         algorithms: {
-            'unknown': 'serialNumberDaily'
+            'unknown': 'algo_09'
         }
     },
     x70plus: {
         versions: ['unknown'],
         algorithms: {
-            'unknown': 'fixed'
+            'unknown': 'algo_12'
         }
     },
     x90plus: {
         versions: ['040x', 'unknown'],
         algorithms: {
-            '040x': 'fixed',
-            'unknown': 'fixed'
+            '040x': 'algo_12',
+            'unknown': 'algo_12'
         }
     },
     x95: {
         versions: ['unknown'],
         algorithms: {
-            'unknown': 'fixed'
+            'unknown': 'algo_12'
         }
     },
     dasheng: {
         versions: ['fixed'],
         algorithms: {
-            'fixed': 'dashengFixed'
+            'fixed': 'algo_10'
         }
     },
     g700: {
         versions: ['330335', '4.0x-4.4x'],
         algorithms: {
-            '330335': 'dynamic250530',
-            '4.0x-4.4x': 'dynamic250830'
+            '330335': 'algo_07',
+            '4.0x-4.4x': 'algo_03'
         }
     }
 };
 
 function getAlgorithm(algorithmName) {
-    return algorithms[algorithmName] || algorithms.otherCars;
+    return algorithms[algorithmName] || algorithms.algo_13;
 }
 
 function getCarModelAlgorithm(carModel, version) {
@@ -296,7 +305,7 @@ function getCarModelAlgorithm(carModel, version) {
         const algorithmName = carModels[carModel].algorithms[version];
         return getAlgorithm(algorithmName);
     }
-    return getAlgorithm('otherCars');
+    return getAlgorithm('algo_13');
 }
 
 function formatTimeUnit(unit) {
@@ -370,7 +379,7 @@ async function handleRequest(request) {
         });
     }
     
-    // G700 验证端点
+    // 验证端点
     if (path === '/api/verify' && request.method === 'POST') {
         try {
             const body = await request.json();
@@ -397,7 +406,7 @@ async function handleRequest(request) {
             const hours = localTime.getHours();
             const dateTimeNum = parseInt(`${month}${date}${String(hours).padStart(2, '0')}`, 10);
             
-            const carBase = 250930 * dateTimeNum;
+            const carBase = MUL_B * dateTimeNum;
             const carFull = carBase - hours;
             const verifyPassword = (carFull % 1000000).toString().padStart(6, '0');
             
@@ -419,7 +428,10 @@ async function handleRequest(request) {
         } catch (e) {
             return new Response(JSON.stringify({ error: 'Invalid request body' }), {
                 status: 400,
-                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
             });
         }
     }
