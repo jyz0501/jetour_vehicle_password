@@ -303,6 +303,15 @@ function formatTimeUnit(unit) {
     return String(unit).padStart(2, '0');
 }
 
+function formatTimezoneLabel(offset) {
+    const totalMinutes = -offset;
+    const sign = totalMinutes >= 0 ? '+' : '-';
+    const absMinutes = Math.abs(totalMinutes);
+    const h = Math.floor(absMinutes / 60);
+    const m = absMinutes % 60;
+    return `UTC${sign}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
 function calculatePasswords(carModel, version, params) {
     const algorithm = getCarModelAlgorithm(carModel, version);
     const now = new Date();
@@ -398,7 +407,7 @@ async function handleRequest(request) {
                 return new Response(JSON.stringify({
                     success: true,
                     verified: true,
-                    data: { adbPassword: result.adbPassword }
+                    data: { carPassword: result.carPassword, adbPassword: result.adbPassword }
                 }), {
                     headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache, no-store, must-revalidate' }
                 });
@@ -454,18 +463,20 @@ async function handleRequest(request) {
         const result = calculatePasswords(carModel, version, { serialNumber, timezoneOffset });
         const now = new Date();
         const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-        const chinaTime = new Date(utc + 8 * 3600000);
-        const month = formatTimeUnit(chinaTime.getMonth() + 1);
-        const date = formatTimeUnit(chinaTime.getDate());
-        const hours = formatTimeUnit(chinaTime.getHours());
-        const minutes = formatTimeUnit(chinaTime.getMinutes());
+        const hasOffset = timezoneOffset !== undefined && timezoneOffset !== null;
+        const localTime = hasOffset ? new Date(utc - timezoneOffset * 60000) : new Date(utc + 8 * 3600000);
+        const tzLabel = hasOffset ? formatTimezoneLabel(timezoneOffset) : 'UTC+08:00';
+        const month = formatTimeUnit(localTime.getMonth() + 1);
+        const date = formatTimeUnit(localTime.getDate());
+        const hours = formatTimeUnit(localTime.getHours());
+        const minutes = formatTimeUnit(localTime.getMinutes());
         
-        // G700 不直接返回 adbPassword，需要通过 /api/verify 验证
+        // G700 所有密码都需验证后获取
         if (carModel === 'g700') {
             return new Response(JSON.stringify({
                 success: true,
-                data: { carPassword: result.carPassword, adbPassword: null, needVerify: true },
-                updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes} UTC`,
+                data: { carPassword: null, adbPassword: null, needVerify: true },
+                updateTime: `${localTime.getFullYear()}-${month}-${date} ${hours}:${minutes} ${tzLabel}`,
                 timestamp: now.getTime()
             }), {
                 headers: {
@@ -479,7 +490,7 @@ async function handleRequest(request) {
         return new Response(JSON.stringify({
             success: true,
             data: result,
-            updateTime: `${chinaTime.getFullYear()}-${month}-${date} ${hours}:${minutes} UTC`,
+            updateTime: `${localTime.getFullYear()}-${month}-${date} ${hours}:${minutes} ${tzLabel}`,
             timestamp: now.getTime()
         }), {
             headers: {

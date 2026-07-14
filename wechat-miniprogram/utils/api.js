@@ -13,7 +13,8 @@ export function fetchPasswords(carModel, version, serialNumber = '') {
             data: {
                 carModel,
                 version,
-                serialNumber
+                serialNumber,
+                timezoneOffset: new Date().getTimezoneOffset()
             },
             success(res) {
                 if (res.data && res.data.success) {

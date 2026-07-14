@@ -133,6 +133,86 @@ function formatTimeUnit(unit) {
   return String(unit).padStart(2, '0');
 }
 
+const timezones = [
+  { value: 'UTC-11', label: '(UTC-11:00) 美属萨摩亚', offset: 660 },
+  { value: 'UTC-10', label: '(UTC-10:00) 夏威夷', offset: 600 },
+  { value: 'UTC-09', label: '(UTC-09:00) 阿拉斯加', offset: 540 },
+  { value: 'UTC-08', label: '(UTC-08:00) 洛杉矶/蒂华纳', offset: 480 },
+  { value: 'UTC-07', label: '(UTC-07:00) 丹佛/凤凰城', offset: 420 },
+  { value: 'UTC-06', label: '(UTC-06:00) 芝加哥/墨西哥城', offset: 360 },
+  { value: 'UTC-05', label: '(UTC-05:00) 纽约/利马', offset: 300 },
+  { value: 'UTC-04', label: '(UTC-04:00) 哈利法克斯/加拉加斯', offset: 240 },
+  { value: 'UTC-03', label: '(UTC-03:00) 圣保罗/布宜诺斯艾利斯', offset: 180 },
+  { value: 'UTC-02', label: '(UTC-02:00) 中大西洋', offset: 120 },
+  { value: 'UTC-01', label: '(UTC-01:00) 亚速尔/佛得角', offset: 60 },
+  { value: 'UTC+00', label: '(UTC+00:00) 伦敦/里斯本/都柏林', offset: 0 },
+  { value: 'UTC+01', label: '(UTC+01:00) 巴黎/柏林/罗马', offset: -60 },
+  { value: 'UTC+02', label: '(UTC+02:00) 开罗/雅典/开普敦', offset: -120 },
+  { value: 'UTC+03', label: '(UTC+03:00) 莫斯科/伊斯坦布尔/内罗毕', offset: -180 },
+  { value: 'UTC+03:30', label: '(UTC+03:30) 德黑兰', offset: -210 },
+  { value: 'UTC+04', label: '(UTC+04:00) 迪拜/巴库', offset: -240 },
+  { value: 'UTC+05', label: '(UTC+05:00) 伊斯兰堡/塔什干', offset: -300 },
+  { value: 'UTC+05:30', label: '(UTC+05:30) 新德里/孟买/科伦坡', offset: -330 },
+  { value: 'UTC+05:45', label: '(UTC+05:45) 加德满都', offset: -345 },
+  { value: 'UTC+06', label: '(UTC+06:00) 达卡/阿斯塔纳', offset: -360 },
+  { value: 'UTC+06:30', label: '(UTC+06:30) 仰光', offset: -390 },
+  { value: 'UTC+07', label: '(UTC+07:00) 曼谷/雅加达/河内', offset: -420 },
+  { value: 'UTC+08', label: '(UTC+08:00) 北京/上海/香港/台北', offset: -480 },
+  { value: 'UTC+09', label: '(UTC+09:00) 东京/首尔', offset: -540 },
+  { value: 'UTC+09:30', label: '(UTC+09:30) 阿德莱德/达尔文', offset: -570 },
+  { value: 'UTC+10', label: '(UTC+10:00) 悉尼/墨尔本/布里斯班', offset: -600 },
+  { value: 'UTC+11', label: '(UTC+11:00) 所罗门/努美阿', offset: -660 },
+  { value: 'UTC+12', label: '(UTC+12:00) 奥克兰/惠灵顿/斐济', offset: -720 }
+];
+
+function formatTimezoneLabel(offset) {
+  const totalMinutes = -offset;
+  const sign = totalMinutes >= 0 ? '+' : '-';
+  const absMinutes = Math.abs(totalMinutes);
+  const h = Math.floor(absMinutes / 60);
+  const m = absMinutes % 60;
+  return `UTC${sign}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function getSelectedLocalTime(timezoneOffset) {
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utc - timezoneOffset * 60000);
+}
+
+function getCountdownMs(timezoneOffset, countdownType) {
+  const localTime = getSelectedLocalTime(timezoneOffset);
+  const year = localTime.getFullYear();
+  const month = localTime.getMonth();
+  const date = localTime.getDate();
+  const hours = localTime.getHours();
+
+  let targetEpoch;
+  if (countdownType === 'daily') {
+    targetEpoch = Date.UTC(year, month, date + 1, 0, 0, 0) + timezoneOffset * 60000;
+  } else {
+    targetEpoch = Date.UTC(year, month, date, hours + 1, 0, 0) + timezoneOffset * 60000;
+  }
+  return targetEpoch - Date.now();
+}
+
+function getDefaultTimezoneIndex() {
+  const deviceOffset = new Date().getTimezoneOffset();
+  let exactIdx = timezones.findIndex(tz => tz.offset === deviceOffset);
+  if (exactIdx !== -1) return exactIdx;
+
+  let closestIdx = 0;
+  let minDiff = Math.abs(timezones[0].offset - deviceOffset);
+  for (let i = 1; i < timezones.length; i++) {
+    const diff = Math.abs(timezones[i].offset - deviceOffset);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIdx = i;
+    }
+  }
+  return closestIdx;
+}
+
 Page({
   data: {
     showPopup: true,
@@ -173,18 +253,36 @@ Page({
     settingInstructions: '系统设置——输入对应口令',
     
     serialNumber: '',
-    
+
     g700VerifyPassword: '',
     g700ShowAdb: false,
+
+    timezoneList: timezones,
+    timezoneIndex: 23,
+    timezoneOffset: -480,
 
     updateTimer: null,
     countdownTimer: null
   },
 
   onLoad() {
-    this.updateVersionList();
-    this.updatePasswords();
-    
+    const storedOffset = wx.getStorageSync('selectedTimezoneOffset');
+    let tzIndex;
+    if (storedOffset !== '' && storedOffset !== undefined && storedOffset !== null) {
+      const idx = timezones.findIndex(tz => tz.offset === storedOffset);
+      tzIndex = idx !== -1 ? idx : getDefaultTimezoneIndex();
+    } else {
+      tzIndex = getDefaultTimezoneIndex();
+    }
+    const tzOffset = timezones[tzIndex].offset;
+    this.setData({
+      timezoneIndex: tzIndex,
+      timezoneOffset: tzOffset
+    }, () => {
+      this.updateVersionList();
+      this.updatePasswords();
+    });
+
     this.data.updateTimer = setInterval(() => {
       this.updatePasswords();
     }, 60000);
@@ -271,6 +369,26 @@ Page({
     });
   },
 
+  onTimezoneChange(e) {
+    const index = parseInt(e.detail.value);
+    const offset = timezones[index].offset;
+    wx.setStorageSync('selectedTimezoneOffset', offset);
+
+    if (this.data.countdownTimer) {
+      clearInterval(this.data.countdownTimer);
+    }
+
+    this.setData({
+      timezoneIndex: index,
+      timezoneOffset: offset,
+      isCountdownMode: false,
+      countdownSeconds: 0,
+      countdownDisplay: ''
+    }, () => {
+      this.updatePasswords();
+    });
+  },
+
   updateVersionList() {
     const carModel = carModels[this.data.currentCarModel];
     const versionList = carModel.versions.map(version => ({
@@ -297,8 +415,8 @@ Page({
   },
 
   verifyG700Password() {
-    const { g700VerifyPassword, currentVersion } = this.data;
-    
+    const { g700VerifyPassword, currentVersion, timezoneOffset } = this.data;
+
     wx.request({
       url: 'https://api.qianxian.tech/api/verify',
       method: 'POST',
@@ -310,12 +428,13 @@ Page({
         carModel: 'g700',
         password: g700VerifyPassword,
         version: currentVersion,
-        timezoneOffset: new Date().getTimezoneOffset()
+        timezoneOffset: timezoneOffset
       },
       success: (res) => {
         if (res.data.verified) {
           this.setData({
             g700ShowAdb: true,
+            carPassword: res.data.data.carPassword || '--',
             settingPassword: res.data.data.adbPassword || '--',
             g700VerifyError: false
           });
@@ -390,45 +509,39 @@ Page({
   },
 
   updateCountdown() {
-    const now = new Date();
     const countdownType = this.getCountdownType(this.data.currentCarModel, this.data.currentVersion);
-    
+    const tzOffset = this.data.timezoneOffset;
+
     let countdownSeconds = 0;
-    
+
     if (countdownType === 'none') {
       this.setData({
         isCountdownMode: false,
         nextUpdateTime: '无（固定口令）'
       });
       return;
-    } else if (countdownType === 'daily') {
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      countdownSeconds = Math.floor((tomorrow - now) / 1000);
-    } else if (countdownType === 'hourly') {
-      const nextHour = new Date(now);
-      nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-      countdownSeconds = Math.floor((nextHour - now) / 1000);
     }
-    
+
+    countdownSeconds = Math.floor(getCountdownMs(tzOffset, countdownType) / 1000);
+
     this.setData({
       isCountdownMode: true,
       countdownSeconds: countdownSeconds,
       countdownDisplay: this.formatCountdown(countdownSeconds),
       nextUpdateTime: '倒计时'
     });
-    
+
     this.startCountdown();
   },
 
   async updatePasswords() {
-    const { currentCarModel, currentVersion, serialNumber } = this.data;
-    const now = new Date();
-    
+    const { currentCarModel, currentVersion, serialNumber, timezoneOffset } = this.data;
+    const localTime = getSelectedLocalTime(timezoneOffset);
+    const tzLabel = formatTimezoneLabel(timezoneOffset);
+
     const API_BASE_URL = 'https://api.qianxian.tech';
     const API_KEY = 'jetour_password_2026';
-    
+
     wx.request({
       url: `${API_BASE_URL}/api/password`,
       method: 'POST',
@@ -440,15 +553,15 @@ Page({
         carModel: currentCarModel,
         version: currentVersion,
         serialNumber: serialNumber,
-        timezoneOffset: new Date().getTimezoneOffset()
+        timezoneOffset: timezoneOffset
       },
       success: (res) => {
         if (res.data && res.data.success) {
           const result = res.data.data;
-          const month = formatTimeUnit(now.getMonth() + 1);
-          const date = formatTimeUnit(now.getDate());
-          const hours = formatTimeUnit(now.getHours());
-          const minutes = formatTimeUnit(now.getMinutes());
+          const month = formatTimeUnit(localTime.getMonth() + 1);
+          const date = formatTimeUnit(localTime.getDate());
+          const hours = formatTimeUnit(localTime.getHours());
+          const minutes = formatTimeUnit(localTime.getMinutes());
           
           let carInstructions = '应用中心——蓝牙电话，输入对应口令';
           let settingInstructions = '系统设置——输入对应口令';
@@ -501,37 +614,29 @@ Page({
           let countdownSeconds = 0;
           let countdownDisplay = '';
           let nextUpdateTime = '';
-          
+
           if (countdownType === 'none') {
             nextUpdateTime = '无（固定口令）';
           } else {
             isCountdownMode = true;
             nextUpdateTime = '倒计时';
-            
-            if (countdownType === 'daily') {
-              const tomorrow = new Date(now);
-              tomorrow.setDate(tomorrow.getDate() + 1);
-              tomorrow.setHours(0, 0, 0, 0);
-              countdownSeconds = Math.floor((tomorrow - now) / 1000);
-            } else {
-              const nextHour = new Date(now);
-              nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-              countdownSeconds = Math.floor((nextHour - now) / 1000);
-            }
+            countdownSeconds = Math.floor(getCountdownMs(timezoneOffset, countdownType) / 1000);
             countdownDisplay = this.formatCountdown(countdownSeconds);
           }
-          
+
+          let carPassword = result.carPassword || '--';
           let settingPassword = result.adbPassword || '--';
-            if (currentCarModel === 'g700' && !this.data.g700ShowAdb) {
-              settingPassword = '请验证密码';
-            }
-            
-            this.setData({
-            carPassword: result.carPassword || '--',
+          if (currentCarModel === 'g700' && !this.data.g700ShowAdb) {
+            carPassword = '请验证密码';
+            settingPassword = '请验证密码';
+          }
+
+          this.setData({
+            carPassword: carPassword,
             actualSettingPassword: result.adbPassword || '',
             settingPassword: settingPassword,
             nextUpdateTime: nextUpdateTime,
-            updateTime: `${now.getFullYear()}-${month}-${date} ${hours}:${minutes} UTC`,
+            updateTime: `${localTime.getFullYear()}-${month}-${date} ${hours}:${minutes} ${tzLabel}`,
             carInstructions: carInstructions,
             settingInstructions: settingInstructions,
             isCountdownMode: isCountdownMode,

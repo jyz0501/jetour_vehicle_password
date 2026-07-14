@@ -54,7 +54,25 @@
       </view>
     </picker>
   </view>
-  
+
+  <!-- 时区选择 -->
+  <view class="selector-row">
+    <text class="section-title-inline">时区：</text>
+    <picker
+      mode="selector"
+      range="{{timezoneList}}"
+      range-key="label"
+      value="{{timezoneIndex}}"
+      bindchange="onTimezoneChange"
+      class="timezone-picker-inline"
+    >
+      <view class="picker-value-inline">
+        {{timezoneList[timezoneIndex].label}}
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
+  </view>
+
   <view class="hour-password-group">
     <view class="hour-indicator">
       口令有效期：

@@ -142,6 +142,9 @@ douyin-miniprogram/.log/
 server/.wrangler/
 .wrangler/
 
+# TRAE IDE
+.trae/
+
 .dev.vars*
 !.dev.vars.example
 !.env.example

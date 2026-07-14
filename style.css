@@ -181,6 +181,34 @@ h1 {
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
 }
 
+.timezone-selector {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.timezone-selector label {
+    font-size: 16px;
+    color: #2c3e50;
+    margin-right: 10px;
+}
+
+.timezone-selector select {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: 1px solid #27ae60;
+    border-radius: 4px;
+    background-color: white;
+    color: #2c3e50;
+    cursor: pointer;
+    min-width: 280px;
+}
+
+.timezone-selector select:focus {
+    outline: none;
+    border-color: #229954;
+    box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+}
+
 .link-button {
     display: inline-block;
     padding: 10px 20px;
