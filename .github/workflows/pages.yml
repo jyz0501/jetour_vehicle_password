@@ -22,8 +22,8 @@ jobs:
       
       - name: Update version
         run: |
-          chmod +x ./update-version.sh
-          ./update-version.sh
+          chmod +x ./update_version.sh
+          ./update_version.sh
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
