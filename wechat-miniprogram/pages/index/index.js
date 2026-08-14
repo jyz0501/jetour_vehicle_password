@@ -1,4 +1,4 @@
-const carModels = {
+let carModels = {
   traveler: {
     name: '旅行者/山海T2',
     versions: ['00x', '0406', '0407', 'other', 'cdm'],
@@ -15,6 +15,9 @@ const carModels = {
       '0407': 'hourly',
       'other': 'daily',
       'cdm': 'hourly'
+    },
+    showSerialNumberInput: {
+      '00x': true
     }
   },
   ziyouzhe: {
@@ -133,7 +136,7 @@ function formatTimeUnit(unit) {
   return String(unit).padStart(2, '0');
 }
 
-const timezones = [
+let timezones = [
   { value: 'UTC-11', label: '(UTC-11:00) 美属萨摩亚', offset: 660 },
   { value: 'UTC-10', label: '(UTC-10:00) 夏威夷', offset: 600 },
   { value: 'UTC-09', label: '(UTC-09:00) 阿拉斯加', offset: 540 },
@@ -213,6 +216,37 @@ function getDefaultTimezoneIndex() {
   return closestIdx;
 }
 
+const API_BASE_URL = 'https://api.qianxian.tech';
+const API_KEY = 'jetour_password_2026';
+
+// 将服务端 /api/config 返回的配置转换为小程序本地格式
+function getShowSerialNumberInput(carModel, version) {
+  const m = carModels[carModel];
+  return !!(m && m.showSerialNumberInput && m.showSerialNumberInput[version]);
+}
+
+function applyServerConfig(remote) {
+  const serverCarModels = remote.carModels || {};
+  const algorithms = remote.algorithms || {};
+
+  Object.keys(serverCarModels).forEach(key => {
+    const model = serverCarModels[key];
+    const algoMap = model.algorithms || {};
+    model.countdownType = {};
+    model.showSerialNumberInput = {};
+    Object.keys(algoMap).forEach(v => {
+      const algo = algorithms[algoMap[v]] || {};
+      model.countdownType[v] = algo.countdown || 'none';
+      model.showSerialNumberInput[v] = !!algo.showSerialNumberInput;
+    });
+  });
+
+  return {
+    carModels: serverCarModels,
+    timezones: remote.timezones || timezones
+  };
+}
+
 Page({
   data: {
     showPopup: true,
@@ -238,6 +272,7 @@ Page({
     versionIndex: 0,
     
     currentVersion: '0407',
+    showSerialNumberInput: false,
     
     carPassword: '--',
     settingPassword: '--',
@@ -286,6 +321,8 @@ Page({
     this.data.updateTimer = setInterval(() => {
       this.updatePasswords();
     }, 60000);
+
+    this.fetchRemoteConfig();
   },
 
   onUnload() {
@@ -389,15 +426,71 @@ Page({
     });
   },
 
+  fetchRemoteConfig() {
+    wx.request({
+      url: `${API_BASE_URL}/api/config`,
+      method: 'GET',
+      header: {
+        'X-API-Key': API_KEY
+      },
+      success: (res) => {
+        if (res.data && res.data.success && res.data.data) {
+          try {
+            const applied = applyServerConfig(res.data.data);
+            carModels = applied.carModels;
+            timezones = applied.timezones;
+            this.applyRemoteSelection();
+          } catch (e) {
+            console.error('apply remote config failed', e);
+          }
+        }
+      },
+      fail: () => {
+        console.error('fetch remote config failed, use local config');
+      }
+    });
+  },
+
+  applyRemoteSelection() {
+    const carModelKeys = Object.keys(carModels);
+    if (carModelKeys.length === 0) return;
+
+    const currentCarModel = carModels[this.data.currentCarModel] ? this.data.currentCarModel : carModelKeys[0];
+    const currentVersion = carModels[currentCarModel].versions.includes(this.data.currentVersion)
+      ? this.data.currentVersion
+      : carModels[currentCarModel].versions[0];
+
+    const timezoneList = timezones.length ? timezones : this.data.timezoneList;
+    const timezoneIndex = timezoneList.length > 0 ? Math.min(this.data.timezoneIndex, timezoneList.length - 1) : 0;
+
+    this.setData({
+      carModelList: carModelKeys.map(key => ({ label: carModels[key].name || key, value: key })),
+      currentCarModel: currentCarModel,
+      carModelIndex: Math.max(0, carModelKeys.indexOf(currentCarModel)),
+      currentVersion: currentVersion,
+      versionList: carModels[currentCarModel].versions.map(v => ({ label: carModels[currentCarModel].versionNames[v], version: v })),
+      versionIndex: Math.max(0, carModels[currentCarModel].versions.indexOf(currentVersion)),
+      showSerialNumberInput: getShowSerialNumberInput(currentCarModel, currentVersion),
+      timezoneList: timezoneList,
+      timezoneIndex: timezoneIndex,
+      timezoneOffset: timezoneList[timezoneIndex].offset
+    }, () => {
+      this.updatePasswords();
+    });
+  },
+
   updateVersionList() {
     const carModel = carModels[this.data.currentCarModel];
     const versionList = carModel.versions.map(version => ({
       label: carModel.versionNames[version],
       version: version
     }));
+    const versionIndex = Math.max(0, versionList.findIndex(v => v.version === this.data.currentVersion));
     
     this.setData({
-      versionList: versionList
+      versionList: versionList,
+      versionIndex: versionIndex,
+      showSerialNumberInput: getShowSerialNumberInput(this.data.currentCarModel, this.data.currentVersion)
     });
   },
 

@@ -388,7 +388,7 @@ const CONFIG_CAR_MODELS = {
             'unknown': '其他版本'
         },
         algorithms: {
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             'unknown': false
@@ -427,7 +427,7 @@ const CONFIG_CAR_MODELS = {
             'unknown': '00.01.0x'
         },
         algorithms: {
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             'unknown': false
@@ -442,7 +442,7 @@ const CONFIG_CAR_MODELS = {
         },
         algorithms: {
             '040x': 'fixed',
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             '040x': false,
@@ -456,7 +456,7 @@ const CONFIG_CAR_MODELS = {
             'unknown': '其他版本'
         },
         algorithms: {
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             'unknown': false

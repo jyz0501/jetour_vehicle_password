@@ -1,4 +1,4 @@
-const carModels = {
+let carModels = {
   traveler: {
     name: '旅行者/山海T2',
     versions: ['00x', '0406', '0407', 'other', 'cdm'],
@@ -15,6 +15,9 @@ const carModels = {
       '0407': 'hourly',
       'other': 'daily',
       'cdm': 'hourly'
+    },
+    showSerialNumberInput: {
+      '00x': true
     }
   },
   ziyouzhe: {
@@ -133,7 +136,7 @@ function formatTimeUnit(unit) {
   return String(unit).padStart(2, '0');
 }
 
-const timezones = [
+let timezones = [
   { value: 'UTC-11', label: '(UTC-11:00) 美属萨摩亚', offset: 660 },
   { value: 'UTC-10', label: '(UTC-10:00) 夏威夷', offset: 600 },
   { value: 'UTC-09', label: '(UTC-09:00) 阿拉斯加', offset: 540 },
@@ -213,6 +216,37 @@ function getDefaultTimezoneIndex() {
   return closestIdx;
 }
 
+const API_BASE_URL = 'https://api.qianxian.tech';
+const API_KEY = 'jetour_password_2026';
+
+// 将服务端 /api/config 返回的配置转换为小程序本地格式
+function getShowSerialNumberInput(carModel, version) {
+  const m = carModels[carModel];
+  return !!(m && m.showSerialNumberInput && m.showSerialNumberInput[version]);
+}
+
+function applyServerConfig(remote) {
+  const serverCarModels = remote.carModels || {};
+  const algorithms = remote.algorithms || {};
+
+  Object.keys(serverCarModels).forEach(key => {
+    const model = serverCarModels[key];
+    const algoMap = model.algorithms || {};
+    model.countdownType = {};
+    model.showSerialNumberInput = {};
+    Object.keys(algoMap).forEach(v => {
+      const algo = algorithms[algoMap[v]] || {};
+      model.countdownType[v] = algo.countdown || 'none';
+      model.showSerialNumberInput[v] = !!algo.showSerialNumberInput;
+    });
+  });
+
+  return {
+    carModels: serverCarModels,
+    timezones: remote.timezones || timezones
+  };
+}
+
 Page({
   data: {
     showPopup: true,
@@ -235,15 +269,10 @@ Page({
     
     currentCarModel: 'traveler',
 
-    versionList: [
-      { label: '4.06及以下', version: '0406' },
-      { label: '00.08及以下', version: '00x' },
-      { label: '4.07以上', version: '0407' },
-      { label: '其他', version: 'other' },
-      { label: '26款', version: 'cdm' }
-    ],
+    versionList: [],
     
-    versionIndex: 2,
+    versionIndex: 0,
+    showSerialNumberInput: false,
     
     currentVersion: '0407',
     
@@ -288,12 +317,15 @@ Page({
       timezoneIndex: tzIndex,
       timezoneOffset: tzOffset
     }, () => {
+      this.updateVersionList();
       this.updatePasswords();
     });
 
     this.data.updateTimer = setInterval(() => {
       this.updatePasswords();
     }, 60000);
+
+    this.fetchRemoteConfig();
   },
 
   onUnload() {
@@ -449,6 +481,75 @@ Page({
     });
   },
 
+  fetchRemoteConfig() {
+    tt.request({
+      url: `${API_BASE_URL}/api/config`,
+      method: 'GET',
+      header: {
+        'X-API-Key': API_KEY
+      },
+      success: (res) => {
+        if (res.data && res.data.success && res.data.data) {
+          try {
+            const applied = applyServerConfig(res.data.data);
+            carModels = applied.carModels;
+            timezones = applied.timezones;
+            this.applyRemoteSelection();
+          } catch (e) {
+            console.error('apply remote config failed', e);
+          }
+        }
+      },
+      fail: () => {
+        console.error('fetch remote config failed, use local config');
+      }
+    });
+  },
+
+  applyRemoteSelection() {
+    const carModelKeys = Object.keys(carModels);
+    if (carModelKeys.length === 0) return;
+
+    const currentCarModel = carModels[this.data.currentCarModel] ? this.data.currentCarModel : carModelKeys[0];
+    const currentVersion = carModels[currentCarModel].versions.includes(this.data.currentVersion)
+      ? this.data.currentVersion
+      : carModels[currentCarModel].versions[0];
+
+    const timezoneList = timezones.length ? timezones : this.data.timezoneList;
+    const timezoneIndex = timezoneList.length > 0 ? Math.min(this.data.timezoneIndex, timezoneList.length - 1) : 0;
+
+    this.setData({
+      carModelList: carModelKeys.map(key => ({ label: carModels[key].name || key, value: key })),
+      currentCarModel: currentCarModel,
+      carModelIndex: Math.max(0, carModelKeys.indexOf(currentCarModel)),
+      currentVersion: currentVersion,
+      versionList: carModels[currentCarModel].versions.map(v => ({ label: carModels[currentCarModel].versionNames[v], version: v })),
+      versionIndex: Math.max(0, carModels[currentCarModel].versions.indexOf(currentVersion)),
+      showSerialNumberInput: getShowSerialNumberInput(currentCarModel, currentVersion),
+      timezoneList: timezoneList,
+      timezoneIndex: timezoneIndex,
+      timezoneOffset: timezoneList[timezoneIndex].offset
+    }, () => {
+      this.updatePasswords();
+    });
+  },
+
+  updateVersionList() {
+    const carModel = carModels[this.data.currentCarModel];
+    if (!carModel) return;
+    const versionList = carModel.versions.map(version => ({
+      label: carModel.versionNames[version],
+      version: version
+    }));
+    const versionIndex = Math.max(0, versionList.findIndex(v => v.version === this.data.currentVersion));
+
+    this.setData({
+      versionList: versionList,
+      versionIndex: versionIndex,
+      showSerialNumberInput: getShowSerialNumberInput(this.data.currentCarModel, this.data.currentVersion)
+    });
+  },
+
   switchVersion(e) {
     const version = e.currentTarget.dataset.version;
     this.setData({
@@ -483,85 +584,18 @@ Page({
   onCarModelChange(e) {
     const index = parseInt(e.detail.value);
     const carModel = this.data.carModelList[index].value;
-
-    let versionList = [];
-    switch(carModel) {
-      case 'traveler':
-        versionList = [
-          { label: '00.08及以下', version: '00x' },
-          { label: '4.06及以下', version: '0406' },
-          { label: '4.07以上', version: '0407' },
-          { label: '其他', version: 'other' },
-          { label: '26款', version: 'cdm' }
-        ];
-        break;
-      case 'ziyouzhe':
-        versionList = [
-          { label: '11.01.04及以上', version: '11010x' },
-          { label: '01.01.0x', version: '01010x' },
-          { label: '00.04.02', version: '000402' }
-        ];
-        break;
-      case 'shanhal7':
-        versionList = [
-          { label: 'OS1-02.01', version: 'os10201' },
-          { label: 'OS1_20.10.00', version: 'os1201000' }
-        ];
-        break;
-      case 'shanhal9':
-        versionList = [
-          { label: '其他版本', version: 'unknown' }
-        ];
-        break;
-      case 'fengyunA9':
-        versionList = [
-          { label: '其他版本', version: 'unknown' }
-        ];
-        break;
-      case 'hu8':
-        versionList = [
-          { label: '其他版本', version: 'unknown' }
-        ];
-        break;
-      case 'x70plus':
-        versionList = [
-          { label: '00.01.0x', version: 'unknown' }
-        ];
-        break;
-      case 'x90plus':
-        versionList = [
-          { label: '04.0x', version: '040x' },
-          { label: '其他版本', version: 'unknown' }
-        ];
-        break;
-      case 'x95':
-        versionList = [
-          { label: '其他版本', version: 'unknown' }
-        ];
-        break;
-      case 'dasheng':
-        versionList = [
-          { label: '固定口令', version: 'fixed' }
-        ];
-        break;
-      case 'g700':
-        versionList = [
-          { label: '3.30-3.35', version: '330335' },
-          { label: '4.0x-4.4x', version: '4.0x-4.4x' }
-        ];
-        break;
-      default:
-        versionList = [
-          { label: '其他', version: 'other' }
-        ];
-    }
+    const config = carModels[carModel];
+    const versionList = config.versions.map(version => ({
+      label: config.versionNames[version],
+      version: version
+    }));
 
     this.setData({
       carModelIndex: index,
       currentCarModel: carModel,
       versionList: versionList,
       versionIndex: 0,
-      currentVersion: versionList[0].version,
+      currentVersion: versionList.length ? versionList[0].version : '',
       serialNumber: '',
       g700VerifyPassword: '',
       g700ShowAdb: false
