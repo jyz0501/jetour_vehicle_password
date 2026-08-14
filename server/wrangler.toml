@@ -8,3 +8,6 @@ API_KEY = "jetour_password_2026"
 [env.production]
 name = "jetour-password-api"
 route = "api.qianxian.tech/*"
+
+[env.production.vars]
+API_KEY = "jetour_password_2026"
