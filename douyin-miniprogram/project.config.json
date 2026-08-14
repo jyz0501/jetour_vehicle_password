@@ -1,1 +1,16 @@
-{"appid":"tt235d55e0bd3da34e01","projectname":"我的方盒子"}
+{
+  "appid": "tt235d55e0bd3da34e01",
+  "projectname": "我的方盒子",
+  "compileType": "miniprogram",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "urlCheck": true,
+    "postcss": true,
+    "enhance": true
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}

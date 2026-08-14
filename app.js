@@ -1,5 +1,5 @@
-import { carModels } from './config/carModels.js';
-import { fetchPasswordsWithRetry } from './utils/api.js';
+import { carModels, applyServerConfig } from './config/store.js';
+import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js';
 import {
     renderVersionButtons,
     renderPasswordGroup,
@@ -64,6 +64,20 @@ function initTimezoneSelector() {
     });
 }
 
+function populateCarModelOptions() {
+    const select = document.getElementById('carModel');
+    if (!select) return;
+
+    select.innerHTML = '';
+    Object.keys(carModels).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = carModels[key].name;
+        select.appendChild(option);
+    });
+    select.value = currentCarModel;
+}
+
 document.getElementById('carModel').addEventListener('change', function() {
     currentCarModel = this.value;
     const carModel = carModels[currentCarModel];
@@ -75,7 +89,19 @@ document.getElementById('carModel').addEventListener('change', function() {
     updatePasswords();
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // 拉取服务端共享配置（车型/版本/算法/时区），成功则以服务端为准渲染，失败回退本地配置
+    const remoteConfig = await fetchConfig();
+    if (remoteConfig && applyServerConfig(remoteConfig)) {
+        if (!carModels[currentCarModel]) {
+            currentCarModel = Object.keys(carModels)[0];
+        }
+        if (!carModels[currentCarModel].versions.includes(currentVersion)) {
+            currentVersion = carModels[currentCarModel].versions[0];
+        }
+        populateCarModelOptions();
+    }
+
     const popup = document.getElementById('usagePopup');
     const closePopup = document.getElementById('closePopup');
 

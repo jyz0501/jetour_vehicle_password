@@ -33,6 +33,30 @@ export async function fetchPasswords(carModel, version, serialNumber = '') {
     }
 }
 
+export async function fetchConfig() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/config`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': API_KEY
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            return data.data;
+        } else {
+            console.error('Config API Error:', data.error);
+            return null;
+        }
+    } catch (error) {
+        console.error('Fetch Config Error:', error);
+        return null;
+    }
+}
+
 export async function fetchPasswordsWithRetry(carModel, version, serialNumber = '', maxRetries = 2) {
     let lastError = null;
     

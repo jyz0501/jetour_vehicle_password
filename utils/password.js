@@ -1,5 +1,4 @@
-import { carModels } from '../config/carModels.js';
-import { getAlgorithm } from '../config/algorithms.js';
+import { carModels, getAlgorithm } from '../config/store.js';
 
 // 格式化时间单位（补前导零）
 export function formatTimeUnit(unit) {

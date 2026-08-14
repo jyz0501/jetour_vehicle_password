@@ -8,8 +8,8 @@ def main():
             viewport={"width": 720, "height": 1280}
         )
         
-        # 访问你的动态页面（替换为实际 URL）
-        page.goto("https://jyz0501.github.io/jetour_dynamic-password/")
+        # 访问口令页面（GitHub Pages 演示地址）
+        page.goto("https://jyz0501.github.io/jetour_vehicle_password/")
         
         # 等待页面加载完成
         page.wait_for_selector("#carPassword", state="visible")

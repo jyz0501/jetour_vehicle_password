@@ -1,6 +1,6 @@
 <view class="container">
   <!-- 进入页弹窗提醒 -->
-  <view wx:if="{{showPopup}}" class="popup-overlay">
+  <view tt:if="{{showPopup}}" class="popup-overlay">
     <view class="popup-content">
       <text class="popup-title">免责声明</text>
       <view class="popup-message">
@@ -76,8 +76,8 @@
   <view class="hour-password-group">
     <view class="hour-indicator">
       口令有效期：
-      <text wx:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
-      <text wx:else class="highlight countdown">{{countdownDisplay}}</text>
+      <text tt:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
+      <text tt:else class="highlight countdown">{{countdownDisplay}}</text>
     </view>
     
     <view class="password-group">
@@ -90,7 +90,7 @@
       <view class="password-card">
         <text class="card-title">2. 加密项口令</text>
         
-        <view wx:if="{{currentVersion === 'other'}}" class="serial-number-input">
+        <view tt:if="{{currentVersion === 'other'}}" class="serial-number-input">
           <input 
             type="text" 
             placeholder="请输入序列号后六位" 
@@ -100,7 +100,7 @@
           <button class="calculate-button" bindtap="calculateEncryptionPassword">计算口令</button>
         </view>
         
-        <view wx:if="{{currentCarModel === 'g700' && !g700ShowAdb}}" class="serial-number-input">
+        <view tt:if="{{currentCarModel === 'g700' && !g700ShowAdb}}" class="serial-number-input">
           <input 
             type="text" 
             placeholder="请输入密码" 
@@ -108,7 +108,7 @@
             maxlength="6"
           />
           <button class="calculate-button" bindtap="verifyG700Password">验证</button>
-          <text wx:if="{{g700VerifyError}}" class="error-text">密码错误</text>
+          <text tt:if="{{g700VerifyError}}" class="error-text">密码错误</text>
         </view>
         
         <text class="password-value">{{encryptionPassword}}</text>
