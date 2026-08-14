@@ -83,7 +83,7 @@ export const carModels = {
             'unknown': '其他版本'
         },
         algorithms: {
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             'unknown': false
@@ -122,7 +122,7 @@ export const carModels = {
             'unknown': '00.01.0x'
         },
         algorithms: {
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             'unknown': false
@@ -137,7 +137,7 @@ export const carModels = {
         },
         algorithms: {
             '040x': 'fixed',
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             '040x': false,
@@ -151,7 +151,7 @@ export const carModels = {
             'unknown': '其他版本'
         },
         algorithms: {
-            'unknown': 'otherCars'
+            'unknown': 'fixed'
         },
         encrypted: {
             'unknown': false
