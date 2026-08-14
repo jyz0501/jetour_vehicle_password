@@ -90,7 +90,7 @@
       <view class="password-card">
         <text class="card-title">2. 设置口令</text>
 
-        <view wx:if="{{currentVersion === '00x'}}" class="serial-number-input">
+        <view wx:if="{{showSerialNumberInput}}" class="serial-number-input">
           <input
             type="text"
             placeholder="请输入序列号后六位"

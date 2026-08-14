@@ -90,7 +90,7 @@
       <view class="password-card">
         <text class="card-title">2. 加密项口令</text>
         
-        <view tt:if="{{currentVersion === 'other'}}" class="serial-number-input">
+        <view tt:if="{{showSerialNumberInput}}" class="serial-number-input">
           <input 
             type="text" 
             placeholder="请输入序列号后六位" 
