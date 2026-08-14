@@ -1,4 +1,4 @@
-import { carModels } from '../config/carModels.js';
+import { carModels } from '../config/store.js';
 import { fetchPasswordsWithRetry } from './api.js';
 import { getCountdownType, formatTimeUnit } from './password.js';
 import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';

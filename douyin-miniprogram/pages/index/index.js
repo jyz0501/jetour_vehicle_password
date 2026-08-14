@@ -275,7 +275,7 @@ Page({
   },
 
   onLoad() {
-    const storedOffset = wx.getStorageSync('selectedTimezoneOffset');
+    const storedOffset = tt.getStorageSync('selectedTimezoneOffset');
     let tzIndex;
     if (storedOffset !== '' && storedOffset !== undefined && storedOffset !== null) {
       const idx = timezones.findIndex(tz => tz.offset === storedOffset);
@@ -353,7 +353,7 @@ Page({
     const API_BASE_URL = 'https://api.qianxian.tech';
     const API_KEY = 'jetour_password_2026';
 
-    wx.request({
+    tt.request({
       url: `${API_BASE_URL}/api/password`,
       method: 'POST',
       header: {
@@ -463,7 +463,7 @@ Page({
   onTimezoneChange(e) {
     const index = parseInt(e.detail.value);
     const offset = timezones[index].offset;
-    wx.setStorageSync('selectedTimezoneOffset', offset);
+    tt.setStorageSync('selectedTimezoneOffset', offset);
 
     if (this.data.countdownTimer) {
       clearInterval(this.data.countdownTimer);
@@ -586,7 +586,7 @@ Page({
   },
 
   openManual() {
-    wx.showToast({
+    tt.showToast({
       title: '功能暂未开放',
       icon: 'none',
       duration: 2000
@@ -594,7 +594,7 @@ Page({
   },
 
   openTool() {
-    wx.showToast({
+    tt.showToast({
       title: '功能暂未开放',
       icon: 'none',
       duration: 2000
@@ -619,7 +619,7 @@ Page({
   verifyG700Password() {
     const { g700VerifyPassword, currentVersion, timezoneOffset } = this.data;
 
-    wx.request({
+    tt.request({
       url: 'https://api.qianxian.tech/api/verify',
       method: 'POST',
       header: {
@@ -662,7 +662,7 @@ Page({
     if (currentCarModel !== 'traveler' || currentVersion !== '00x') return;
 
     if (serialNumber.length !== 6) {
-      wx.showToast({
+      tt.showToast({
         title: '请输入系统序列号后六位',
         icon: 'none'
       });
@@ -683,13 +683,6 @@ Page({
       title: '车机口令工具',
       desc: '专业的车机工程模式口令计算工具',
       path: '/pages/index/index'
-    };
-  },
-
-  onShareTimeline() {
-    return {
-      title: '车机口令工具 - 专业的车机工程模式口令计算',
-      query: {}
     };
   }
 });
