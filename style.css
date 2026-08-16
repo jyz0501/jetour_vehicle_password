@@ -6,7 +6,68 @@ body {
     font-family: '微软雅黑', Arial, sans-serif;
 }
 
-/* 弹窗样式 */
+/* 弹窗样式（免责声明 usagePopup 共用，勿删） */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.popup-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.popup-message {
+    margin-bottom: 30px;
+    text-align: justify;
+    line-height: 1.6;
+}
+
+.popup-message p {
+    margin-bottom: 15px;
+    color: #34495e;
+    font-size: 14px;
+}
+
+.popup-button {
+    padding: 12px 30px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.popup-button:hover {
+    background-color: #2980b9;
+}
+
+.popup-button:active {
+    background-color: #1f618d;
+}
+
 .container {
     max-width: 1080px;
     margin: 0 auto;
