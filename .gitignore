@@ -148,3 +148,5 @@ server/.wrangler/
 .dev.vars*
 !.dev.vars.example
 !.env.example
+.DS_Store
+douyin-miniprogram/.DS_Store

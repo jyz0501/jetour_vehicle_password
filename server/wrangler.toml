@@ -2,12 +2,10 @@ name = "jetour-password-api"
 main = "index.js"
 compatibility_date = "2024-01-01"
 
-[vars]
-API_KEY = "jetour_password_2026"
+# API_KEY 不再明文写在这里，改用 Secret 注入：
+#   wrangler secret put API_KEY --env production
+# 本地 dev 无 secret 时，index.js 会自动 fallback 到内置常量。
 
 [env.production]
 name = "jetour-password-api"
 route = "api.qianxian.tech/*"
-
-[env.production.vars]
-API_KEY = "jetour_password_2026"

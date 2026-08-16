@@ -1,4 +1,28 @@
-const API_KEY = 'jetour_password_2026';
+// API Key 优先从 Cloudflare Secret(env) 读取，本地 dev 用 fallback 常量
+// 部署：wrangler secret put API_KEY --env production  （不要再在 wrangler.toml 里明文写 API_KEY）
+const API_KEY = (typeof API_KEY !== 'undefined' && API_KEY) ? API_KEY : 'jetour_password_2026';
+
+// 简单内存级频率限制（防爆破 /api/verify 与防刷 /api/password）
+// 注意：Workers 多实例下非全局共享，仅作基础防护，真正限流应在边缘/网关层做
+const RATE_LIMIT = {
+    windowMs: 60 * 1000,   // 1 分钟窗口
+    maxRequests: 30,        // 单 IP 每分钟最多 30 次
+    counters: new Map()     // ip -> { count, resetAt }
+};
+
+function checkRateLimit(ip) {
+    const now = Date.now();
+    const entry = RATE_LIMIT.counters.get(ip);
+    if (!entry || now > entry.resetAt) {
+        RATE_LIMIT.counters.set(ip, { count: 1, resetAt: now + RATE_LIMIT.windowMs });
+        return true;
+    }
+    entry.count++;
+    if (entry.count > RATE_LIMIT.maxRequests) {
+        return false;
+    }
+    return true;
+}
 
 const MUL_A = 250110;
 const MUL_B = 250930;
@@ -651,6 +675,19 @@ async function handleRequest(request) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
+            }
+        });
+    }
+
+    // 基础频率限制（按客户端 IP）
+    const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
+    if (!checkRateLimit(clientIp)) {
+        return new Response(JSON.stringify({ error: 'Too many requests, please try later' }), {
+            status: 429,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Retry-After': '60'
             }
         });
     }

@@ -1,5 +1,5 @@
 import { carModels } from '../config/store.js';
-import { fetchPasswordsWithRetry } from './api.js';
+import { fetchPasswordsWithRetry, fetchVerify } from './api.js';
 import { getCountdownType, formatTimeUnit } from './password.js';
 import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';
 
@@ -99,21 +99,8 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             button.disabled = true;
             
             try {
-                const response = await fetch('https://api.qianxian.tech/api/verify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-Key': 'jetour_password_2026'
-                    },
-                    body: JSON.stringify({
-                        carModel: 'g700',
-                        password: input.value,
-                        version: currentVersion,
-                        timezoneOffset: currentTimezoneOffset
-                    })
-                });
-                const data = await response.json();
-                
+                const data = await fetchVerify('g700', currentVersion, input.value);
+
                 if (data.verified) {
                     errorEl.style.display = 'none';
                     const carPwdEl = document.getElementById('carPassword');

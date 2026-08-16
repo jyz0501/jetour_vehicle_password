@@ -1,5 +1,6 @@
 import { currentTimezoneOffset } from '../config/timezones.js';
 
+// 后端地址集中管理：若 api.qianxian.tech 部署冲突，只需改这里（如 pwd-api.qianxian.tech）
 const API_BASE_URL = 'https://api.qianxian.tech';
 const API_KEY = 'jetour_password_2026';
 
@@ -72,4 +73,28 @@ export async function fetchPasswordsWithRetry(carModel, version, serialNumber = 
     }
     
     return null;
+}
+
+// G700 等需密码验证的车型：验证通过后返回口令
+export async function fetchVerify(carModel, version, password) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/verify`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': API_KEY
+            },
+            body: JSON.stringify({
+                carModel,
+                version,
+                password,
+                timezoneOffset: currentTimezoneOffset
+            })
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Verify Fetch Error:', error);
+        return { success: false, verified: false, error: 'network' };
+    }
 }
