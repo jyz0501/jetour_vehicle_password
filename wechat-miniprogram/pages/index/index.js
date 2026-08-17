@@ -217,7 +217,7 @@ function getDefaultTimezoneIndex() {
 }
 
 const API_BASE_URL = 'https://api.qianxian.tech';
-const API_KEY = 'jetour_password_2026';
+const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
 
 // 将服务端 /api/config 返回的配置转换为小程序本地格式
 function getShowSerialNumberInput(carModel, version) {
@@ -515,7 +515,7 @@ Page({
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
-        'X-API-Key': 'jetour_password_2026'
+        'X-API-Key': '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f'
       },
       data: {
         carModel: 'g700',
@@ -633,7 +633,7 @@ Page({
     const tzLabel = formatTimezoneLabel(timezoneOffset);
 
     const API_BASE_URL = 'https://api.qianxian.tech';
-    const API_KEY = 'jetour_password_2026';
+    const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
 
     wx.request({
       url: `${API_BASE_URL}/api/password`,

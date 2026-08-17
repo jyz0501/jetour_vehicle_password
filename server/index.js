@@ -1,6 +1,6 @@
-// API Key 优先从 Cloudflare Secret(env) 读取，本地 dev 用 fallback 常量
+// API Key 优先从 Cloudflare Secret(globalThis.API_KEY) 读取，其次 Node 环境变量(process.env.API_KEY)，本地 dev 用 fallback 常量
 // 部署：wrangler secret put API_KEY --env production  （不要再在 wrangler.toml 里明文写 API_KEY）
-const API_KEY = (typeof API_KEY !== 'undefined' && API_KEY) ? API_KEY : 'jetour_password_2026';
+const API_KEY = globalThis.API_KEY || (typeof process !== 'undefined' && process.env && process.env.API_KEY) || '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
 
 // 简单内存级频率限制（防爆破 /api/verify 与防刷 /api/password）
 // 注意：Workers 多实例下非全局共享，仅作基础防护，真正限流应在边缘/网关层做
