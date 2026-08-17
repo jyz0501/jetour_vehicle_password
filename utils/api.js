@@ -2,7 +2,7 @@ import { currentTimezoneOffset } from '../config/timezones.js';
 
 // 后端地址集中管理：若 api.qianxian.tech 部署冲突，只需改这里（如 pwd-api.qianxian.tech）
 const API_BASE_URL = 'https://api.qianxian.tech';
-const API_KEY = 'jetour_password_2026';
+const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
 
 export async function fetchPasswords(carModel, version, serialNumber = '') {
     try {
