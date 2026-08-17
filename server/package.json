@@ -2,19 +2,12 @@
   "name": "jetour-password-api",
   "version": "1.0.0",
   "description": "Jetour vehicle password calculation API",
-  "main": "index.js",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "publish": "wrangler publish",
-    "start": "node server.js",
     "install:service": "install_service.bat install",
     "uninstall:service": "install_service.bat uninstall",
     "restart:service": "install_service.bat restart",
     "health": "curl -s http://localhost:8080/healthz"
   },
   "dependencies": {},
-  "devDependencies": {
-    "wrangler": "^3.0.0"
-  }
+  "devDependencies": {}
 }

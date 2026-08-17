@@ -3,8 +3,8 @@
 """
 捷途车机动态口令计算 API —— Python 版（自有服务器部署）
 
-完整移植自 Cloudflare Workers 版 server/index.js，算法与接口保持 100% 一致，
 仅使用 Python 标准库实现，服务器无需 Node.js。
+（注：原 Cloudflare Workers 版已移除，本文件为唯一后端实现。）
 
 接口：
   GET  /healthz                   健康检查（不校验 API_KEY）
