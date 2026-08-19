@@ -206,11 +206,11 @@ def algo_07(params):  # G700 330335
 
 
 def algo_14(params):  # G700 335337 (3.36-3.37)
-    # 工程模式口令与 ADB 口令同算法：均为 MUL_H 动态计算（区别于 3.30-3.35 的固定 *#20240730#*）
-    dt, hours = params["dateTimeNum"], params["hours"]
+    # 工程模式口令与 ADB 口令数值相同（均等于 MUL_H*dt 后 6 位，非 adb-hours 关系）
+    dt = params["dateTimeNum"]
     adb_full = MUL_H * dt
-    return {"carPassword": f"*#{(adb_full - hours) % 1000000:06d}#*",
-            "adbPassword": f"{adb_full % 1000000:06d}"}
+    pwd = f"{adb_full % 1000000:06d}"
+    return {"carPassword": f"*#{pwd}#*", "adbPassword": pwd}
 
 
 def algo_13(params):  # 其他车型（山海L7/T9等）
