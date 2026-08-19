@@ -56,7 +56,7 @@ BOOTSTRAP_LOG = os.path.join(LOG_DIR, "bootstrap.log")
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
 API_KEY = os.environ.get("API_KEY", "") or "6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f"
-APP_VERSION = "v2.1.5"
+APP_VERSION = "v2.2.0"
 
 
 def _log_bootstrap(msg):
@@ -101,6 +101,7 @@ MUL_D = 240910
 MUL_E = 231030
 MUL_F = 230830
 MUL_G = 250530
+MUL_H = 251030
 MUL_SN = 802018
 
 FIXED_PASSWORDS = {
@@ -204,6 +205,11 @@ def algo_07(params):  # G700 330335
     return {"carPassword": "*#20240730#*", "adbPassword": f"{(MUL_G * dt - hours) % 1000000:06d}"}
 
 
+def algo_14(params):  # G700 330337 (3.36-3.37)
+    dt, hours = params["dateTimeNum"], params["hours"]
+    return {"carPassword": "*#20240730#*", "adbPassword": f"{(MUL_H * dt - hours) % 1000000:06d}"}
+
+
 def algo_13(params):  # 其他车型（山海L7/T9等）
     car_model = params["carModel"]
     year, month, date = params["year"], params["month"], params["date"]
@@ -225,7 +231,7 @@ ALGORITHMS = {
     "algo_09": algo_09, "algo_01": algo_01, "algo_02": algo_02,
     "algo_03": algo_03, "algo_04": algo_04, "algo_11": algo_11,
     "algo_05": algo_05, "algo_06": algo_06, "algo_07": algo_07,
-    "algo_13": algo_13,
+    "algo_13": algo_13, "algo_14": algo_14,
 }
 
 # 车型 -> 版本 -> 算法（与 index.js carModels 一致）
@@ -244,18 +250,18 @@ CAR_MODELS = {
     "x90plus": {"versions": ["040x", "unknown"], "algorithms": {"040x": "algo_12", "unknown": "algo_12"}},
     "x95": {"versions": ["unknown"], "algorithms": {"unknown": "algo_12"}},
     "dasheng": {"versions": ["fixed"], "algorithms": {"fixed": "algo_10"}},
-    "g700": {"versions": ["330335", "4.0x-4.4x"],
-             "algorithms": {"330335": "algo_07", "4.0x-4.4x": "algo_03"}},
+    "g700": {"versions": ["330335", "330337", "4.0x-4.4x"],
+             "algorithms": {"330335": "algo_07", "330337": "algo_14", "4.0x-4.4x": "algo_03"}},
 }
 
 # =====================================================================
 # 配置下发元数据（与 index.js 一致）
 # =====================================================================
 CONFIG_CAR_MODELS = {
-    "g700": {"name": "捷途G700", "versions": ["330335", "4.0x-4.4x"],
-             "versionNames": {"330335": "3.30-3.35", "4.0x-4.4x": "4.0x-4.4x"},
-             "algorithms": {"330335": "g700Dynamic", "4.0x-4.4x": "g700Dynamic"},
-             "encrypted": {"330335": False, "4.0x-4.4x": False}},
+    "g700": {"name": "捷途G700", "versions": ["330335", "330337", "4.0x-4.4x"],
+             "versionNames": {"330335": "3.30-3.35", "330337": "3.36-3.37", "4.0x-4.4x": "4.0x-4.4x"},
+             "algorithms": {"330335": "g700Dynamic", "330337": "g700Dynamic", "4.0x-4.4x": "g700Dynamic"},
+             "encrypted": {"330335": False, "330337": False, "4.0x-4.4x": False}},
     "traveler": {"name": "旅行者/山海T2", "versions": ["00x", "0406", "0407", "other", "cdm"],
                  "versionNames": {"00x": "00.08及以下", "0406": "4.06及以下", "0407": "4.07以上",
                                   "other": "其他", "cdm": "26款"},
