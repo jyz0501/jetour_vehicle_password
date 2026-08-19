@@ -205,9 +205,12 @@ def algo_07(params):  # G700 330335
     return {"carPassword": "*#20240730#*", "adbPassword": f"{(MUL_G * dt - hours) % 1000000:06d}"}
 
 
-def algo_14(params):  # G700 330337 (3.36-3.37)
+def algo_14(params):  # G700 335337 (3.36-3.37)
+    # 工程模式口令与 ADB 口令同算法：均为 MUL_H 动态计算（区别于 3.30-3.35 的固定 *#20240730#*）
     dt, hours = params["dateTimeNum"], params["hours"]
-    return {"carPassword": "*#20240730#*", "adbPassword": f"{(MUL_H * dt - hours) % 1000000:06d}"}
+    adb_full = MUL_H * dt
+    return {"carPassword": f"*#{(adb_full - hours) % 1000000:06d}#*",
+            "adbPassword": f"{adb_full % 1000000:06d}"}
 
 
 def algo_13(params):  # 其他车型（山海L7/T9等）
@@ -250,18 +253,18 @@ CAR_MODELS = {
     "x90plus": {"versions": ["040x", "unknown"], "algorithms": {"040x": "algo_12", "unknown": "algo_12"}},
     "x95": {"versions": ["unknown"], "algorithms": {"unknown": "algo_12"}},
     "dasheng": {"versions": ["fixed"], "algorithms": {"fixed": "algo_10"}},
-    "g700": {"versions": ["330335", "330337", "4.0x-4.4x"],
-             "algorithms": {"330335": "algo_07", "330337": "algo_14", "4.0x-4.4x": "algo_03"}},
+    "g700": {"versions": ["330335", "335337", "4.0x-4.4x"],
+             "algorithms": {"330335": "algo_07", "335337": "algo_14", "4.0x-4.4x": "algo_03"}},
 }
 
 # =====================================================================
 # 配置下发元数据（与 index.js 一致）
 # =====================================================================
 CONFIG_CAR_MODELS = {
-    "g700": {"name": "捷途G700", "versions": ["330335", "330337", "4.0x-4.4x"],
-             "versionNames": {"330335": "3.30-3.35", "330337": "3.36-3.37", "4.0x-4.4x": "4.0x-4.4x"},
-             "algorithms": {"330335": "g700Dynamic", "330337": "g700Dynamic", "4.0x-4.4x": "g700Dynamic"},
-             "encrypted": {"330335": False, "330337": False, "4.0x-4.4x": False}},
+    "g700": {"name": "捷途G700", "versions": ["330335", "335337", "4.0x-4.4x"],
+             "versionNames": {"330335": "3.30-3.35", "335337": "3.36-3.37", "4.0x-4.4x": "4.0x-4.4x"},
+             "algorithms": {"330335": "g700Dynamic", "335337": "g700Dynamic", "4.0x-4.4x": "g700Dynamic"},
+             "encrypted": {"330335": False, "335337": False, "4.0x-4.4x": False}},
     "traveler": {"name": "旅行者/山海T2", "versions": ["00x", "0406", "0407", "other", "cdm"],
                  "versionNames": {"00x": "00.08及以下", "0406": "4.06及以下", "0407": "4.07以上",
                                   "other": "其他", "cdm": "26款"},
