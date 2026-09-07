@@ -343,25 +343,6 @@ body {
     font-weight: 700;
     box-shadow: 0 3px 10px rgba(124, 58, 237, .16);
 }
-.ver-chip .ver-common {
-    font-style: normal;
-    font-size: 9px;
-    font-weight: 800;
-    color: var(--accent);
-    background: #fff6e5;
-    border: 1px solid #f6dfae;
-    border-radius: 6px;
-    padding: 1px 5px;
-}
-.ver-chip .ver-note {
-    font-style: normal;
-    font-size: 9px;
-    color: var(--bad);
-    background: #fdeef2;
-    border-radius: 6px;
-    padding: 1px 5px;
-}
-
 /* ---------- 口令区 ---------- */
 .pwd-area {
     margin-top: 10px;

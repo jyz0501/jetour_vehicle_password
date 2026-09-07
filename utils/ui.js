@@ -1,6 +1,6 @@
 import { carModels } from '../config/store.js';
 import { fetchPasswordsWithRetry, fetchVerify } from './api.js';
-import { getCarModelAlgorithm, getCountdownType, formatTimeUnit } from './password.js';
+import { getCountdownType } from './password.js';
 import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';
 
 /* ===== 车型展示分组（静态 UI 元数据；key 需与服务端 carModels 一致，未知 key 自动归入“其他”） ===== */
@@ -126,7 +126,7 @@ export function renderCarGrid(selectedKey) {
     });
 }
 
-/** 渲染第 2 步的版本选择 chips（仅当前车型有效版本，首项标注“常用”，需要序列号的版本加角标） */
+/** 渲染第 2 步的版本选择 chips（仅当前车型有效版本） */
 export function renderVersionButtons(currentCarModel, currentVersion) {
     const container = document.getElementById('versionChips');
     if (!container) return;
@@ -135,7 +135,7 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
     const carModel = carModels[currentCarModel];
     if (!carModel || !Array.isArray(carModel.versions)) return;
 
-    carModel.versions.forEach((version, index) => {
+    carModel.versions.forEach(version => {
         const chip = document.createElement('button');
         chip.type = 'button';
         chip.className = 'ver-chip' + (version === currentVersion ? ' active' : '');
@@ -145,21 +145,6 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
         label.className = 'ver-label';
         label.textContent = (carModel.versionNames && carModel.versionNames[version]) || version;
         chip.appendChild(label);
-
-        if (index === 0) {
-            const common = document.createElement('i');
-            common.className = 'ver-common';
-            common.textContent = '常用';
-            chip.appendChild(common);
-        }
-
-        const algorithm = getCarModelAlgorithm(currentCarModel, version);
-        if (algorithm && algorithm.showSerialNumberInput) {
-            const note = document.createElement('i');
-            note.className = 'ver-note';
-            note.textContent = '需序列号';
-            chip.appendChild(note);
-        }
 
         container.appendChild(chip);
     });
