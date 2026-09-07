@@ -149,8 +149,8 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
 export function renderPasswordGroup(currentCarModel, currentVersion) {
     const passwordGroup = document.getElementById('passwordGroup');
     
-    if (currentCarModel === 'traveler' || currentCarModel === 'zonghengF700') {
-        const adbCardTitle = currentCarModel === 'zonghengF700' ? 'ADB权限口令' : '加密项口令';
+    if (currentCarModel === 'traveler') {
+        const adbCardTitle = '加密项口令';
         passwordGroup.innerHTML = `
             <div class="password-card">
                 <h2>1. 工程模式口令</h2>
@@ -193,7 +193,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div class="password-value" id="password1">--</div>
             </div>
         `;
-    } else if (currentCarModel === 'g700') {
+    } else if (currentCarModel === 'g700' || currentCarModel === 'zonghengF700') {
         passwordGroup.innerHTML = `
             <div class="password-card">
                 <h2>1. 工程模式口令</h2>
@@ -229,7 +229,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             button.disabled = true;
             
             try {
-                const data = await fetchVerify('g700', currentVersion, input.value);
+                const data = await fetchVerify(currentCarModel, currentVersion, input.value);
 
                 if (data.verified) {
                     errorEl.style.display = 'none';
@@ -390,7 +390,7 @@ export function updateCountdown(currentCarModel, currentVersion) {
 }
 
 export function updatePasswordsFromApi(result, currentCarModel, currentVersion) {
-    if (currentCarModel === 'traveler' || currentCarModel === 'zonghengF700') {
+    if (currentCarModel === 'traveler') {
         const carPasswordEl = document.getElementById('carPassword');
         const adbPasswordEl = document.getElementById('adbPassword');
         
@@ -416,7 +416,7 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
         if (password1El) {
             password1El.textContent = result.carPassword || '--';
         }
-    } else if (currentCarModel === 'g700') {
+    } else if (currentCarModel === 'g700' || currentCarModel === 'zonghengF700') {
         const carPasswordEl = document.getElementById('carPassword');
         const adbPasswordEl = document.getElementById('adbPassword');
         

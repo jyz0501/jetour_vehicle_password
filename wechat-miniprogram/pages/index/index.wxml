@@ -100,7 +100,7 @@
           <button class="calculate-button" bindtap="calculatePassword">计算口令</button>
         </view>
 
-        <view wx:if="{{currentCarModel === 'g700' && !g700ShowAdb}}" class="serial-number-input">
+        <view wx:if="{{(currentCarModel === 'g700' || currentCarModel === 'zonghengF700') && !g700ShowAdb}}" class="serial-number-input">
           <input
             type="text"
             placeholder="请输入密码"

@@ -462,7 +462,7 @@ Page({
 
           let systemPassword = result.carPassword || '--';
           let encryptionPassword = result.adbPassword || '--';
-          if (currentCarModel === 'g700' && !this.data.g700ShowAdb) {
+          if ((currentCarModel === 'g700' || currentCarModel === 'zonghengF700') && !this.data.g700ShowAdb) {
             systemPassword = '请验证密码';
             encryptionPassword = '请验证密码';
           }
@@ -663,7 +663,7 @@ Page({
   },
 
   verifyG700Password() {
-    const { g700VerifyPassword, currentVersion, timezoneOffset } = this.data;
+    const { g700VerifyPassword, currentVersion, timezoneOffset, currentCarModel } = this.data;
 
     tt.request({
       url: 'https://api.qianxian.tech/api/verify',
@@ -673,7 +673,7 @@ Page({
         'X-API-Key': '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f'
       },
       data: {
-        carModel: 'g700',
+        carModel: currentCarModel,
         password: g700VerifyPassword,
         version: currentVersion,
         timezoneOffset: timezoneOffset
