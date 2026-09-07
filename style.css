@@ -175,7 +175,7 @@ body {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
 }
 .step-head .step-no {
@@ -316,18 +316,11 @@ body {
 .switch-btn:hover { background: var(--brand-soft); }
 
 /* ---------- 第 2 步：版本 chips ---------- */
-.pick-name {
-    font-size: 13px;
-    color: var(--sub);
-    margin-bottom: 10px;
-}
-.pick-name b { color: var(--brand-2); font-size: 15px; }
-
 .ver-bar {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding: 3px 2px 8px;
+    padding: 4px 2px 8px;
     scrollbar-width: none;
 }
 .ver-bar::-webkit-scrollbar { display: none; }

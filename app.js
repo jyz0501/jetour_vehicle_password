@@ -124,20 +124,11 @@ function enterStep2() {
     document.getElementById('stepBar1').classList.add('on');
     document.getElementById('stepBar2').classList.add('on');
 
-    document.getElementById('pickCarName').innerHTML =
-        `当前车型：<b id="pickCarNameBold">${escapeHtml(model.name || currentCarModel)}</b>`;
-
     renderVersionButtons(currentCarModel, currentVersion);
     renderPasswordGroup(currentCarModel, currentVersion);
     updateCarInstructions(currentCarModel, currentVersion);
     updatePasswords();
     persistSelection();
-}
-
-function escapeHtml(text) {
-    return String(text).replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
 }
 
 function chooseCar(carKey) {
