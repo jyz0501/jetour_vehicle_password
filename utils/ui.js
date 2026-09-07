@@ -203,9 +203,9 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             <div class="password-card">
                 <h2>2. ADB权限口令</h2>
                 <div class="password-value" id="adbPassword">--</div>
-                <div id="g700PasswordInput" style="display: none; margin-top: 10px;">
-                    <input type="text" id="g700VerifyPassword" maxlength="6" placeholder="请输入密码" style="width: 100%; padding: 8px; font-size: 14px; text-align: center; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-                    <button id="g700VerifyButton" class="toggle-button" style="margin-top: 8px;">验证</button>
+                <div id="g700PasswordInput" class="verify-input" style="display: none;">
+                    <input type="text" id="g700VerifyPassword" maxlength="6" placeholder="请输入密码">
+                    <button id="g700VerifyButton" class="toggle-button">验证</button>
                     <p id="g700VerifyError" style="color: #e74c3c; margin-top: 8px; display: none; font-size: 12px;">密码错误</p>
                 </div>
                 <div id="adbInstructions">进入加密项输入上方计算后的口令</div>
