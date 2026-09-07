@@ -59,6 +59,11 @@ export const algorithms = {
         name: '其他车型算法',
         countdown: 'hourly',
         showSerialNumberInput: false
+    },
+    f700Dynamic: {
+        name: '动态算法（纵横F700车型）',
+        countdown: 'hourly',
+        showSerialNumberInput: false
     }
 };
 

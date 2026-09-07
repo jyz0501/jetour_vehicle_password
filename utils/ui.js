@@ -20,7 +20,8 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
 export function renderPasswordGroup(currentCarModel, currentVersion) {
     const passwordGroup = document.getElementById('passwordGroup');
     
-    if (currentCarModel === 'traveler') {
+    if (currentCarModel === 'traveler' || currentCarModel === 'zonghengF700') {
+        const adbCardTitle = currentCarModel === 'zonghengF700' ? 'ADB权限口令' : '加密项口令';
         passwordGroup.innerHTML = `
             <div class="password-card">
                 <h2>1. 工程模式口令</h2>
@@ -28,7 +29,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div id="carInstructions">应用中心——蓝牙电话，输入上方口令</div>
             </div>
             <div class="password-card">
-                <h2>2. 加密项口令</h2>
+                <h2>2. ${adbCardTitle}</h2>
                 <div id="serialNumberInput" style="display: none; margin-bottom: 15px;">
                     <input type="text" id="serialNumber" maxlength="6" placeholder="请输入序列号后六位">
                     <button id="calculateAdbButton" class="toggle-button">计算口令</button>
@@ -182,8 +183,11 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
     let carInstructions = '应用中心——蓝牙电话，输入上方口令';
     let adbInstructions = '加密设置——进入加密设置，输入上方口令';
     
-    if (currentCarModel === 'traveler') {
-        if (currentVersion === '00x') {
+    if (currentCarModel === 'traveler' || currentCarModel === 'zonghengF700') {
+        if (currentCarModel === 'zonghengF700') {
+            carInstructions = '应用中心——蓝牙电话，输入上方口令';
+            adbInstructions = '进入加密项输入上方计算后的口令';
+        } else if (currentVersion === '00x') {
             carInstructions = '系统界面连点 8 次';
             adbInstructions = '进入加密项输入上方计算后的口令';
         } else if (currentVersion === 'other') {
@@ -257,7 +261,7 @@ export function updateCountdown(currentCarModel, currentVersion) {
 }
 
 export function updatePasswordsFromApi(result, currentCarModel, currentVersion) {
-    if (currentCarModel === 'traveler') {
+    if (currentCarModel === 'traveler' || currentCarModel === 'zonghengF700') {
         const carPasswordEl = document.getElementById('carPassword');
         const adbPasswordEl = document.getElementById('adbPassword');
         

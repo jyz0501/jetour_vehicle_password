@@ -172,5 +172,18 @@ export const carModels = {
         encrypted: {
             'fixed': false
         }
+    },
+    zonghengF700: {
+        name: '纵横F700',
+        versions: ['000302'],
+        versionNames: {
+            '000302': '00.03.02'
+        },
+        algorithms: {
+            '000302': 'f700Dynamic'
+        },
+        encrypted: {
+            '000302': false
+        }
     }
 };

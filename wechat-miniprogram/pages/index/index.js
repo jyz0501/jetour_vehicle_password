@@ -131,6 +131,16 @@ let carModels = {
       '335337': 'hourly',
       '4.0x-4.4x': 'hourly'
     }
+  },
+  zonghengF700: {
+    name: '纵横F700',
+    versions: ['000302'],
+    versionNames: {
+      '000302': '00.03.02'
+    },
+    countdownType: {
+      '000302': 'hourly'
+    }
   }
 };
 
