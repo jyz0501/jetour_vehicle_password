@@ -107,10 +107,6 @@ export function renderCarGrid(selectedKey) {
 
         keys.forEach(key => {
             const model = carModels[key];
-            const dyn = carModelTag(key);
-            const versionText = (model.versionNames
-                ? model.versions.map(v => model.versionNames[v] || v)
-                : model.versions).join(' · ');
 
             const card = document.createElement('button');
             card.type = 'button';
@@ -120,23 +116,11 @@ export function renderCarGrid(selectedKey) {
             const thumb = buildCarThumb(key, model.name);
             card.appendChild(thumb);
 
-            const line = document.createElement('div');
-            line.className = 'card-line';
             const name = document.createElement('span');
             name.className = 'car-name';
             name.textContent = model.name || key;
-            const tag = document.createElement('span');
-            tag.className = 'tag ' + dyn.cls;
-            tag.textContent = dyn.txt;
-            line.appendChild(name);
-            line.appendChild(tag);
+            card.appendChild(name);
 
-            const vers = document.createElement('div');
-            vers.className = 'car-vers';
-            vers.textContent = versionText;
-
-            card.appendChild(line);
-            card.appendChild(vers);
             grid.appendChild(card);
         });
     });
