@@ -64,7 +64,7 @@ export const carModels = {
         }
     },
     shanhal7: {
-        name: '山海L7/Plus/T9',
+        name: '山海L7/Plus',
         versions: ['os10201', 'os1201000'],
         versionNames: {
             'os10201': 'OS1-02.01',

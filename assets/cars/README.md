@@ -10,7 +10,7 @@
 - 纵横F700 → `zonghengF700.png`
 - 旅行者 / 山海T2 → `traveler.png`
 - 自由者 / 山海T1 → `ziyouzhe.png`
-- 山海L7 / Plus / T9 → `shanhal7.png`
+- 山海L7 / Plus → `shanhal7.png`
 - 山海L9 → `shanhal9.png`
 - X70 Plus/L/Pro/CDM → `x70plus.png`
 - X90/Plus/Pro/CDM → `x90plus.png`

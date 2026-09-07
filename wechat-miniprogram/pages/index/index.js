@@ -35,7 +35,7 @@ let carModels = {
     }
   },
   shanhal7: {
-    name: '山海L7/Plus/T9',
+    name: '山海L7/Plus',
     versions: ['os10201', 'os1201000'],
     versionNames: {
       'os10201': 'OS1-02.01',
@@ -267,7 +267,7 @@ Page({
       { label: '纵横G700', value: 'g700' },
       { label: '旅行者/山海T2', value: 'traveler' },
       { label: '自由者/山海T1', value: 'ziyouzhe' },
-      { label: '山海L7/Plus/T9', value: 'shanhal7' },
+      { label: '山海L7/Plus', value: 'shanhal7' },
       { label: '山海L9', value: 'shanhal9' },
       { label: '风云A9/T9', value: 'fengyunA9' },
       { label: '虎8/8L', value: 'hu8' },
@@ -306,6 +306,9 @@ Page({
     showVerifyModal: false,
     needVerify: false,
     verifyToken: wx.getStorageSync('pw_verify_token') || '',
+
+    // 联系我们：请替换为开发者真实可联系的邮箱
+    contactEmail: 'support@example.com',
 
     timezoneList: timezones,
     timezoneIndex: 23,
@@ -353,6 +356,12 @@ Page({
     this.setData({
       showPopup: false
     });
+  },
+
+  // 客服会话回调（open-type="contact" 按钮触发）
+  handleContact(e) {
+    // e.detail 含来自客服的回调信息，此处仅做记录，可按需扩展
+    console.log('contact callback', e.detail);
   },
 
   openManual() {
