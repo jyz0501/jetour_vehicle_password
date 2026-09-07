@@ -23,63 +23,83 @@
             <button id="closePopup" class="popup-button">我知道了</button>
         </div>
     </div>
-    
+
     <div class="container">
-        <h1>大伦车机口令工具<span id="app-version" style="font-size: 12px; color: #999;">v2.1.5</span></h1>
-        <div class="link-buttons">
-            <!-- <a href="https://jetour.qianxian.tech/" target="_self" class="link-button">主题工具</a> -->
-            <a href="https://tool.qianxian.tech/" target="_self" class="link-button">安装工具</a>
-        </div>
+        <!-- 顶部品牌区 -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-line">
+                    <span class="brand-dot"></span>
+                    <h1>大伦车机口令工具<span id="app-version" class="app-ver">v2.1.5</span></h1>
+                </div>
+                <p class="slogan">两步取口令 · 车型按品牌分组 · 版本自动匹配</p>
+            </div>
+            <div class="top-actions">
+                <!-- <a href="https://jetour.qianxian.tech/" target="_self" class="link-button">主题工具</a> -->
+                <a href="https://tool.qianxian.tech/" target="_self" class="link-button">安装工具</a>
+                <label class="tz-field" for="timezone">时区
+                    <select id="timezone"></select>
+                </label>
+            </div>
+        </header>
+
         <!-- 斜放水印层 -->
         <div class="watermark-container">
             <div class="watermark-diagonal">抖音@大伦哥的CDM</div>
         </div>
-        
-        <div class="car-selector">
-            <label for="carModel">选择车型：</label>
-            <select id="carModel">
-                <option value="g700">纵横G700</option>
-                <option value="zonghengF700">纵横F700</option>
-                <option value="traveler" selected>旅行者/山海T2</option>
-                <option value="ziyouzhe">自由者/山海T1</option>
-                <option value="shanhal7">山海L7/Plus/T9</option>
-                <option value="shanhal9">山海L9</option>
-                <option value="x70plus">X70Plus/L/Pro/CDM</option>
-                <option value="x90plus">X90/Plus/Pro/CDM</option>
-                <option value="x95">X95</option>
-                <option value="dasheng">捷途大圣</option>
-                <option value="fengyunA9">风云A9/T9</option>
-                <option value="hu8">虎8/8L</option>
-            </select>
-        </div>
-        
-        <div class="version-switcher">
-            <div class="version-buttons">
-                <button class="version-button" data-version="00x">00.08及以下</button>
-                <button class="version-button" data-version="0406">4.06及以下</button>
-                <button class="version-button active" data-version="0407">4.07以上</button>
-                <button class="version-button" data-version="other">其他</button>
-            </div>
-        </div>
 
-        <div class="timezone-selector">
-            <label for="timezone">选择时区：</label>
-            <select id="timezone"></select>
-        </div>
+        <!-- 向导主体 -->
+        <div class="wizard">
+            <!-- 步骤指示 -->
+            <div class="steps">
+                <div class="step-bar on" id="stepBar1"></div>
+                <div class="step-bar" id="stepBar2"></div>
+            </div>
 
-        <div class="hour-password-group">
-            <div class="hour-indicator">
-                口令有效期：<span id="nextUpdateTime">--</span>
-            </div>
-            <div class="password-group" id="passwordGroup">
-                <!-- 口令输入框将由JS动态生成 -->
-            </div>
-        </div>
-        
-        <div class="update-info">
-            最后更新时间：<span id="updateTime">--</span>
+            <!-- 第 1 步：选择车型 -->
+            <section id="stepCar" class="step">
+                <div class="step-head">
+                    <span class="step-no">STEP 1</span>
+                    <h2>选择你的车型</h2>
+                    <span class="step-sub" id="carCount"></span>
+                </div>
+                <div id="carGridWrap">
+                    <div id="carGrid" class="wz-grid"></div>
+                </div>
+                <!-- 已选车型摘要（进入第 2 步后展示） -->
+                <div id="carSummary" class="car-summary" hidden>
+                    <div class="sum-name" id="sumName"></div>
+                    <span class="tag" id="sumBadge"></span>
+                    <button type="button" id="switchCarBtn" class="switch-btn">更换车型</button>
+                </div>
+            </section>
+
+            <!-- 第 2 步：确认版本 + 取口令 -->
+            <section id="stepPick" class="step" hidden>
+                <div class="step-head">
+                    <span class="step-no">STEP 2</span>
+                    <h2>确认系统版本</h2>
+                    <span class="step-sub">默认选中常用版本，不确定时可直接使用</span>
+                </div>
+
+                <div class="pick-name" id="pickCarName"></div>
+                <div id="versionChips" class="ver-bar"></div>
+
+                <div class="pwd-area">
+                    <div class="hour-indicator">
+                        口令有效期：<span id="nextUpdateTime">--</span>
+                    </div>
+                    <div class="password-group" id="passwordGroup">
+                        <!-- 口令卡由JS按车型渲染 -->
+                    </div>
+                    <div class="update-info">
+                        最后更新时间：<span id="updateTime">--</span>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
+
     <script src="app.js" type="module"></script>
 </body>
 </html>

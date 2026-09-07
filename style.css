@@ -1,404 +1,472 @@
-body {
-    margin: 0;
-    padding: 20px;
-    min-height: 100vh;
-    background: #f5f7fa;
-    font-family: '微软雅黑', Arial, sans-serif;
+/* ============================================================
+   向导式主题 · 保留弹窗 / 口令卡 / 序列号等 JS 依赖样式
+   ============================================================ */
+:root {
+    --bg: #f3f5fb;
+    --card: #ffffff;
+    --line: #e6e9f2;
+    --txt: #1c2333;
+    --sub: #6b7280;
+    --brand: #5b5bd6;
+    --brand-2: #7c3aed;
+    --brand-soft: #f0effc;
+    --accent: #f59e0b;
+    --ok: #16a34a;
+    --bad: #e11d48;
 }
 
-/* 弹窗样式（免责声明 usagePopup 共用，勿删） */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #e9ecfa 0%, var(--bg) 300px);
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+    color: var(--txt);
+}
+
+.container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 22px 16px 80px;
+}
+
+/* ---------- 弹窗（免责声明 usagePopup 共用，勿删） ---------- */
 .popup-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
 }
-
 .popup-content {
     background-color: white;
-    border-radius: 12px;
-    padding: 30px;
-    max-width: 80%;
-    max-height: 80%;
+    border-radius: 14px;
+    padding: 28px;
+    max-width: 480px;
+    width: 92%;
+    max-height: 82%;
     overflow-y: auto;
     text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.28);
 }
-
-.popup-content h3 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 20px;
-}
-
-.popup-message {
-    margin-bottom: 30px;
-    text-align: justify;
-    line-height: 1.6;
-}
-
-.popup-message p {
-    margin-bottom: 15px;
-    color: #34495e;
-    font-size: 14px;
-}
-
+.popup-content h3 { color: var(--txt); margin-bottom: 16px; font-size: 19px; }
+.popup-message { margin-bottom: 22px; text-align: justify; line-height: 1.7; }
+.popup-message p { margin-bottom: 12px; color: #444b5c; font-size: 13px; }
 .popup-button {
-    padding: 12px 30px;
-    background-color: #3498db;
-    color: white;
+    padding: 10px 34px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff;
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
+    border-radius: 22px;
+    font-size: 15px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: opacity .2s;
+}
+.popup-button:hover { opacity: .88; }
+
+/* ---------- 顶部 ---------- */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.brand { display: flex; flex-direction: column; gap: 3px; }
+.brand-line { display: flex; align-items: center; gap: 10px; }
+.brand h1 {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 21px;
+    letter-spacing: .3px;
+    color: var(--txt);
+}
+.brand-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, .13);
+    margin-right: 10px;
+}
+.app-ver { font-size: 11px; color: var(--sub); font-weight: 400; }
+.slogan { font-size: 12px; color: var(--sub); padding-left: 20px; }
+[hidden] { display: none !important; }
+.top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.link-button {
+    display: inline-block;
+    padding: 7px 16px;
+    background: var(--card);
+    color: var(--brand);
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 13px;
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(28, 35, 51, .05);
+    transition: all .2s;
+}
+.link-button:hover { border-color: var(--brand); color: var(--brand-2); }
+
+.tz-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--sub);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 5px 8px 5px 12px;
+}
+.tz-field select {
+    font-size: 12px;
+    color: var(--txt);
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    max-width: 150px;
 }
 
-.popup-button:hover {
-    background-color: #2980b9;
-}
-
-.popup-button:active {
-    background-color: #1f618d;
-}
-
-.container {
-    max-width: 1080px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-/* 水印容器 */
+/* ---------- 水印 ---------- */
 .watermark-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     pointer-events: none;
     z-index: 1;
     overflow: hidden;
 }
-
-/* 斜放水印 */
 .watermark-diagonal {
     position: absolute;
-    background-color: rgba(200, 200, 200, 0.15);
-    color: rgba(100, 100, 100, 0.3);
-    padding: 12px 40px;
-    font-size: 16px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    background-color: rgba(200, 200, 210, .12);
+    color: rgba(100, 100, 120, .28);
+    padding: 10px 42px;
+    font-size: 15px;
     font-weight: bold;
-    transform: rotate(-45deg);
     white-space: nowrap;
     border-radius: 4px;
-    border: 1px solid rgba(150, 150, 150, 0.2);
+    border: 1px solid rgba(150, 150, 170, .18);
 }
 
-.watermark-diagonal:nth-child(1) {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-45deg);
-}
+/* ---------- 向导主体 ---------- */
+.wizard { position: relative; z-index: 2; }
 
-.watermark-diagonal:nth-child(2) {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    display: none;
+.steps { display: flex; gap: 8px; margin-bottom: 18px; }
+.step-bar {
+    flex: 1;
+    height: 5px;
+    border-radius: 3px;
+    background: #dcdef0;
+    transition: background .4s;
 }
+.step-bar.on { background: linear-gradient(90deg, var(--brand), var(--brand-2)); }
 
-h1 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 20px;
-}
-
-.link-buttons {
-    margin-bottom: 20px;
-}
-
-.car-selector {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.car-selector label {
-    font-size: 16px;
-    color: #2c3e50;
-    margin-right: 10px;
-}
-
-.car-selector select {
-    padding: 10px 15px;
-    font-size: 14px;
-    border: 1px solid #3498db;
-    border-radius: 4px;
-    background-color: white;
-    color: #2c3e50;
-    cursor: pointer;
-    min-width: 180px;
-}
-
-.car-selector select:focus {
-    outline: none;
-    border-color: #2980b9;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
-}
-
-.timezone-selector {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.timezone-selector label {
-    font-size: 16px;
-    color: #2c3e50;
-    margin-right: 10px;
-}
-
-.timezone-selector select {
-    padding: 10px 15px;
-    font-size: 14px;
-    border: 1px solid #27ae60;
-    border-radius: 4px;
-    background-color: white;
-    color: #2c3e50;
-    cursor: pointer;
-    min-width: 280px;
-}
-
-.timezone-selector select:focus {
-    outline: none;
-    border-color: #229954;
-    box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
-}
-
-.link-button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #3498db;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
-
-.link-button:hover {
-    background-color: #2980b9;
-}
-
-.link-button:active {
-    background-color: #1f618d;
-}
-
-.version-switcher {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.version-switcher h3 {
-    margin-bottom: 10px;
-    color: #34495e;
-}
-
-.version-buttons {
+.step-head {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    align-items: baseline;
     gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+.step-head .step-no {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--brand-2);
+    background: var(--brand-soft);
+    border-radius: 6px;
+    padding: 3px 8px;
+}
+.step-head h2 { font-size: 17px; }
+.step-head .step-sub { font-size: 12px; color: var(--sub); }
+
+/* ---------- 第 1 步：车型卡片网格 ---------- */
+.wz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (min-width: 620px) {
+    .wz-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.wz-group {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 -2px;
+}
+.wz-group-name { font-size: 12px; font-weight: 700; color: var(--sub); letter-spacing: 1px; }
+.wz-group-count { font-size: 10px; color: #a6adc2; }
+.wz-group::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
 }
 
-.version-button {
-    padding: 10px 20px;
-    border: 1px solid #3498db;
-    border-radius: 4px;
-    background-color: white;
-    color: #3498db;
+.car-card {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    text-align: left;
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    padding: 12px 12px 11px;
     cursor: pointer;
+    transition: all .18s ease;
+    font-family: inherit;
+}
+.car-card:hover {
+    border-color: #c9cdea;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(28, 35, 51, .07);
+}
+.car-card.selected {
+    border-color: var(--brand);
+    background: #f7f6ff;
+    box-shadow: 0 4px 14px rgba(91, 91, 214, .18);
+}
+.card-line { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.car-name {
     font-size: 14px;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.car-card.selected .car-name { color: var(--brand-2); }
+.tag {
+    flex: none;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: .3px;
+}
+.tag-dyn { background: #fff4e0; color: #b45309; }
+.tag-fixed { background: #e8f5ee; color: #15803d; }
+.car-vers {
+    font-size: 11px;
+    color: var(--sub);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.version-button:hover {
-    background-color: #3498db;
-    color: white;
+/* 选中后摘要条 */
+.car-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 14px rgba(28, 35, 51, .06);
+    flex-wrap: wrap;
+}
+.sum-name { font-size: 16px; font-weight: 800; color: var(--brand-2); }
+.switch-btn {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--brand);
+    background: #fff;
+    border: 1px solid var(--brand);
+    border-radius: 18px;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: all .18s;
+}
+.switch-btn:hover { background: var(--brand-soft); }
+
+/* ---------- 第 2 步：版本 chips ---------- */
+.pick-name {
+    font-size: 13px;
+    color: var(--sub);
+    margin-bottom: 10px;
+}
+.pick-name b { color: var(--brand-2); font-size: 15px; }
+
+.ver-bar {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 3px 2px 8px;
+    scrollbar-width: none;
+}
+.ver-bar::-webkit-scrollbar { display: none; }
+
+.ver-chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 22px;
+    background: var(--card);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--txt);
+    font-family: inherit;
+    transition: all .18s;
+}
+.ver-chip:hover { border-color: #c9cdea; }
+.ver-chip.active {
+    border-color: var(--brand-2);
+    background: linear-gradient(180deg, #f7f4ff, #ece6ff);
+    color: var(--brand-2);
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(124, 58, 237, .16);
+}
+.ver-chip .ver-common {
+    font-style: normal;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--accent);
+    background: #fff6e5;
+    border: 1px solid #f6dfae;
+    border-radius: 6px;
+    padding: 1px 5px;
+}
+.ver-chip .ver-note {
+    font-style: normal;
+    font-size: 9px;
+    color: var(--bad);
+    background: #fdeef2;
+    border-radius: 6px;
+    padding: 1px 5px;
 }
 
-.version-button.active {
-    background-color: #3498db;
-    color: white;
-    font-weight: bold;
+/* ---------- 口令区 ---------- */
+.pwd-area {
+    margin-top: 10px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 16px;
+    box-shadow: 0 10px 30px rgba(28, 35, 51, .06);
 }
-
-.hour-password-group {
-    border: 2px solid #3498db;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
 .hour-indicator {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sub);
     text-align: center;
-    color: #34495e;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+    margin-bottom: 16px;
 }
+#nextUpdateTime { color: var(--accent); font-weight: 800; }
 
 .password-group {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 14px;
 }
-
 .password-card {
-    background: white;
-    border-radius: 12px;
-    padding: 30px 20px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s;
+    background: #fbfaff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    animation: rise .3s ease;
 }
-
-.password-card:hover {
-    transform: translateY(-2px);
-}
-
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .password-card h2 {
-    color: #34495e;
-    margin: 0 0 20px 0;
-    font-size: 20px;
+    color: var(--txt);
+    margin: 0 0 4px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-
+.password-card h2::before {
+    content: "";
+    width: 8px; height: 8px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+}
 .password-value {
-    font-size: 32px;
-    color: #e74c3c;
-    font-weight: bold;
-    letter-spacing: 2px;
-    font-family: 'DS-DIGI ITC', monospace; 
+    font-size: 38px;
+    color: var(--txt);
+    font-weight: 800;
+    letter-spacing: 4px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    text-align: center;
+    padding: 6px 0 4px;
+    font-variant-numeric: tabular-nums;
 }
-
-.password-container {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 15px;
+#carInstructions {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--bad);
+    font-weight: 600;
+    text-align: center;
 }
+#adbInstructions {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #6b7a8f;
+    text-align: center;
+}
+#notes { font-size: 12px; color: var(--bad); }
 
+/* 序列号输入 */
 #serialNumberInput {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    width: 100%;
+    gap: 8px;
+    margin-top: 10px;
 }
-
-#serialNumberInput input {
-    width: 100%;
-    max-width: 200px;
-}
-
-#serialNumberInput input {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
+#serialNumberInput input,
+#g700VerifyPassword {
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 9px;
     width: 100%;
     max-width: 200px;
     font-size: 16px;
     text-align: center;
-    height: 44px;
-    box-sizing: border-box;
+    letter-spacing: 4px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
 }
+#serialNumberInput input:focus,
+#g700VerifyPassword:focus { border-color: var(--brand); }
 
-#calculateAdbButton {
-    margin-top: 10px;
-    padding: 6px 8px;
-    background-color: #3498db;
-    color: white;
+.toggle-button, #calculateAdbButton {
+    margin-top: 6px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 18px;
     cursor: pointer;
-    font-size: 11px;
-    transition: background-color 0.3s;
-    white-space: nowrap;
-    min-width: 100px;
-    max-width: 140px;
-    height: 28px;
-    box-sizing: border-box;
-    text-align: center;
-    line-height: 16px;
+    font-size: 13px;
+    transition: opacity .2s;
 }
-
-#calculateAdbButton:hover {
-    background-color: #2980b9;
-}
-
-#calculateAdbButton:active {
-    background-color: #1f618d;
-}
-
-.toggle-button {
-    margin-top: 10px;
-    padding: 6px 8px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 11px;
-    transition: background-color 0.3s;
-    white-space: nowrap;
-    min-width: 100px;
-    max-width: 140px;
-    height: 28px;
-    box-sizing: border-box;
-    text-align: center;
-    line-height: 16px;
-}
-
-.toggle-button:hover {
-    background-color: #2980b9;
-}
-
-.toggle-button:active {
-    background-color: #1f618d;
-}
+.toggle-button:hover, #calculateAdbButton:hover { opacity: .88; }
 
 .update-info {
-    color: #7f8c8d;
-    font-size: 16px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 8px;
-    display: inline-block;
-}
-#nextUpdateTime {
-    color: #e74c3c;
-    font-weight: bold;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    color: var(--sub);
+    font-size: 12px;
+    text-align: center;
 }
 
-#carInstructions {
-    margin-top: 5px;
-    font-size: 0.9em;
-    color: #e74c3c;
-    font-weight: bold;
-    padding-left: 20px;
-}
-
-#adbInstructions {
-    margin-top: 5px;
-    font-size: 0.9em;
-    color: #666;
-    padding-left: 20px;
-}
-#notes {
-    font-size: 0.9em;
-    color:  #e74c3c;
+/* 移动端适配 */
+@media (max-width: 420px) {
+    .car-card { padding: 10px 10px 9px; }
+    .car-name { font-size: 13px; }
 }

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念稿 C · 渐进升级版（分组下拉 + 上下文版本条）</title>
+<style>
+  /* ===== 概念稿 C：改动最小 · 对齐现有页面骨架 · 工具类清晰风格 ===== */
+  :root{
+    --bg:#eef2f7; --card:#fff; --line:#dbe2ec; --line2:#cdd7e4;
+    --txt:#22304a; --sub:#6a7b96; --brand:#1f6feb; --brand-d:#1a5fd0;
+    --soft:#eaf1ff; --ok:#12a150; --warn:#e8590c; --bad:#e03131;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 18px 70px;}
+
+  header{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;flex-wrap:wrap;}
+  header h1{font-size:20px;}
+  header .ver{font-size:12px;color:var(--sub);}
+  .crumbs{color:var(--sub);font-size:13px;margin-bottom:18px;}
+
+  /* ① 车型 + 时区工具条（一行内完成主选择） */
+  .toolbar{background:var(--card);border:1px solid var(--line);border-radius:14px;
+       padding:14px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;
+       box-shadow:0 1px 0 rgba(20,40,80,.04);}
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;}
+  select.sel{padding:9px 34px 9px 12px;border:1.5px solid var(--line2);border-radius:10px;
+       font-size:14px;color:var(--txt);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a7b96' fill='none' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center;
+       appearance:none;-webkit-appearance:none;cursor:pointer;min-width:240px;}
+  select.sel:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(31,111,235,.12);}
+  select.sel optgroup{color:var(--sub);font-weight:700;}
+  .spacer{flex:1;}
+  .tz{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--sub);}
+  .tz select{font-size:12.5px;color:var(--txt);border:1px solid var(--line2);border-radius:8px;padding:6px 8px;}
+
+  /* ② 车型速览 */
+  .car-banner{margin-top:14px;background:linear-gradient(90deg,#f5f9ff,#fff);
+       border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:12px;
+       padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .car-banner .big{font-size:17px;font-weight:800;}
+  .badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .badge.hourly{color:#0a7d3f;background:#e6f6ec;}
+  .badge.fixed{color:#4b5872;background:#eef1f6;}
+  .car-banner .meta{font-size:12px;color:var(--sub);display:flex;gap:14px;flex-wrap:wrap;}
+
+  /* ③ 版本条：仅当前车型有效版本 */
+  .ver-row{margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .ver-row .lab{font-size:12px;color:var(--sub);font-weight:700;letter-spacing:.5px;}
+  .segs{display:inline-flex;background:#e3e9f2;border-radius:11px;padding:4px;gap:4px;flex-wrap:wrap;}
+  .seg{border:none;background:transparent;padding:8px 15px;border-radius:8px;font-size:13px;cursor:pointer;
+       color:#40536f;font-family:inherit;transition:.15s;}
+  .seg:hover{color:var(--txt);}
+  .seg.on{background:#fff;color:var(--brand);font-weight:800;box-shadow:0 2px 6px rgba(31,111,235,.2);}
+  .seg .rec{font-size:9px;background:var(--warn);color:#fff;border-radius:5px;padding:1px 5px;margin-left:4px;vertical-align:1px;}
+  .seg .warn-flag{font-size:9px;color:var(--warn);font-weight:700;margin-left:2px;}
+
+  /* ④ 口令卡 */
+  .cards{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:620px){.cards{grid-template-columns:1fr}}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;
+       position:relative;box-shadow:0 6px 20px rgba(30,50,90,.06);}
+  .pcard .idx{position:absolute;top:-11px;left:16px;background:var(--brand);color:#fff;font-size:11px;
+       padding:3px 10px;border-radius:20px;font-weight:700;}
+  .pcard h3{font-size:15px;}
+  .pcard .sub2{font-size:12px;color:var(--sub);margin:2px 0 12px;}
+  .code-box{display:flex;align-items:center;gap:8px;background:#fbfdff;border:1px dashed var(--line2);
+       border-radius:12px;padding:10px 14px;}
+  .code{font-family:var(--mono);font-size:32px;font-weight:800;letter-spacing:4px;flex:1;
+       text-align:center;color:var(--txt);font-variant-numeric:tabular-nums;}
+  .copy{padding:8px 14px;border:1px solid var(--brand);color:var(--brand);background:#fff;border-radius:9px;
+       font-size:12px;cursor:pointer;transition:.15s;}
+  .copy:hover{background:var(--soft);}
+  .copy.done{background:var(--ok);border-color:var(--ok);color:#fff;}
+  .route{margin-top:10px;font-size:12px;color:var(--sub);background:#f6f9fd;border-radius:9px;
+       padding:8px 10px;line-height:1.6;}
+  .route b{color:var(--brand-d);}
+  .need-serial{margin-top:8px;display:none;font-size:12px;color:var(--bad);background:#fff1f1;
+       border:1px solid #ffd7d7;border-radius:9px;padding:8px 10px;}
+  .need-serial.show{display:block;}
+  .need-serial input{width:130px;margin-left:8px;padding:5px 8px;border:1px solid #ffc9c9;
+       border-radius:7px;font-size:13px;letter-spacing:2px;text-align:center;}
+
+  /* ⑤ 倒计时 */
+  .timer{margin-top:16px;display:flex;align-items:center;gap:12px;background:#fff8ec;
+       border:1px solid #ffe1b8;border-radius:12px;padding:10px 16px;}
+  .timer .ico{width:11px;height:11px;border-radius:50%;background:var(--warn);animation:blink 1s infinite;}
+  @keyframes blink{50%{opacity:.35}}
+  .timer .txt{font-size:13px;color:#9a5b13;}
+  .timer .hl{background:var(--warn);color:#fff;font-weight:800;font-size:13px;border-radius:8px;
+       padding:4px 12px;margin-left:auto;font-family:var(--mono);}
+  .foot{color:var(--sub);font-size:12px;margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>车机口令查询</h1><span class="ver">概念稿 C · 渐进升级版</span></header>
+  <div class="crumbs">仅对「车型 / 版本」选择区重构 · 口令展示沿用卡片化结构</div>
+
+  <!-- ① 工具条：车型（品牌分组）+ 时区 -->
+  <div class="toolbar">
+    <div class="field" style="flex:1;min-width:250px">
+      <label for="carSel">选择车型</label>
+      <select class="sel" id="carSel"></select>
+    </div>
+    <div class="spacer"></div>
+    <div class="tz">时区
+      <select id="tz"><option>UTC+8 北京时间</option><option>UTC+0</option></select>
+    </div>
+  </div>
+
+  <!-- ② 选中车型速览 -->
+  <div class="car-banner">
+    <div class="big" id="curName">—</div>
+    <span class="badge" id="curBadge">—</span>
+    <div class="meta"><span id="verCount"></span><span id="algDesc"></span></div>
+  </div>
+
+  <!-- ③ 版本段 -->
+  <div class="ver-row">
+    <span class="lab">系统版本</span>
+    <div class="segs" id="segBar"></div>
+  </div>
+
+  <!-- ④ 口令卡 -->
+  <div class="cards">
+    <div class="pcard">
+      <span class="idx">工程模式</span>
+      <h3>工程模式口令</h3>
+      <div class="sub2">应用中心 → 蓝牙电话</div>
+      <div class="code-box"><span class="code" id="c1">------</span>
+        <button class="copy" data-i="0">复制</button></div>
+      <div class="route" id="r1"></div>
+      <div class="need-serial" id="ns1">该版本需输入序列号后 6 位<input id="sn" maxlength="6"></div>
+    </div>
+    <div class="pcard" id="card2">
+      <span class="idx">ADB / 加密项</span>
+      <h3 id="t2">ADB权限口令</h3>
+      <div class="sub2">工程模式 → 加密设置</div>
+      <div class="code-box"><span class="code" id="c2">------</span>
+        <button class="copy" data-i="1">复制</button></div>
+      <div class="route" id="r2"></div>
+    </div>
+  </div>
+
+  <!-- ⑤ 倒计时 -->
+  <div class="timer">
+    <span class="ico"></span>
+    <span class="txt" id="timerTxt">口令每 60 分钟轮换</span>
+    <span class="hl" id="hl">--:--</span>
+  </div>
+  <div class="foot" id="foot">—</div>
+</div>
+
+<script>
+/* ====== 演示数据（示意稿：字段风格对齐 config/carModels.js） ====== */
+/* 每个版本： [版本标识, 显示名, 是否推荐, 是否需序列号] */
+const CAR=[
+  {g:"纵横",items:[
+    {k:"g700",n:"纵横G700",t:"hourly",vs:[["330335","3.30-3.35"],["335337","3.36-3.37"],["4.0x-4.4x","4.0x-4.4x",1]]},
+    {k:"zonghengF700",n:"纵横F700",t:"hourly",vs:[["000302","00.03.02"]]}
+  ]},
+  {g:"捷途",items:[
+    {k:"traveler",n:"旅行者 / 山海T2",t:"hourly",vs:[["00x","00.08及以下",0,1],["0406","4.06及以下"],["0407","4.07以上",1],["other","其他"],["cdm","26款"]]},
+    {k:"ziyouzhe",n:"自由者 / 山海T1",t:"hourly",vs:[["11010x","11.01.04+",1],["01010x","01.01.0x"],["000402","00.04.02"]]},
+    {k:"shanhal7",n:"山海L7 / Plus / T9",t:"hourly",vs:[["os10201","OS1-02.01"],["os1201000","OS1_20.10.00",1]]},
+    {k:"shanhal9",n:"山海L9",t:"fixed",vs:[["u","全系"]]},
+    {k:"x70plus",n:"X70 Plus/L/Pro/CDM",t:"fixed",vs:[["u","00.01.0x"]]},
+    {k:"x90plus",n:"X90/Plus/Pro/CDM",t:"fixed",vs:[["040x","04.0x"],["u","其他",1]]},
+    {k:"x95",n:"X95",t:"fixed",vs:[["u","全系"]]},
+    {k:"dasheng",n:"捷途大圣",t:"fixed",vs:[["u","全系"]]}
+  ]},
+  {g:"奇瑞",items:[
+    {k:"fengyunA9",n:"风云A9 / T9",t:"fixed",vs:[["u","全系"]]},
+    {k:"hu8",n:"虎8 / 8L",t:"fixed",vs:[["u","全系"]]}
+  ]}
+];
+const map={};CAR.forEach(g=>g.items.forEach(m=>map[m.k]=m));
+const sel=document.getElementById("carSel");
+CAR.forEach(g=>{const og=document.createElement("optgroup");og.label=g.g;
+  g.items.forEach(m=>{const o=document.createElement("option");o.value=m.k;o.textContent=m.n;og.appendChild(o);});
+  sel.appendChild(og);});
+
+let cur=null,curVer=null;
+function pick(){
+  const m=map[sel.value];
+  if(cur===m.k)return; cur=m.k;
+  const rec=m.vs.findIndex(x=>x[2]===1);
+  curVer=m.vs[rec>=0?rec:0][0];
+  document.getElementById("curName").textContent=m.n;
+  const b=document.getElementById("curBadge");
+  b.className="badge "+(m.t==="hourly"?"hourly":"fixed");
+  b.textContent=m.t==="hourly"?"每小时动态":"固定口令";
+  document.getElementById("verCount").textContent=m.vs.length+" 个版本可选";
+  document.getElementById("algDesc").textContent=m.t==="hourly"?"取当前小时最新口令":"口令固定不变";
+  renderSegs();renderCards();
+}
+function renderSegs(){
+  const bar=document.getElementById("segBar");bar.innerHTML="";
+  map[cur].vs.forEach(([v,n,rec,ns])=>{
+    const b=document.createElement("button");b.className="seg"+(v===curVer?" on":"");
+    b.innerHTML=n+(rec?'<span class="rec">推荐</span>':'')+(ns?'<span class="warn-flag" title="需序列号">※</span>':'');
+    b.onclick=()=>{curVer=v;renderSegs();renderCards();};
+    bar.appendChild(b);
+  });
+}
+function pwd(seed){let s="";for(let i=0;i<6;i++)s+=(seed+i*3)%10;return s;}
+function renderCards(){
+  const m=map[cur];
+  const i=m.vs.findIndex(x=>x[0]===curVer);
+  const needSerial=m.vs[i][3]===1;
+  const seed=(m.k.length+curVer.length+3*i)%10;
+  document.getElementById("c1").textContent=pwd(seed);
+  document.getElementById("c2").textContent=pwd(seed+4);
+  document.getElementById("r1").innerHTML="<b>入口</b>：应用中心 → 蓝牙电话 → 拨号盘输入";
+  document.getElementById("r2").innerHTML="<b>入口</b>：工程模式 → 加密设置";
+  const t2=document.getElementById("t2");
+  t2.textContent=(m.k==="g700"||m.k==="zonghengF700")?"ADB权限口令":"加密项口令";
+  document.getElementById("card2").style.display=(m.t==="fixed"&&!needSerial)?"none":"";
+  document.getElementById("ns1").classList.toggle("show",needSerial&&m.t!=="fixed");
+  const hl=document.getElementById("hl");
+  if(m.t==="hourly"){
+    hl.style.display="";
+    const now=new Date();
+    const pad=n=>String(n).padStart(2,"0");
+    const secs=Math.max(0,59*60+59-(now.getSeconds()+now.getMinutes()*60)%3600);
+    document.getElementById("timerTxt").textContent="本小时口令有效期至整点换码，当前时区 "+ (now.getTimezoneOffset()/-60>=0?"UTC+"+(now.getTimezoneOffset()/-60):"UTC-"+(now.getTimezoneOffset()/-60)) ;
+    hl.textContent=pad(Math.floor(secs/60))+":"+pad(secs%60);
+    setInterval(()=>{
+      const s2=Math.max(0,59*60+59-(new Date().getSeconds()+new Date().getMinutes()*60)%3600);
+      hl.textContent=pad(Math.floor(s2/60))+":"+pad(s2%60);
+    },1000);
+  }else{
+    hl.textContent="固定";
+    document.getElementById("timerTxt").textContent="固定口令，长期有效";
+  }
+}
+sel.addEventListener("change",pick);
+document.querySelectorAll(".copy").forEach(b=>b.onclick=()=>{
+  const el=document.getElementById(b.dataset.i==="0"?"c1":"c2");
+  navigator.clipboard.writeText(el.textContent).then(()=>{b.textContent="已复制";b.classList.add("done");
+    setTimeout(()=>{b.textContent="复制";b.classList.remove("done");},1300);});
+});
+pick();
+</script>
+</body>
+</html>

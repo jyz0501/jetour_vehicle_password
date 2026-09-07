@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>口令工具 UI 概念稿 · 选择</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#10141b;color:#e6edf3;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 16px;}
+  .wrap{max-width:960px;width:100%;}
+  h1{font-size:24px;margin-bottom:6px;}
+  p.sub{color:#8b9bb0;font-size:14px;margin-bottom:26px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+  a.card{display:block;background:#161e2b;border:1px solid #273445;border-radius:16px;padding:20px;
+       text-decoration:none;color:inherit;transition:.2s;position:relative;overflow:hidden;}
+  a.card:hover{transform:translateY(-3px);border-color:#22d3ee;box-shadow:0 10px 30px rgba(34,211,238,.12);}
+  a.card .no{font-size:12px;color:#22d3ee;font-weight:700;letter-spacing:1px;}
+  a.card h2{font-size:18px;margin:8px 0 6px;}
+  a.card p{font-size:13px;color:#9fb0c3;line-height:1.7;}
+  a.card .pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;margin-top:12px;
+       border:1px solid #33445c;color:#22d3ee;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>口令工具 · 车型/版本选择 UI 概念稿</h1>
+  <p class="sub">三个方向：点开查看可交互演示，选定后再落地到 index.html / 小程序。</p>
+  <div class="grid">
+    <a class="card" href="./concept-A-wizard.html">
+      <div class="no">方案 A · 向导式</div>
+      <h2>两步取口令</h2>
+      <p>移动端优先。车型卡片按品牌分组直接点选（带动态/固定徽标），选中后进入版本推荐条，默认高亮「推荐」版本。最少的点击路径，适合手机访问为主的口令站。</p>
+      <span class="pill">手机 · 卡片点选</span>
+    </a>
+    <a class="card" href="./concept-B-dark-panel.html">
+      <div class="no">方案 B · 工程面板</div>
+      <h2>深色桌面控制台</h2>
+      <p>桌面宽屏。左侧分组车型栏 + 搜索过滤，右侧版本分段开关、口令大号等宽码与「复制」、剩余有效时间进度环。信息密度与工程氛围最强。</p>
+      <span class="pill">桌面 · 高信息密度</span>
+    </a>
+    <a class="card" href="./concept-C-progressive.html">
+      <div class="no">方案 C · 渐进升级</div>
+      <h2>最小改动升级</h2>
+      <p>保留现有页面结构与后端接口不变，仅重构「车型/版本」区：品牌 optgroup 分组下拉、选中车型速览条、按车型动态渲染版本分段并标注「推荐/需序列号」。落地成本最低。</p>
+      <span class="pill">全端 · 低改造量</span>
+    </a>
+  </div>
+</div>
+</body>
+</html>

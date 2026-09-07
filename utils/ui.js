@@ -1,19 +1,136 @@
 import { carModels } from '../config/store.js';
 import { fetchPasswordsWithRetry, fetchVerify } from './api.js';
-import { getCountdownType, formatTimeUnit } from './password.js';
+import { getCarModelAlgorithm, getCountdownType, formatTimeUnit } from './password.js';
 import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';
 
+/* ===== 车型展示分组（静态 UI 元数据；key 需与服务端 carModels 一致，未知 key 自动归入“其他”） ===== */
+const CAR_BRAND_ORDER = ['纵横', '捷途', '奇瑞'];
+const CAR_MODEL_BRAND = {
+    g700: '纵横', zonghengF700: '纵横',
+    traveler: '捷途', ziyouzhe: '捷途', shanhal7: '捷途', shanhal9: '捷途',
+    x70plus: '捷途', x90plus: '捷途', x95: '捷途', dasheng: '捷途',
+    fengyunA9: '奇瑞', hu8: '奇瑞'
+};
+const OTHER_BRAND = '其他';
+
+function brandOf(carKey) {
+    return CAR_MODEL_BRAND[carKey] || OTHER_BRAND;
+}
+
+/** 判断车型是否含动态口令（任一版本非固定即算动态） */
+export function isCarModelDynamic(carKey) {
+    const model = carModels[carKey];
+    if (!model || !Array.isArray(model.versions) || !model.versions.length) {
+        return false;
+    }
+    return model.versions.some(v => getCountdownType(carKey, v) !== 'none');
+}
+
+/** 车型类型徽标（网格卡片与摘要共用） */
+export function carModelTag(carKey) {
+    return isCarModelDynamic(carKey)
+        ? { cls: 'tag-dyn', txt: '每小时更新' }
+        : { cls: 'tag-fixed', txt: '固定口令' };
+}
+
+/**
+ * 渲染第 1 步的车型分组卡片网格
+ * @param {string} selectedKey 当前选中车型 key（用于高亮）
+ */
+export function renderCarGrid(selectedKey) {
+    const grid = document.getElementById('carGrid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    const allKeys = Object.keys(carModels);
+    const groups = [...CAR_BRAND_ORDER, OTHER_BRAND];
+
+    groups.forEach(groupName => {
+        const keys = allKeys.filter(k => brandOf(k) === groupName);
+        if (!keys.length) return;
+
+        const groupHead = document.createElement('div');
+        groupHead.className = 'wz-group';
+        const groupTitle = document.createElement('span');
+        groupTitle.className = 'wz-group-name';
+        groupTitle.textContent = groupName;
+        const groupCount = document.createElement('span');
+        groupCount.className = 'wz-group-count';
+        groupCount.textContent = keys.length + ' 款';
+        groupHead.appendChild(groupTitle);
+        groupHead.appendChild(groupCount);
+        grid.appendChild(groupHead);
+
+        keys.forEach(key => {
+            const model = carModels[key];
+            const dyn = carModelTag(key);
+            const versionText = (model.versionNames
+                ? model.versions.map(v => model.versionNames[v] || v)
+                : model.versions).join(' · ');
+
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'car-card' + (key === selectedKey ? ' selected' : '');
+            card.dataset.key = key;
+
+            const line = document.createElement('div');
+            line.className = 'card-line';
+            const name = document.createElement('span');
+            name.className = 'car-name';
+            name.textContent = model.name || key;
+            const tag = document.createElement('span');
+            tag.className = 'tag ' + dyn.cls;
+            tag.textContent = dyn.txt;
+            line.appendChild(name);
+            line.appendChild(tag);
+
+            const vers = document.createElement('div');
+            vers.className = 'car-vers';
+            vers.textContent = versionText;
+
+            card.appendChild(line);
+            card.appendChild(vers);
+            grid.appendChild(card);
+        });
+    });
+}
+
+/** 渲染第 2 步的版本选择 chips（仅当前车型有效版本，首项标注“常用”，需要序列号的版本加角标） */
 export function renderVersionButtons(currentCarModel, currentVersion) {
-    const versionButtonsContainer = document.querySelector('.version-buttons');
-    versionButtonsContainer.innerHTML = '';
-    
+    const container = document.getElementById('versionChips');
+    if (!container) return;
+
+    container.innerHTML = '';
     const carModel = carModels[currentCarModel];
+    if (!carModel || !Array.isArray(carModel.versions)) return;
+
     carModel.versions.forEach((version, index) => {
-        const button = document.createElement('button');
-        button.className = 'version-button' + (version === currentVersion ? ' active' : '');
-        button.dataset.version = version;
-        button.textContent = carModel.versionNames[version];
-        versionButtonsContainer.appendChild(button);
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'ver-chip' + (version === currentVersion ? ' active' : '');
+        chip.dataset.version = version;
+
+        const label = document.createElement('span');
+        label.className = 'ver-label';
+        label.textContent = (carModel.versionNames && carModel.versionNames[version]) || version;
+        chip.appendChild(label);
+
+        if (index === 0) {
+            const common = document.createElement('i');
+            common.className = 'ver-common';
+            common.textContent = '常用';
+            chip.appendChild(common);
+        }
+
+        const algorithm = getCarModelAlgorithm(currentCarModel, version);
+        if (algorithm && algorithm.showSerialNumberInput) {
+            const note = document.createElement('i');
+            note.className = 'ver-note';
+            note.textContent = '需序列号';
+            chip.appendChild(note);
+        }
+
+        container.appendChild(chip);
     });
 }
 
