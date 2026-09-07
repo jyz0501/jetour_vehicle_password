@@ -119,7 +119,7 @@ let carModels = {
     }
   },
   g700: {
-    name: 'G700',
+    name: '纵横G700',
     versions: ['330335', '335337', '4.0x-4.4x'],
     versionNames: {
       '330335': '3.30-3.35',
@@ -264,7 +264,7 @@ Page({
     showPopup: true,
     
     carModelList: [
-      { label: '捷途G700', value: 'g700' },
+      { label: '纵横G700', value: 'g700' },
       { label: '旅行者/山海T2', value: 'traveler' },
       { label: '自由者/山海T1', value: 'ziyouzhe' },
       { label: '山海L7/Plus/T9', value: 'shanhal7' },

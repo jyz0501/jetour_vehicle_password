@@ -1,7 +1,7 @@
 // 车型配置
 export const carModels = {
     g700: {
-        name: '捷途G700',
+        name: '纵横G700',
         versions: ['330335', '335337', '4.0x-4.4x'],
         versionNames: {
             '330335': '3.30-3.35',

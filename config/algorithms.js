@@ -51,7 +51,7 @@ export const algorithms = {
         showSerialNumberInput: false
     },
     g700Dynamic: {
-        name: '动态算法（G700车型）',
+        name: '动态算法（纵横G700车型）',
         countdown: 'hourly',
         showSerialNumberInput: false
     },
