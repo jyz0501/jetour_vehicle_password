@@ -93,7 +93,7 @@
         <view tt:if="{{showSerialNumberInput}}" class="serial-number-input">
           <input 
             type="text" 
-            placeholder="请输入序列号后六位" 
+            placeholder="------后六位" 
             bindinput="inputSerialNumber"
             maxlength="6"
           />
@@ -117,7 +117,7 @@
       <input
         class="verify-input"
         type="text"
-        placeholder="6 位验证密码"
+        placeholder="输入验证密码"
         value="{{g700VerifyPassword}}"
         bindinput="inputG700VerifyPassword"
         maxlength="6"
