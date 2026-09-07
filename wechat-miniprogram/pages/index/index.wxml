@@ -83,7 +83,7 @@
     <view class="password-group">
       <view class="password-card">
         <text class="card-title">1. 系统口令</text>
-        <text class="password-value">{{carPassword}}</text>
+        <text class="password-value {{needVerify ? 'locked' : ''}}" bindtap="onPasswordTap">{{carPassword}}</text>
         <text class="instructions">{{carInstructions}}</text>
       </view>
 
@@ -100,18 +100,7 @@
           <button class="calculate-button" bindtap="calculatePassword">计算口令</button>
         </view>
 
-        <view wx:if="{{(currentCarModel === 'g700' || currentCarModel === 'zonghengF700') && !g700ShowAdb}}" class="serial-number-input">
-          <input
-            type="text"
-            placeholder="请输入密码"
-            bindinput="inputG700VerifyPassword"
-            maxlength="6"
-          />
-          <button class="calculate-button" bindtap="verifyG700Password">验证</button>
-          <text wx:if="{{g700VerifyError}}" class="error-text">密码错误</text>
-        </view>
-
-        <text class="password-value">{{settingPassword}}</text>
+        <text class="password-value {{needVerify ? 'locked' : ''}}" bindtap="onPasswordTap">{{settingPassword}}</text>
 
         
 
@@ -122,5 +111,25 @@
 
   <view class="update-info">
     <text>最后更新时间：{{updateTime}}</text>
+  </view>
+
+  <view wx:if="{{showVerifyModal}}" class="verify-mask" bindtap="closeVerifyModal">
+    <view class="verify-modal" catchtap="noop">
+      <text class="verify-title">请输入验证密码</text>
+      <text class="verify-tip">验证一次后，系统口令与设置口令同时解锁</text>
+      <input
+        class="verify-input"
+        type="text"
+        placeholder="6 位验证密码"
+        value="{{g700VerifyPassword}}"
+        bindinput="inputG700VerifyPassword"
+        maxlength="6"
+      />
+      <text wx:if="{{g700VerifyError}}" class="error-text">密码错误</text>
+      <view class="verify-actions">
+        <button class="verify-btn ghost" bindtap="closeVerifyModal">取消</button>
+        <button class="verify-btn" bindtap="verifyG700Password">验证</button>
+      </view>
+    </view>
   </view>
 </view>

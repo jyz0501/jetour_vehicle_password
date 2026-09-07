@@ -267,6 +267,71 @@
   width: 100%;
 }
 
+/* 验证密码悬浮窗 */
+.verify-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(20, 24, 38, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  z-index: 999;
+}
+.verify-modal {
+  width: 100%;
+  max-width: 600rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 36rpx 32rpx 28rpx;
+  box-shadow: 0 18rpx 50rpx rgba(20, 24, 38, 0.28);
+  display: flex;
+  flex-direction: column;
+}
+.verify-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1c2333;
+}
+.verify-tip {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-top: 12rpx;
+  line-height: 1.6;
+}
+.verify-input {
+  margin-top: 28rpx;
+  border: 2rpx solid #e6e9f2;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 34rpx;
+  text-align: center;
+  letter-spacing: 8rpx;
+  background: #fff;
+}
+.verify-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20rpx;
+  margin-top: 32rpx;
+}
+.verify-btn {
+  margin: 0;
+  padding: 0 40rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  font-size: 26rpx;
+  border-radius: 12rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #5b5bd6, #7c3aed);
+}
+.verify-btn.ghost {
+  background: #fff;
+  color: #5b5bd6;
+  border: 2rpx solid #5b5bd6;
+}
+.password-value.locked { color: #95a5a6; }
+
 .password-card {
   background-color: white;
   border-radius: 12rpx;

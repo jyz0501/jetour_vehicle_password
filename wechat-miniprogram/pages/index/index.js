@@ -303,6 +303,9 @@ Page({
 
     g700VerifyPassword: '',
     g700ShowAdb: false,
+    showVerifyModal: false,
+    needVerify: false,
+    verifyToken: wx.getStorageSync('pw_verify_token') || '',
 
     timezoneList: timezones,
     timezoneIndex: 23,
@@ -519,8 +522,29 @@ Page({
     });
   },
 
+  openVerifyModal() {
+    this.setData({
+      showVerifyModal: true,
+      g700VerifyPassword: '',
+      g700VerifyError: false
+    });
+  },
+
+  closeVerifyModal() {
+    this.setData({ showVerifyModal: false });
+  },
+
+  onPasswordTap() {
+    if (this.data.needVerify) {
+      this.openVerifyModal();
+    }
+  },
+
+  noop() {},
+
   verifyG700Password() {
     const { g700VerifyPassword, currentVersion, timezoneOffset, currentCarModel } = this.data;
+    if (!g700VerifyPassword) return;
 
     wx.request({
       url: 'https://api.qianxian.tech/api/verify',
@@ -536,12 +560,22 @@ Page({
         timezoneOffset: timezoneOffset
       },
       success: (res) => {
-        if (res.data.verified) {
+        if (res.data && res.data.verified) {
+          const token = res.data.verifyToken || '';
+          if (token) {
+            wx.setStorageSync('pw_verify_token', token);
+          }
+          const data = res.data.data || {};
+          const list = Array.isArray(data.passwords) ? data.passwords : [];
           this.setData({
+            verifyToken: token,
+            showVerifyModal: false,
             g700ShowAdb: true,
-            carPassword: res.data.data.carPassword || '--',
-            settingPassword: res.data.data.adbPassword || '--',
-            g700VerifyError: false
+            g700VerifyError: false,
+            carPassword: data.carPassword || list[0] || '--',
+            settingPassword: data.adbPassword || list[1] || '--'
+          }, () => {
+            this.updatePasswords();
           });
         } else {
           this.setData({
@@ -658,7 +692,8 @@ Page({
         carModel: currentCarModel,
         version: currentVersion,
         serialNumber: serialNumber,
-        timezoneOffset: timezoneOffset
+        timezoneOffset: timezoneOffset,
+        verifyToken: this.data.verifyToken
       },
       success: (res) => {
         if (res.data && res.data.success) {
@@ -731,12 +766,14 @@ Page({
 
           let carPassword = result.carPassword || '--';
           let settingPassword = result.adbPassword || '--';
-          if ((currentCarModel === 'g700' || currentCarModel === 'zonghengF700') && !this.data.g700ShowAdb) {
-            carPassword = '请验证密码';
-            settingPassword = '请验证密码';
+          const needVerify = !!result.needVerify && !this.data.verifyToken;
+          if (needVerify) {
+            carPassword = '点击验证密码';
+            settingPassword = '点击验证密码';
           }
 
           this.setData({
+            needVerify: needVerify,
             carPassword: carPassword,
             actualSettingPassword: result.adbPassword || '',
             settingPassword: settingPassword,
@@ -748,6 +785,10 @@ Page({
             countdownSeconds: countdownSeconds,
             countdownDisplay: countdownDisplay
           }, () => {
+            if (needVerify && this._verifyAutoShownFor !== `${currentCarModel}:${currentVersion}`) {
+              this._verifyAutoShownFor = `${currentCarModel}:${currentVersion}`;
+              this.openVerifyModal();
+            }
             if (isCountdownMode) {
               this.startCountdown();
             } else if (this.data.countdownTimer) {
