@@ -1,5 +1,5 @@
 import { carModels, isVerifyRequired } from '../config/store.js';
-import { fetchPasswordsWithRetry, fetchVerify } from './api.js';
+import { fetchPasswordsWithRetry, fetchVerify, getVerifyToken } from './api.js';
 import { getCountdownType } from './password.js';
 import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';
 
@@ -204,64 +204,15 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             <div class="password-card">
                 <h2>2. ADB权限口令</h2>
                 <div class="password-value" id="adbPassword">--</div>
-                <div id="g700PasswordInput" class="verify-input" style="display: none;">
-                    <input type="text" id="g700VerifyPassword" maxlength="6" placeholder="请输入密码">
-                    <button id="g700VerifyButton" class="toggle-button">验证</button>
-                    <p id="g700VerifyError" style="color: #e74c3c; margin-top: 8px; display: none; font-size: 12px;">密码错误</p>
-                </div>
                 <div id="adbInstructions">进入加密项输入上方计算后的口令</div>
             </div>
         `;
-        
-        if (isVerifyRequired(currentCarModel, currentVersion)) {
-            const carPasswordEl = document.getElementById('carPassword');
-            const adbPasswordEl = document.getElementById('adbPassword');
-            if (carPasswordEl) {
-                carPasswordEl.textContent = '请验证密码';
-                carPasswordEl.style.color = '#95a5a6';
-            }
-            if (adbPasswordEl) {
-                adbPasswordEl.textContent = '请验证密码';
-                adbPasswordEl.style.color = '#95a5a6';
-            }
-            document.getElementById('g700PasswordInput').style.display = 'block';
-        }
-        
-        document.getElementById('g700VerifyButton').addEventListener('click', async function() {
-            const input = document.getElementById('g700VerifyPassword');
-            const errorEl = document.getElementById('g700VerifyError');
-            const adbPwdEl = document.getElementById('adbPassword');
-            const button = document.getElementById('g700VerifyButton');
-            
-            button.textContent = '验证中...';
-            button.disabled = true;
-            
-            try {
-                const data = await fetchVerify(currentCarModel, currentVersion, input.value);
 
-                if (data.verified) {
-                    errorEl.style.display = 'none';
-                    const carPwdEl = document.getElementById('carPassword');
-                    const adbPwdEl = document.getElementById('adbPassword');
-                    const verified = data.data || {};
-                    const verifiedList = Array.isArray(verified.passwords) ? verified.passwords : [];
-                    carPwdEl.textContent = verified.carPassword || verifiedList[0] || '--';
-                    carPwdEl.style.color = '';
-                    adbPwdEl.textContent = verified.adbPassword || verifiedList[1] || '--';
-                    adbPwdEl.style.color = '#e74c3c';
-                    document.getElementById('g700PasswordInput').style.display = 'none';
-                } else {
-                    errorEl.style.display = 'block';
-                    input.value = '';
-                }
-            } catch (e) {
-                errorEl.textContent = '验证失败，请重试';
-                errorEl.style.display = 'block';
-            } finally {
-                button.textContent = '验证';
-                button.disabled = false;
-            }
-        });
+        // 未验证时两张卡都置为待验证，点击任意一张即唤起悬浮窗（验证一次解锁全部）
+        if (isVerifyRequired(currentCarModel, currentVersion) && !getVerifyToken()) {
+            markVerifyLocked('carPassword', currentCarModel, currentVersion);
+            markVerifyLocked('adbPassword', currentCarModel, currentVersion);
+        }
     } else if (currentCarModel === 'x70plus' || currentCarModel === 'x90plus') {
         let html = '';
         for (let i = 1; i <= 3; i++) {
@@ -428,28 +379,27 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
         }
     } else if (currentCarModel === 'g700' || currentCarModel === 'zonghengF700'
                || isVerifyRequired(currentCarModel, currentVersion)) {
+        const locked = isVerifyRequired(currentCarModel, currentVersion) && !getVerifyToken();
         const carPasswordEl = document.getElementById('carPassword');
         const adbPasswordEl = document.getElementById('adbPassword');
-        
-        if (carPasswordEl) {
-            const g700PasswordInput = document.getElementById('g700PasswordInput');
-            if (g700PasswordInput && g700PasswordInput.style.display !== 'none') {
-                carPasswordEl.textContent = '请验证密码';
-                carPasswordEl.style.color = '#95a5a6';
+        const list = Array.isArray(result.passwords) ? result.passwords : [];
+        const values = [result.carPassword || list[0], result.adbPassword || list[1]];
+
+        [carPasswordEl, adbPasswordEl].forEach((el, i) => {
+            if (!el) return;
+            if (locked) {
+                markVerifyLocked(el.id, currentCarModel, currentVersion);
             } else {
-                carPasswordEl.textContent = result.carPassword || '--';
-                carPasswordEl.style.color = '';
+                el.textContent = values[i] || '--';
+                el.style.color = '';
+                el.classList.remove('locked');
+                el.onclick = null;
             }
-        }
-        if (adbPasswordEl) {
-            const g700PasswordInput = document.getElementById('g700PasswordInput');
-            if (g700PasswordInput && g700PasswordInput.style.display !== 'none') {
-                adbPasswordEl.textContent = '请验证密码';
-                adbPasswordEl.style.color = '#95a5a6';
-            } else {
-                adbPasswordEl.textContent = result.adbPassword || '--';
-                adbPasswordEl.style.color = '';
-            }
+        });
+
+        if (locked && !verifyModalShown) {
+            verifyModalShown = true;
+            openVerifyModal(currentCarModel, currentVersion);
         }
     } else {
         if (result.passwords && Array.isArray(result.passwords)) {
@@ -471,4 +421,111 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
             }
         }
     }
+}
+
+/* ===== 验证密码悬浮窗：验证一次，同时解锁工程模式口令与 ADB 权限口令 ===== */
+let verifyModalShown = false;
+let verifyContext = { carModel: '', version: '' };
+
+/** 将口令位标记为「待验证」，点击即唤起悬浮窗 */
+function markVerifyLocked(elId, carModel, version) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.textContent = '点击验证密码';
+    el.style.color = '#95a5a6';
+    el.classList.add('locked');
+    el.onclick = () => openVerifyModal(carModel, version);
+}
+
+function ensureVerifyModal() {
+    if (document.getElementById('verifyOverlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'verify-overlay';
+    overlay.id = 'verifyOverlay';
+    overlay.hidden = true;
+    overlay.innerHTML = `
+        <div class="verify-modal" role="dialog" aria-modal="true">
+            <h3>请输入验证密码</h3>
+            <p class="verify-tip">验证一次后，工程模式口令与 ADB 权限口令同时解锁</p>
+            <input type="text" id="verifyModalInput" maxlength="6" inputmode="numeric"
+                   autocomplete="off" placeholder="6 位验证密码">
+            <p class="verify-error" id="verifyModalError" hidden>密码错误，请重试</p>
+            <div class="verify-actions">
+                <button type="button" class="vm-btn ghost" id="verifyModalCancel">取消</button>
+                <button type="button" class="vm-btn" id="verifyModalOk">验证</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const input = overlay.querySelector('#verifyModalInput');
+    overlay.querySelector('#verifyModalCancel').onclick = closeVerifyModal;
+    overlay.querySelector('#verifyModalOk').onclick = submitVerifyModal;
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitVerifyModal();
+    });
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeVerifyModal();
+    });
+}
+
+function closeVerifyModal() {
+    const overlay = document.getElementById('verifyOverlay');
+    if (overlay) overlay.hidden = true;
+}
+
+export function openVerifyModal(carModel, version) {
+    ensureVerifyModal();
+    if (carModel) verifyContext = { carModel, version };
+
+    const overlay = document.getElementById('verifyOverlay');
+    const input = document.getElementById('verifyModalInput');
+    const err = document.getElementById('verifyModalError');
+    if (err) err.hidden = true;
+    if (input) input.value = '';
+    overlay.hidden = false;
+    setTimeout(() => input && input.focus(), 50);
+}
+
+async function submitVerifyModal() {
+    const input = document.getElementById('verifyModalInput');
+    const err = document.getElementById('verifyModalError');
+    const btn = document.getElementById('verifyModalOk');
+    if (!input || !input.value) return;
+
+    btn.disabled = true;
+    btn.textContent = '验证中...';
+    try {
+        const data = await fetchVerify(verifyContext.carModel, verifyContext.version, input.value);
+        if (data && data.verified) {
+            closeVerifyModal();
+            fillVerifiedPasswords(data.data);
+        } else {
+            err.textContent = '密码错误，请重试';
+            err.hidden = false;
+            input.value = '';
+            input.focus();
+        }
+    } catch (e) {
+        err.textContent = '验证失败，请重试';
+        err.hidden = false;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '验证';
+    }
+}
+
+function fillVerifiedPasswords(data) {
+    const verified = data || {};
+    const list = Array.isArray(verified.passwords) ? verified.passwords : [];
+    [['carPassword', verified.carPassword || list[0]],
+     ['adbPassword', verified.adbPassword || list[1]]].forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value || '--';
+        el.style.color = '';
+        el.classList.remove('locked');
+        el.onclick = null;
+    });
 }

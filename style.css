@@ -421,8 +421,7 @@ body {
     gap: 8px;
     margin-top: 10px;
 }
-#serialNumberInput input,
-#g700VerifyPassword {
+#serialNumberInput input {
     border: 1.5px solid var(--line);
     border-radius: 10px;
     padding: 9px;
@@ -435,18 +434,7 @@ body {
     outline: none;
     transition: border-color .2s;
 }
-#serialNumberInput input:focus,
-#g700VerifyPassword:focus { border-color: var(--brand); }
-
-/* 密码验证输入（G700/F700）：纵向排列居中 */
-.verify-input {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
-}
-.verify-input .toggle-button { margin-top: 0; }
+#serialNumberInput input:focus { border-color: var(--brand); }
 
 .toggle-button, #calculateAdbButton {
     margin-top: 6px;
@@ -469,6 +457,41 @@ body {
     font-size: 12px;
     text-align: center;
 }
+
+/* ---------- 验证密码悬浮窗 ---------- */
+.verify-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(20, 24, 38, .55);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+}
+.verify-overlay[hidden] { display: none; }
+.verify-modal {
+    width: 100%; max-width: 340px;
+    background: var(--card); border-radius: 14px; padding: 22px 20px 18px;
+    box-shadow: 0 18px 50px rgba(20, 24, 38, .28);
+    animation: rise .25s ease;
+}
+.verify-modal h3 { font-size: 17px; margin-bottom: 8px; }
+.verify-tip { font-size: 12px; color: var(--sub); line-height: 1.6; margin-bottom: 14px; }
+.verify-modal input {
+    width: 100%; border: 1.5px solid var(--line); border-radius: 8px;
+    padding: 10px; font-size: 18px; text-align: center; letter-spacing: 6px;
+    font-family: inherit; outline: none; transition: border-color .2s;
+}
+.verify-modal input:focus { border-color: var(--brand); }
+.verify-error { margin-top: 8px; font-size: 12px; color: var(--bad); }
+.verify-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+.vm-btn {
+    padding: 8px 20px; border: none; border-radius: 8px; cursor: pointer;
+    font-size: 13px; font-family: inherit; color: #fff;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    transition: opacity .2s;
+}
+.vm-btn.ghost { background: var(--card); color: var(--brand); border: 1px solid var(--brand); }
+.vm-btn:hover { opacity: .88; }
+.vm-btn:disabled { opacity: .6; cursor: default; }
+.password-value.locked { cursor: pointer; }
 
 /* 移动端适配 */
 @media (max-width: 420px) {

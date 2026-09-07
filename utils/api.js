@@ -4,6 +4,31 @@ import { currentTimezoneOffset } from '../config/timezones.js';
 const API_BASE_URL = 'https://api.qianxian.tech';
 const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
 
+// 验证凭证：一次验证成功后由服务端签发，本次浏览器会话内免重复验证
+const VERIFY_TOKEN_KEY = 'pw_verify_token';
+
+export function getVerifyToken() {
+    try {
+        return sessionStorage.getItem(VERIFY_TOKEN_KEY) || '';
+    } catch (e) {
+        return '';
+    }
+}
+
+export function setVerifyToken(token) {
+    try {
+        if (token) {
+            sessionStorage.setItem(VERIFY_TOKEN_KEY, token);
+        } else {
+            sessionStorage.removeItem(VERIFY_TOKEN_KEY);
+        }
+    } catch (e) { /* 忽略存储不可用 */ }
+}
+
+export function clearVerifyToken() {
+    setVerifyToken('');
+}
+
 export async function fetchPasswords(carModel, version, serialNumber = '') {
     try {
         const response = await fetch(`${API_BASE_URL}/api/password`, {
@@ -16,7 +41,8 @@ export async function fetchPasswords(carModel, version, serialNumber = '') {
                 carModel,
                 version,
                 serialNumber,
-                timezoneOffset: currentTimezoneOffset
+                timezoneOffset: currentTimezoneOffset,
+                verifyToken: getVerifyToken()
             })
         });
         
@@ -92,6 +118,9 @@ export async function fetchVerify(carModel, version, password) {
             })
         });
         const data = await response.json();
+        if (data && data.verified && data.verifyToken) {
+            setVerifyToken(data.verifyToken);
+        }
         return data;
     } catch (error) {
         console.error('Verify Fetch Error:', error);
