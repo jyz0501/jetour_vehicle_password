@@ -389,7 +389,7 @@ body {
     background: linear-gradient(135deg, var(--brand), var(--brand-2));
 }
 .password-value {
-    font-size: 38px;
+    font-size: 32px;
     color: var(--txt);
     font-weight: 800;
     letter-spacing: 4px;
