@@ -141,7 +141,7 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
         chip.className = 'ver-chip' + (version === currentVersion ? ' active' : '');
         chip.dataset.version = version;
         const title = (carModel.versionNames && carModel.versionNames[version]) || version;
-        chip.innerHTML = `<span class="ver-key">${version}</span><span class="ver-title">${title}</span>`;
+        chip.textContent = title;
 
         container.appendChild(chip);
     });
@@ -161,7 +161,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             <div class="password-card">
                 <h2>2. ${adbCardTitle}</h2>
                 <div id="serialNumberInput" style="display: none; margin-bottom: 15px;">
-                    <input type="text" id="serialNumber" maxlength="6" placeholder="请输入序列号后六位">
+                    <input type="text" id="serialNumber" maxlength="6" placeholder="------后六位">
                     <button id="calculateAdbButton" class="toggle-button">计算口令</button>
                 </div>
                 <div class="password-value" id="adbPassword">--</div>
@@ -449,7 +449,7 @@ function ensureVerifyModal() {
         <div class="verify-modal" role="dialog" aria-modal="true">
             <h3>请输入验证密码</h3>
             <input type="text" id="verifyModalInput" maxlength="6" inputmode="numeric"
-                   autocomplete="off" placeholder="6 位验证密码">
+                   autocomplete="off" placeholder="输入验证密码">
             <p class="verify-error" id="verifyModalError" hidden>密码错误，请重试</p>
             <div class="verify-actions">
                 <button type="button" class="vm-btn ghost" id="verifyModalCancel">取消</button>

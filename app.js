@@ -1,5 +1,5 @@
-import { carModels, applyServerConfig } from './config/store.js?v=3';
-import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=3';
+import { carModels, applyServerConfig } from './config/store.js?v=4';
+import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=4';
 import {
     renderCarGrid,
     renderVersionButtons,
@@ -8,7 +8,7 @@ import {
     updateCountdown,
     updatePasswordsFromApi,
     carModelTag
-} from './utils/ui.js?v=3';
+} from './utils/ui.js?v=4';
 import {
     timezones,
     setTimezone,
@@ -17,7 +17,7 @@ import {
     formatTimezoneLabel,
     getSelectedLocalTime,
     currentTimezoneOffset
-} from './config/timezones.js?v=3';
+} from './config/timezones.js?v=4';
 
 let currentCarModel = 'traveler';
 let currentVersion = '0407';
