@@ -293,12 +293,6 @@
   font-weight: bold;
   color: #1c2333;
 }
-.verify-tip {
-  font-size: 24rpx;
-  color: #6b7280;
-  margin-top: 12rpx;
-  line-height: 1.6;
-}
 .verify-input {
   margin-top: 28rpx;
   border: 2rpx solid #e6e9f2;
@@ -401,6 +395,66 @@
   padding-top: 20rpx;
   border-top: 1rpx solid #eee;
   width: 100%;
+}
+
+/* 联系我们样式 */
+.contact-section {
+  margin-top: 30rpx;
+  padding: 30rpx 40rpx;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #f5f8fc;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #1E88E5;
+  margin-bottom: 16rpx;
+}
+
+.contact-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 36rpx;
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.contact-label {
+  color: #666;
+}
+
+.contact-value {
+  color: #1E88E5;
+  font-weight: bold;
+  word-break: break-all;
+}
+
+.contact-button {
+  width: 60%;
+  min-width: 240rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  background-color: #1E88E5;
+  color: white;
+  border: none;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  font-weight: bold;
 }
 
 /* 响应式设计 */

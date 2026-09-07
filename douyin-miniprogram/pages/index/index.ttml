@@ -114,7 +114,6 @@
   <view tt:if="{{showVerifyModal}}" class="verify-mask" bindtap="closeVerifyModal">
     <view class="verify-modal" catchtap="noop">
       <text class="verify-title">请输入验证密码</text>
-      <text class="verify-tip">验证一次后，系统口令与设置口令同时解锁</text>
       <input
         class="verify-input"
         type="text"

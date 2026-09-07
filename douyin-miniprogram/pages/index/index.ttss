@@ -245,13 +245,6 @@ page {
   color: #1c2333;
   display: block;
 }
-.verify-tip {
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 8px;
-  display: block;
-  line-height: 1.6;
-}
 .verify-input {
   margin-top: 16px;
   border: 1px solid #e6e9f2;

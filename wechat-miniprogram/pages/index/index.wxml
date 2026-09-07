@@ -113,10 +113,20 @@
     <text>最后更新时间：{{updateTime}}</text>
   </view>
 
+  <!-- 联系我们 -->
+  <view class="contact-section">
+    <text class="contact-title">联系我们</text>
+    <text class="contact-desc">如在使用中遇到问题或建议，可通过以下方式联系开发者：</text>
+    <view class="contact-item">
+      <text class="contact-label">客服邮箱：</text>
+      <text class="contact-value" selectable="true">{{contactEmail}}</text>
+    </view>
+    <button class="contact-button" open-type="contact" bindcontact="handleContact">联系客服</button>
+  </view>
+
   <view wx:if="{{showVerifyModal}}" class="verify-mask" bindtap="closeVerifyModal">
     <view class="verify-modal" catchtap="noop">
       <text class="verify-title">请输入验证密码</text>
-      <text class="verify-tip">验证一次后，系统口令与设置口令同时解锁</text>
       <input
         class="verify-input"
         type="text"

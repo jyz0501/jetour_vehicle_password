@@ -447,7 +447,6 @@ function ensureVerifyModal() {
     overlay.innerHTML = `
         <div class="verify-modal" role="dialog" aria-modal="true">
             <h3>请输入验证密码</h3>
-            <p class="verify-tip">验证一次后，工程模式口令与 ADB 权限口令同时解锁</p>
             <input type="text" id="verifyModalInput" maxlength="6" inputmode="numeric"
                    autocomplete="off" placeholder="6 位验证密码">
             <p class="verify-error" id="verifyModalError" hidden>密码错误，请重试</p>
