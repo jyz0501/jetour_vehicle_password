@@ -140,11 +140,7 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
         chip.type = 'button';
         chip.className = 'ver-chip' + (version === currentVersion ? ' active' : '');
         chip.dataset.version = version;
-
-        const label = document.createElement('span');
-        label.className = 'ver-label';
-        label.textContent = (carModel.versionNames && carModel.versionNames[version]) || version;
-        chip.appendChild(label);
+        chip.textContent = (carModel.versionNames && carModel.versionNames[version]) || version;
 
         container.appendChild(chip);
     });
