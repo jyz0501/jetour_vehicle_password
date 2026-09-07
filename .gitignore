@@ -150,3 +150,6 @@ server/.wrangler/
 !.env.example
 .DS_Store
 douyin-miniprogram/.DS_Store
+
+# 后台运行时配置（服务端生成、后台配置页维护）
+server/verify_config.json

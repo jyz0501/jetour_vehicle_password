@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台配置 · 验证密码开关</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-head {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; flex-wrap: wrap; margin-bottom: 18px;
+        }
+        .admin-head h1 {
+            font-size: 20px; display: flex; align-items: center; gap: 10px;
+        }
+        .admin-head h1::before {
+            content: ""; width: 10px; height: 10px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, .13);
+        }
+        .card {
+            background: var(--card); border: 1px solid var(--line);
+            border-radius: 14px; padding: 16px; margin-bottom: 14px;
+            box-shadow: 0 4px 14px rgba(28, 35, 51, .06);
+        }
+        .conn-grid { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .conn-grid label {
+            font-size: 12px; color: var(--sub);
+            display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 220px;
+        }
+        .conn-grid input {
+            border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px;
+            font-size: 13px; font-family: inherit; color: var(--txt); outline: none;
+            transition: border-color .2s;
+        }
+        .conn-grid input:focus { border-color: var(--brand); }
+        .btn {
+            padding: 8px 18px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 13px; font-family: inherit;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            color: #fff; transition: opacity .2s;
+        }
+        .btn.ghost { background: var(--card); color: var(--brand); border: 1px solid var(--brand); }
+        .btn:hover { opacity: .88; }
+        .model-head {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 10px; flex-wrap: wrap; margin-bottom: 8px;
+        }
+        .model-head h2 { font-size: 15px; }
+        .model-head .code { font-size: 11px; color: var(--sub); font-weight: 400; }
+        .mini-btns { display: flex; gap: 8px; flex: none; }
+        .mini-btns .btn { padding: 5px 12px; font-size: 12px; }
+        .row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; padding: 10px 0; border-top: 1px dashed var(--line);
+        }
+        .row:first-of-type { border-top: none; }
+        .row .ver { font-size: 13.5px; }
+        .row .tip { font-size: 11.5px; color: var(--sub); margin-top: 3px; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex: none; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; inset: 0; background: #d7dbe8;
+            border-radius: 8px; transition: .18s; cursor: pointer;
+        }
+        .slider::before {
+            content: ""; position: absolute; width: 18px; height: 18px;
+            left: 3px; top: 3px; background: #fff; border-radius: 6px; transition: .18s;
+        }
+        .switch input:checked + .slider { background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
+        .switch input:checked + .slider::before { transform: translateX(20px); }
+        .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+        #msg { font-size: 12.5px; color: var(--ok); }
+        #msg.err { color: var(--bad); }
+        .note { font-size: 12px; color: var(--sub); line-height: 1.8; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="admin-head">
+        <h1>后台配置 · 验证密码开关</h1>
+        <a class="link-button" href="index.html">返回首页</a>
+    </div>
+
+    <section class="card">
+        <div class="conn-grid">
+            <label>接口地址
+                <input type="text" id="apiBase" placeholder="https://api.qianxian.tech">
+            </label>
+            <label>API Key（X-API-Key）
+                <input type="password" id="apiKey" placeholder="接口密钥">
+            </label>
+            <button class="btn" id="loadBtn">加载配置</button>
+        </div>
+        <p class="note" style="margin-top:10px;">
+            地址与密钥仅保存在本机浏览器（localStorage）。开关为「开」时，该车型该版本需输入验证密码后才显示口令；
+            为「关」时直接显示。保存后立即对所有端（网页 / 微信小程序 / 抖音小程序）生效。
+        </p>
+    </section>
+
+    <div id="list"></div>
+
+    <div class="bar">
+        <button class="btn" id="saveBtn">保存配置</button>
+        <button class="btn ghost" id="resetBtn">恢复默认（仅 G700 / F700 需验证）</button>
+        <span id="msg"></span>
+    </div>
+</div>
+
+<script>
+const DEFAULT_API = 'https://api.qianxian.tech';
+const DEFAULT_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
+const DEFAULT_VERIFY_MODELS = ['g700', 'zonghengF700'];
+
+const apiInput = document.getElementById('apiBase');
+const keyInput = document.getElementById('apiKey');
+const listEl = document.getElementById('list');
+const msgEl = document.getElementById('msg');
+
+let cfg = {};
+let carModels = {};
+
+apiInput.value = localStorage.getItem('admin_api_base') || DEFAULT_API;
+keyInput.value = localStorage.getItem('admin_api_key') || DEFAULT_KEY;
+
+[apiInput, keyInput].forEach((el) => {
+    el.addEventListener('change', () => {
+        localStorage.setItem('admin_api_base', apiInput.value.trim());
+        localStorage.setItem('admin_api_key', keyInput.value.trim());
+    });
+});
+
+function baseUrl() {
+    return (apiInput.value.trim() || DEFAULT_API).replace(/\/+$/, '');
+}
+function headers() {
+    return {
+        'Content-Type': 'application/json',
+        'X-API-Key': keyInput.value.trim() || DEFAULT_KEY
+    };
+}
+function setMsg(text, isErr) {
+    msgEl.textContent = text;
+    msgEl.className = isErr ? 'err' : '';
+}
+function setVersion(model, version, value) {
+    cfg[model] = cfg[model] || {};
+    cfg[model][version] = value;
+}
+
+function render() {
+    listEl.innerHTML = '';
+    Object.keys(carModels).forEach((model) => {
+        const info = carModels[model] || {};
+        const versions = info.versions || [];
+        cfg[model] = cfg[model] || {};
+
+        const card = document.createElement('section');
+        card.className = 'card';
+
+        const head = document.createElement('div');
+        head.className = 'model-head';
+        const title = document.createElement('h2');
+        title.innerHTML = `${info.name || model} <span class="code">${model}</span>`;
+        const mini = document.createElement('div');
+        mini.className = 'mini-btns';
+        [['全部开启', true], ['全部关闭', false]].forEach(([text, val]) => {
+            const b = document.createElement('button');
+            b.className = 'btn ghost';
+            b.textContent = text;
+            b.onclick = () => { versions.forEach((v) => setVersion(model, v, val)); render(); };
+            mini.appendChild(b);
+        });
+        head.appendChild(title);
+        head.appendChild(mini);
+        card.appendChild(head);
+
+        versions.forEach((v) => {
+            const enabled = !!cfg[model][v];
+            const row = document.createElement('div');
+            row.className = 'row';
+
+            const label = document.createElement('div');
+            const name = (info.versionNames && info.versionNames[v]) || v;
+            label.innerHTML = `<div class="ver">${name}</div>
+                <div class="tip">${enabled ? '需输入验证密码后显示' : '直接显示口令'}</div>`;
+
+            const sw = document.createElement('label');
+            sw.className = 'switch';
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = enabled;
+            cb.onchange = () => { setVersion(model, v, cb.checked); render(); };
+            const slider = document.createElement('span');
+            slider.className = 'slider';
+            sw.appendChild(cb);
+            sw.appendChild(slider);
+
+            row.appendChild(label);
+            row.appendChild(sw);
+            card.appendChild(row);
+        });
+
+        listEl.appendChild(card);
+    });
+}
+
+async function loadConfig() {
+    setMsg('加载中…', false);
+    try {
+        const res = await fetch(`${baseUrl()}/api/admin/verify`, { method: 'GET', headers: headers() });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+            setMsg(`加载失败：${data.error || res.status}`, true);
+            return;
+        }
+        cfg = data.data.requireVerify || {};
+        carModels = data.data.carModels || {};
+        render();
+        setMsg('配置已加载', false);
+    } catch (e) {
+        setMsg(`加载失败：${e.message}`, true);
+    }
+}
+
+async function saveConfig() {
+    setMsg('保存中…', false);
+    try {
+        const res = await fetch(`${baseUrl()}/api/admin/verify`, {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify({ requireVerify: cfg })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+            setMsg(`保存失败：${data.error || res.status}`, true);
+            return;
+        }
+        cfg = data.data.requireVerify || cfg;
+        render();
+        setMsg('已保存，立即生效', false);
+    } catch (e) {
+        setMsg(`保存失败：${e.message}`, true);
+    }
+}
+
+function resetDefault() {
+    Object.keys(carModels).forEach((model) => {
+        (carModels[model].versions || []).forEach((v) => {
+            setVersion(model, v, DEFAULT_VERIFY_MODELS.indexOf(model) !== -1);
+        });
+    });
+    render();
+    setMsg('已恢复默认，请点击保存', false);
+}
+
+document.getElementById('loadBtn').onclick = loadConfig;
+document.getElementById('saveBtn').onclick = saveConfig;
+document.getElementById('resetBtn').onclick = resetDefault;
+loadConfig();
+</script>
+</body>
+</html>

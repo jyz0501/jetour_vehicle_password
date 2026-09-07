@@ -1,4 +1,4 @@
-import { carModels } from '../config/store.js';
+import { carModels, isVerifyRequired } from '../config/store.js';
 import { fetchPasswordsWithRetry, fetchVerify } from './api.js';
 import { getCountdownType } from './password.js';
 import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';
@@ -193,7 +193,8 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                 <div class="password-value" id="password1">--</div>
             </div>
         `;
-    } else if (currentCarModel === 'g700' || currentCarModel === 'zonghengF700') {
+    } else if (currentCarModel === 'g700' || currentCarModel === 'zonghengF700'
+               || isVerifyRequired(currentCarModel, currentVersion)) {
         passwordGroup.innerHTML = `
             <div class="password-card">
                 <h2>1. 工程模式口令</h2>
@@ -212,12 +213,19 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             </div>
         `;
         
-        const adbPasswordEl = document.getElementById('adbPassword');
-        if (adbPasswordEl) {
-            adbPasswordEl.textContent = '请验证密码';
-            adbPasswordEl.style.color = '#95a5a6';
+        if (isVerifyRequired(currentCarModel, currentVersion)) {
+            const carPasswordEl = document.getElementById('carPassword');
+            const adbPasswordEl = document.getElementById('adbPassword');
+            if (carPasswordEl) {
+                carPasswordEl.textContent = '请验证密码';
+                carPasswordEl.style.color = '#95a5a6';
+            }
+            if (adbPasswordEl) {
+                adbPasswordEl.textContent = '请验证密码';
+                adbPasswordEl.style.color = '#95a5a6';
+            }
+            document.getElementById('g700PasswordInput').style.display = 'block';
         }
-        document.getElementById('g700PasswordInput').style.display = 'block';
         
         document.getElementById('g700VerifyButton').addEventListener('click', async function() {
             const input = document.getElementById('g700VerifyPassword');
@@ -235,9 +243,11 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
                     errorEl.style.display = 'none';
                     const carPwdEl = document.getElementById('carPassword');
                     const adbPwdEl = document.getElementById('adbPassword');
-                    carPwdEl.textContent = data.data.carPassword || '--';
+                    const verified = data.data || {};
+                    const verifiedList = Array.isArray(verified.passwords) ? verified.passwords : [];
+                    carPwdEl.textContent = verified.carPassword || verifiedList[0] || '--';
                     carPwdEl.style.color = '';
-                    adbPwdEl.textContent = data.data.adbPassword || '--';
+                    adbPwdEl.textContent = verified.adbPassword || verifiedList[1] || '--';
                     adbPwdEl.style.color = '#e74c3c';
                     document.getElementById('g700PasswordInput').style.display = 'none';
                 } else {
@@ -416,7 +426,8 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
         if (password1El) {
             password1El.textContent = result.carPassword || '--';
         }
-    } else if (currentCarModel === 'g700' || currentCarModel === 'zonghengF700') {
+    } else if (currentCarModel === 'g700' || currentCarModel === 'zonghengF700'
+               || isVerifyRequired(currentCarModel, currentVersion)) {
         const carPasswordEl = document.getElementById('carPassword');
         const adbPasswordEl = document.getElementById('adbPassword');
         
