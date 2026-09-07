@@ -1,8 +1,8 @@
 // 共享配置存储：默认使用本地配置，启动时若 /api/config 拉取成功则以服务端配置为准
 // （单一数据源：新增车型/算法/时区只需更新 Server 的 CONFIG_* 常量）
-import { carModels as localCarModels } from './carModels.js';
-import { timezones as localTimezones } from './timezones.js';
-import { algorithms as localAlgorithms } from './algorithms.js';
+import { carModels as localCarModels } from './carModels.js?v=2';
+import { timezones as localTimezones } from './timezones.js?v=2';
+import { algorithms as localAlgorithms } from './algorithms.js?v=2';
 
 export let carModels = localCarModels;
 export let timezones = localTimezones;

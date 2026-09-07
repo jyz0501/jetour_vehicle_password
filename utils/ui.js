@@ -1,7 +1,7 @@
-import { carModels, isVerifyRequired } from '../config/store.js';
-import { fetchPasswordsWithRetry, fetchVerify, getVerifyToken } from './api.js';
-import { getCountdownType } from './password.js';
-import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js';
+import { carModels, isVerifyRequired } from '../config/store.js?v=2';
+import { fetchPasswordsWithRetry, fetchVerify, getVerifyToken } from './api.js?v=2';
+import { getCountdownType } from './password.js?v=2';
+import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js?v=2';
 
 /* ===== 车型展示分组（静态 UI 元数据；key 需与服务端 carModels 一致，未知 key 自动归入“其他”） ===== */
 const CAR_BRAND_ORDER = ['纵横', '捷途', '奇瑞'];

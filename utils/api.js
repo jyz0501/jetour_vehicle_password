@@ -1,4 +1,4 @@
-import { currentTimezoneOffset } from '../config/timezones.js';
+import { currentTimezoneOffset } from '../config/timezones.js?v=2';
 
 // 后端地址集中管理：若 api.qianxian.tech 部署冲突，只需改这里（如 pwd-api.qianxian.tech）
 const API_BASE_URL = 'https://api.qianxian.tech';
