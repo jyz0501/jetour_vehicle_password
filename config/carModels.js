@@ -21,13 +21,13 @@ export const carModels = {
     },
     traveler: {
         name: '旅行者/山海T2',
-        versions: ['00x', '0406', '0407', 'other', 'cdm'],
+        versions: ['00x', '0406', '0407', 'cdm', 'other'],
         versionNames: {
-            '00x': '00.08及以下',
-            '0406': '4.06及以下',
-            '0407': '4.07以上',
-            'other': '其他',
-            'cdm': '26款'
+            '00x': '≤00.00.08',
+            '0406': '≤00.04.06',
+            '0407': '>00.04.07',
+            'cdm': '≥00.00.03',
+            'other': '其他'
         },
         algorithms: {
             '00x': 'serialNumber',
