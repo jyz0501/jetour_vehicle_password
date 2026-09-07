@@ -17,6 +17,50 @@ function brandOf(carKey) {
     return CAR_MODEL_BRAND[carKey] || OTHER_BRAND;
 }
 
+/* ===== 车型占位图 =====
+ * 每张卡片先显示“品牌渐变底 + 车型首字”的占位块；
+ * 若存在 assets/cars/<车型key>.png 则加载成功后自动替换为真实车图。
+ * 推荐图片：PNG/JPG，横版，建议 ≥ 400×200。 */
+const THUMB_BG = {
+    '纵横': 'linear-gradient(135deg, #7c6cf0 0%, #4f5bd5 100%)',
+    '捷途': 'linear-gradient(135deg, #ff9a3c 0%, #f5542f 100%)',
+    '奇瑞': 'linear-gradient(135deg, #2fb6ff 0%, #5b7cfa 100%)',
+    '其他': 'linear-gradient(135deg, #9aa3b2 0%, #6b7480 100%)'
+};
+const CAR_THUMB_DIR = 'assets/cars/';
+
+function thumbLetter(carKey, modelName) {
+    const text = modelName || carKey;
+    const ch = Array.from(text)[0] || '?';
+    return /[a-zA-Z0-9]/.test(ch) ? ch.toUpperCase() : ch;
+}
+
+/** 构建“占位色块 → 可被真实图片接管”的缩略图节点 */
+function buildCarThumb(carKey, modelName) {
+    const thumb = document.createElement('div');
+    thumb.className = 'car-thumb';
+    thumb.style.background = THUMB_BG[brandOf(carKey)] || THUMB_BG['其他'];
+
+    const letter = document.createElement('span');
+    letter.className = 'car-thumb-letter';
+    letter.textContent = thumbLetter(carKey, modelName);
+    thumb.appendChild(letter);
+
+    const img = new Image();
+    img.className = 'car-thumb-img';
+    img.alt = modelName || carKey;
+    img.decoding = 'async';
+    img.addEventListener('load', () => {
+        if (!img.src) return;
+        thumb.classList.add('has-img');
+        thumb.innerHTML = '';
+        thumb.appendChild(img);
+    });
+    img.src = CAR_THUMB_DIR + carKey + '.png';
+
+    return thumb;
+}
+
 /** 判断车型是否含动态口令（任一版本非固定即算动态） */
 export function isCarModelDynamic(carKey) {
     const model = carModels[carKey];
@@ -72,6 +116,9 @@ export function renderCarGrid(selectedKey) {
             card.type = 'button';
             card.className = 'car-card' + (key === selectedKey ? ' selected' : '');
             card.dataset.key = key;
+
+            const thumb = buildCarThumb(key, model.name);
+            card.appendChild(thumb);
 
             const line = document.createElement('div');
             line.className = 'card-line';

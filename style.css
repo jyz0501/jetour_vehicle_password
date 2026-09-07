@@ -214,12 +214,12 @@ body {
 .car-card {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 8px;
     text-align: left;
     border: 1.5px solid var(--line);
     border-radius: 14px;
     background: var(--card);
-    padding: 12px 12px 11px;
+    padding: 10px 10px 12px;
     cursor: pointer;
     transition: all .18s ease;
     font-family: inherit;
@@ -234,6 +234,34 @@ body {
     background: #f7f6ff;
     box-shadow: 0 4px 14px rgba(91, 91, 214, .18);
 }
+
+/* 车型缩略图：占位色块（品牌渐变 + 车型首字）→ 真实图片接管 */
+.car-thumb {
+    position: relative;
+    width: 100%;
+    height: 64px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    isolation: isolate;
+}
+.car-thumb-letter {
+    font-size: 30px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, .78);
+    letter-spacing: 1px;
+    user-select: none;
+}
+.car-thumb-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .card-line { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .car-name {
     font-size: 14px;
