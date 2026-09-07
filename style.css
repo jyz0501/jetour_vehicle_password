@@ -171,6 +171,8 @@ body {
 }
 .step-bar.on { background: linear-gradient(90deg, var(--brand), var(--brand-2)); }
 
+#stepPick { margin-top: 14px; }
+
 .step-head {
     display: flex;
     align-items: baseline;
