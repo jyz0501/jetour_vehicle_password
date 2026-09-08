@@ -1,5 +1,5 @@
-import { carModels, applyServerConfig } from './config/store.js?v=6';
-import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=6';
+import { carModels, applyServerConfig } from './config/store.js?v=7';
+import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=7';
 import {
     renderCarGrid,
     renderVersionButtons,
@@ -8,7 +8,7 @@ import {
     updateCountdown,
     updatePasswordsFromApi,
     carModelTag
-} from './utils/ui.js?v=6';
+} from './utils/ui.js?v=7';
 import {
     timezones,
     setTimezone,
@@ -17,7 +17,7 @@ import {
     formatTimezoneLabel,
     getSelectedLocalTime,
     currentTimezoneOffset
-} from './config/timezones.js?v=6';
+} from './config/timezones.js?v=7';
 
 let currentCarModel = 'traveler';
 let currentVersion = '0407';
@@ -226,14 +226,17 @@ async function init() {
     bindEvents();
     initTimezoneSelector();
 
-    // 免责弹窗
-    const popup = document.getElementById('usagePopup');
-    const closePopup = document.getElementById('closePopup');
-    if (popup) popup.style.display = 'flex';
-    if (closePopup) {
-        closePopup.addEventListener('click', function () {
-            if (popup) popup.style.display = 'none';
-        });
+    // 免责弹窗：未同意过才显示（HTML 已默认隐藏，确保 listener 绑好后才弹出，避免 await 期间被误点导致要点两次）
+    if (!localStorage.getItem('jp_disclaimer_agreed')) {
+        const popup = document.getElementById('usagePopup');
+        const closePopup = document.getElementById('closePopup');
+        if (popup) popup.style.display = 'flex';
+        if (closePopup) {
+            closePopup.addEventListener('click', function () {
+                if (popup) popup.style.display = 'none';
+                try { localStorage.setItem('jp_disclaimer_agreed', '1'); } catch (e) {}
+            });
+        }
     }
 
     // 有历史选择 → 直达第 2 步；新访客 → 从车型选择开始
