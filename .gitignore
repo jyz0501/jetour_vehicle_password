@@ -153,3 +153,6 @@ douyin-miniprogram/.DS_Store
 
 # 后台运行时配置（服务端生成、后台配置页维护）
 server/verify_config.json
+
+# ===== 保密：server/ 服务端源码与口令算法，不随仓库公开分发 =====
+server/

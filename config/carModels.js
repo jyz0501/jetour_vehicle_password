@@ -2,21 +2,21 @@
 export const carModels = {
     g700: {
         name: '纵横G700',
-        versions: ['330335', '335337', '4.0x-4.4x'],
+        versions: ['330335', '335337', '04.0x-04.4x'],
         versionNames: {
-            '330335': '3.30-3.35',
-            '335337': '3.36-3.37',
-            '4.0x-4.4x': '4.0x-4.4x'
+            '330335': '03.30-03.35',
+            '335337': '03.36-03.37',
+            '04.0x-04.4x': '04.0x-04.4x'
         },
         algorithms: {
             '330335': 'g700Dynamic',
             '335337': 'g700Dynamic',
-            '4.0x-4.4x': 'g700Dynamic'
+            '04.0x-04.4x': 'g700Dynamic'
         },
         encrypted: {
             '330335': false,
             '335337': false,
-            '4.0x-4.4x': false
+            '04.0x-04.4x': false
         }
     },
     traveler: {
