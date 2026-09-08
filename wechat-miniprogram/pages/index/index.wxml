@@ -55,35 +55,20 @@
     </picker>
   </view>
 
-  <!-- 时区选择 -->
-  <view class="selector-row">
-    <text class="section-title-inline">时区：</text>
-    <picker
-      mode="selector"
-      range="{{timezoneList}}"
-      range-key="label"
-      value="{{timezoneIndex}}"
-      bindchange="onTimezoneChange"
-      class="timezone-picker-inline"
-    >
-      <view class="picker-value-inline">
-        {{timezoneList[timezoneIndex].label}}
-        <text class="picker-arrow">▼</text>
-      </view>
-    </picker>
-  </view>
-
   <view class="hour-password-group">
     <view class="hour-indicator">
-      口令有效期：
-      <text wx:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
-      <text wx:else class="highlight countdown">{{countdownDisplay}}</text>
+      <view class="hour-indicator-text">
+        口令有效期：
+        <text wx:if="{{!isCountdownMode}}" class="highlight">{{nextUpdateTime}}</text>
+        <text wx:else class="highlight countdown">{{countdownDisplay}}</text>
+      </view>
+      <button class="copy-btn" bindtap="onCopyShare">复制</button>
     </view>
 
     <view class="password-group">
       <view class="password-card">
         <text class="card-title">1. 系统口令</text>
-        <text class="password-value {{needVerify ? 'locked' : ''}}" bindtap="onPasswordTap">{{carPassword}}</text>
+        <text class="password-value {{needVerify ? 'locked' : ''}}" bindtap="onPasswordTap" data-value="{{carPassword}}">{{carPassword}}</text>
         <text class="instructions">{{carInstructions}}</text>
       </view>
 
@@ -100,7 +85,7 @@
           <button class="calculate-button" bindtap="calculatePassword">计算口令</button>
         </view>
 
-        <text class="password-value {{needVerify ? 'locked' : ''}}" bindtap="onPasswordTap">{{settingPassword}}</text>
+        <text class="password-value {{needVerify ? 'locked' : ''}}" bindtap="onPasswordTap" data-value="{{settingPassword}}">{{settingPassword}}</text>
 
         
 

@@ -111,27 +111,6 @@ body {
 }
 .link-button:hover { border-color: var(--brand); color: var(--brand-2); }
 
-.tz-field {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--sub);
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 5px 8px 5px 12px;
-}
-.tz-field select {
-    font-size: 12px;
-    color: var(--txt);
-    border: none;
-    outline: none;
-    background: transparent;
-    cursor: pointer;
-    max-width: 150px;
-}
-
 /* ---------- 水印 ---------- */
 .watermark-container {
     position: fixed;
@@ -351,6 +330,11 @@ body {
     box-shadow: 0 10px 30px rgba(28, 35, 51, .06);
 }
 .hour-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
     font-size: 13px;
     font-weight: 600;
     color: var(--sub);
@@ -360,6 +344,19 @@ body {
     margin-bottom: 16px;
 }
 #nextUpdateTime { color: var(--accent); font-weight: 800; }
+.share-copy-btn {
+    border: 1px solid var(--brand);
+    background: transparent;
+    color: var(--brand);
+    border-radius: 999px;
+    font-size: 12px;
+    padding: 3px 14px;
+    line-height: 1.6;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all .2s;
+}
+.share-copy-btn:hover { background: var(--brand); color: #fff; }
 
 .password-group {
     display: flex;
@@ -397,6 +394,9 @@ body {
     text-align: center;
     padding: 6px 0 4px;
     font-variant-numeric: tabular-nums;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 #carInstructions {
     margin-top: 6px;
@@ -491,6 +491,28 @@ body {
 .vm-btn:hover { opacity: .88; }
 .vm-btn:disabled { opacity: .6; cursor: default; }
 .password-value.locked { cursor: pointer; }
+
+/* 口令复制轻提示（隐藏式复制：无复制按钮，点击口令文字后短暂提示） */
+.copy-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 20%;
+    transform: translate(-50%, 10px);
+    background: rgba(28, 35, 51, .88);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 18px;
+    border-radius: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index: 9998;
+}
+.copy-toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
 
 /* 移动端适配 */
 @media (max-width: 420px) {

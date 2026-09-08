@@ -8,12 +8,8 @@ import {
     updateCountdown,
     updatePasswordsFromApi,
     carModelTag
-} from './utils/ui.js?v=7';
+} from './utils/ui.js?v=9';
 import {
-    timezones,
-    setTimezone,
-    getDefaultTimezoneIndex,
-    getStoredTimezoneIndex,
     formatTimezoneLabel,
     getSelectedLocalTime,
     currentTimezoneOffset
@@ -158,30 +154,7 @@ function setVersion(version) {
     persistSelection();
 }
 
-/* ---------- 时区 ---------- */
-function initTimezoneSelector() {
-    const select = document.getElementById('timezone');
-    if (!select) return;
-
-    timezones.forEach(tz => {
-        const option = document.createElement('option');
-        option.value = tz.offset;
-        option.textContent = tz.label;
-        select.appendChild(option);
-    });
-
-    const storedIdx = getStoredTimezoneIndex();
-    const idx = storedIdx !== -1 ? storedIdx : getDefaultTimezoneIndex();
-    const offset = timezones[idx].offset;
-    select.value = String(offset);
-    setTimezone(offset);
-
-    select.addEventListener('change', function () {
-        const newOffset = parseInt(this.value, 10);
-        setTimezone(newOffset);
-        updatePasswords();
-    });
-}
+/* ---------- 时区：跟随设备时区（不再提供手动切换） ---------- */
 
 /* ---------- 事件绑定 ---------- */
 function bindEvents() {
@@ -224,7 +197,6 @@ async function init() {
 
     refreshStep1Visuals();
     bindEvents();
-    initTimezoneSelector();
 
     // 免责弹窗：未同意过才显示（HTML 已默认隐藏，确保 listener 绑好后才弹出，避免 await 期间被误点导致要点两次）
     if (!localStorage.getItem('jp_disclaimer_agreed')) {

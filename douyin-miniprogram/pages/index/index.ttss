@@ -202,11 +202,35 @@ page {
 }
 
 .hour-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 20px;
   text-align: center;
   color: #34495e;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  margin: 0;
+  padding: 0 14px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: #3498db;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1;
+}
+button.copy-btn::after {
+  border: none;
 }
 
 .highlight {

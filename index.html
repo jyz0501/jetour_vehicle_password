@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>捷途密码箱——抖音@大伦哥CDM</title>
     <link rel="icon" href="icon.png" type="image/png">
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
     <!-- 进入页弹窗提醒 -->
@@ -36,9 +36,6 @@
             <div class="top-actions">
                 <!-- <a href="https://jetour.qianxian.tech/" target="_self" class="link-button">主题工具</a> -->
                 <a href="https://tool.qianxian.tech/" target="_self" class="link-button">安装工具</a>
-                <label class="tz-field" for="timezone">时区
-                    <select id="timezone"></select>
-                </label>
             </div>
         </header>
 
@@ -84,7 +81,8 @@
 
                 <div class="pwd-area">
                     <div class="hour-indicator">
-                        口令有效期：<span id="nextUpdateTime">--</span>
+                        <span class="hour-indicator-text">口令有效期：<span id="nextUpdateTime">--</span></span>
+                        <button type="button" id="copyShareBtn" class="share-copy-btn">复制口令详情</button>
                     </div>
                     <div class="password-group" id="passwordGroup">
                         <!-- 口令卡由JS按车型渲染 -->
@@ -97,6 +95,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=7" type="module"></script>
+    <script src="app.js?v=9" type="module"></script>
 </body>
 </html>

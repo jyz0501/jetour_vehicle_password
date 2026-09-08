@@ -148,6 +148,9 @@ export function renderVersionButtons(currentCarModel, currentVersion) {
 }
 
 export function renderPasswordGroup(currentCarModel, currentVersion) {
+    shareCarKey = currentCarModel;
+    shareVersion = currentVersion;
+
     const passwordGroup = document.getElementById('passwordGroup');
     
     if (currentCarModel === 'traveler') {
@@ -529,3 +532,169 @@ function fillVerifiedPasswords(data) {
         el.onclick = null;
     });
 }
+
+/* ===== 口令隐藏式点击复制（无可见复制按钮，点击口令文字即复制，仅轻提示） ===== */
+
+/** 取口令真实内容；占位符/待验证文案不参与复制 */
+function getRealPasswordText(el) {
+    const text = (el.textContent || '').trim();
+    if (!text || text === '--' || text === '点击验证密码') return '';
+    return text;
+}
+
+/** 兼容旧浏览器/非 HTTPS 场景的降级复制 */
+function legacyCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* 忽略 */ }
+    document.body.removeChild(ta);
+}
+
+let copyToastTimer = 0;
+function showCopyToast(message) {
+    let toast = document.getElementById('pwdCopyToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'pwdCopyToast';
+        toast.className = 'copy-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message || '已复制';
+    toast.classList.add('show');
+    clearTimeout(copyToastTimer);
+    copyToastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+async function copyPasswordText(text) {
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return;
+        }
+    } catch (e) { /* 走降级方案 */ }
+    legacyCopyText(text);
+}
+
+/** 口令区事件委托：仅处理真实口令，锁定(待验证)态交由验证浮窗处理 */
+function bindPasswordCopy() {
+    const group = document.getElementById('passwordGroup');
+    if (!group || group.dataset.copyBound) return;
+    group.dataset.copyBound = '1';
+
+    group.addEventListener('click', (e) => {
+        const valueEl = e.target.closest('.password-value');
+        if (!valueEl || valueEl.classList.contains('locked')) return;
+        const text = getRealPasswordText(valueEl);
+        if (!text) return;
+        e.preventDefault();
+        copyPasswordText(text);
+        showCopyToast();
+    });
+}
+
+bindPasswordCopy();
+
+/* ===== 「复制口令详情」：一键复制 车型/系统版本/口令详情/有效期/作者信息 ===== */
+const SHARE_AUTHOR_LINE = '更多车型口令持续更新，欢迎关注 抖音@大伦哥CDM';
+
+let shareCarKey = '';
+let shareVersion = '';
+
+function pad2(n) {
+    return String(n).padStart(2, '0');
+}
+
+/** 将口令到期时刻格式化为本地墙钟文案，如 “今天 16:00” / “明天 00:00” */
+function formatExpiryWallText(target) {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const targetStart = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
+    const hm = `${pad2(target.getHours())}:${pad2(target.getMinutes())}`;
+    if (targetStart === todayStart) return `今天 ${hm}`;
+    if (targetStart - todayStart === 86400000) return `明天 ${hm}`;
+    return `${target.getMonth() + 1}月${target.getDate()}日 ${hm}`;
+}
+
+function getShareValidityLabel() {
+    const type = getCountdownType(shareCarKey, shareVersion);
+    if (type === 'none') return '长期（固定口令）';
+    const diff = getCountdownMs(currentTimezoneOffset, type);
+    return formatExpiryWallText(new Date(Date.now() + diff));
+}
+
+/**
+ * 汇总页面当前可见内容，生成复制文本。
+ * @returns {string|null} 返回 null 表示口令待验证；返回 '' 表示暂无可复制口令；否则返回完整文本
+ */
+function buildShareText() {
+    const model = carModels[shareCarKey];
+    if (!model) return '';
+
+    const versionLabel = (model.versionNames && model.versionNames[shareVersion]) || shareVersion;
+    const lines = [
+        '【捷途密码箱】',
+        `车型：${model.name || shareCarKey}`,
+        `系统版本：${versionLabel}`,
+        '口令详情：'
+    ];
+
+    const group = document.getElementById('passwordGroup');
+    const cards = group ? group.querySelectorAll('.password-card') : [];
+    let realCount = 0;
+    let locked = false;
+
+    cards.forEach(card => {
+        const titleEl = card.querySelector('h2');
+        const valueEl = card.querySelector('.password-value');
+        const instrEl = card.querySelector('[id$="Instructions"]');
+        const title = titleEl ? titleEl.textContent.trim() : '';
+        const value = valueEl ? valueEl.textContent.trim() : '';
+        const instr = instrEl ? instrEl.textContent.trim() : '';
+
+        // 「使用说明」类卡片无口令值，仅收录说明文字
+        if (!value && title === '使用说明') {
+            if (instr) lines.push(`使用说明：${instr}`);
+            return;
+        }
+        if (!value || value === '--') return;
+        if (value === '点击验证密码') {
+            locked = true;
+            return;
+        }
+        realCount += 1;
+        lines.push(`${title}：${value}`);
+        if (instr) lines.push(`  使用说明：${instr}`);
+    });
+
+    if (locked) return null;
+    if (!realCount) return '';
+
+    lines.push(`有效期至：${getShareValidityLabel()}`);
+    lines.push('');
+    lines.push(SHARE_AUTHOR_LINE);
+    return lines.join('\n');
+}
+
+function bindShareCopy() {
+    const btn = document.getElementById('copyShareBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+        const text = buildShareText();
+        if (text === null) {
+            showCopyToast('请先完成口令验证后再复制');
+            return;
+        }
+        if (!text) {
+            showCopyToast('口令尚未生成，请稍后重试');
+            return;
+        }
+        copyPasswordText(text);
+        showCopyToast('已复制口令详情');
+    });
+}
+
+bindShareCopy();
