@@ -1,4 +1,4 @@
-// 算法元数据配置（仅包含UI展示所需信息，计算逻辑在服务端）
+
 export const algorithms = {
     fixed: {
         name: '固定口令',
@@ -67,7 +67,7 @@ export const algorithms = {
     }
 };
 
-// 获取算法元数据
+
 export function getAlgorithm(algorithmName) {
     return algorithms[algorithmName] || algorithms.otherCars;
 }

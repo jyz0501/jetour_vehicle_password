@@ -1,4 +1,4 @@
-// 车型配置
+
 export const carModels = {
     g700: {
         name: '纵横G700',

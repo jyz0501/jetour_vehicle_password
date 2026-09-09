@@ -1,4 +1,4 @@
-// 时区列表（offset 遵循 getTimezoneOffset() 约定：东八区=-480，西五区=300）
+
 export const timezones = [
     { value: 'UTC-11', label: '(UTC-11:00) 美属萨摩亚', offset: 660 },
     { value: 'UTC-10', label: '(UTC-10:00) 夏威夷', offset: 600 },
@@ -31,7 +31,7 @@ export const timezones = [
     { value: 'UTC+12', label: '(UTC+12:00) 奥克兰/惠灵顿/斐济', offset: -720 }
 ];
 
-// 当前生效的时区 offset，初值为客户端时区
+
 export let currentTimezoneOffset = new Date().getTimezoneOffset();
 
 const STORAGE_KEY = 'selectedTimezoneOffset';

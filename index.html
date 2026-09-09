@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
-    <!-- 进入页弹窗提醒 -->
+    
     <div id="usagePopup" class="popup-overlay" style="display:none;">
         <div class="popup-content">
             <h3>免责声明</h3>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="container">
-        <!-- 顶部品牌区 -->
+        
         <header class="topbar">
             <div class="brand">
                 <div class="brand-line">
@@ -34,25 +34,25 @@
                 </div>
             </div>
             <div class="top-actions">
-                <!-- <a href="https://jetour.qianxian.tech/" target="_self" class="link-button">主题工具</a> -->
+                
                 <a href="https://tool.qianxian.tech/" target="_self" class="link-button">安装工具</a>
             </div>
         </header>
 
-        <!-- 斜放水印层 -->
+        
         <div class="watermark-container">
             <div class="watermark-diagonal">抖音@大伦哥CDM</div>
         </div>
 
-        <!-- 向导主体 -->
+        
         <div class="wizard">
-            <!-- 步骤指示 -->
+            
             <div class="steps">
                 <div class="step-bar on" id="stepBar1"></div>
                 <div class="step-bar" id="stepBar2"></div>
             </div>
 
-            <!-- 第 1 步：选择车型 -->
+            
             <section id="stepCar" class="step">
                 <div class="step-head">
                     <span class="step-no">STEP 1</span>
@@ -62,7 +62,7 @@
                 <div id="carGridWrap">
                     <div id="carGrid" class="wz-grid"></div>
                 </div>
-                <!-- 已选车型摘要（进入第 2 步后展示） -->
+                
                 <div id="carSummary" class="car-summary" hidden>
                     <div class="sum-name" id="sumName"></div>
                     <span class="tag" id="sumBadge"></span>
@@ -70,7 +70,7 @@
                 </div>
             </section>
 
-            <!-- 第 2 步：确认版本 + 取口令 -->
+            
             <section id="stepPick" class="step" hidden>
                 <div class="step-head">
                     <span class="step-no">STEP 2</span>
@@ -85,7 +85,7 @@
                         <button type="button" id="copyShareBtn" class="share-copy-btn">复制口令详情</button>
                     </div>
                     <div class="password-group" id="passwordGroup">
-                        <!-- 口令卡由JS按车型渲染 -->
+                        
                     </div>
                     <div class="update-info">
                         最后更新时间：<span id="updateTime">--</span>

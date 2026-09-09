@@ -1,6 +1,4 @@
-/* ============================================================
-   向导式主题 · 保留弹窗 / 口令卡 / 序列号等 JS 依赖样式
-   ============================================================ */
+
 :root {
     --bg: #f3f5fb;
     --card: #ffffff;
@@ -31,7 +29,7 @@ body {
     padding: 22px 16px 80px;
 }
 
-/* ---------- 弹窗（免责声明 usagePopup 共用，勿删） ---------- */
+
 .popup-overlay {
     position: fixed;
     top: 0; left: 0;
@@ -68,7 +66,7 @@ body {
 }
 .popup-button:hover { opacity: .88; }
 
-/* ---------- 顶部 ---------- */
+
 .topbar {
     display: flex;
     flex-direction: column;
@@ -111,7 +109,7 @@ body {
 }
 .link-button:hover { border-color: var(--brand); color: var(--brand-2); }
 
-/* ---------- 水印 ---------- */
+
 .watermark-container {
     position: fixed;
     top: 0; left: 0;
@@ -134,7 +132,7 @@ body {
     border: 1px solid rgba(150, 150, 170, .18);
 }
 
-/* ---------- 向导主体 ---------- */
+
 .wizard { position: relative; z-index: 2; }
 
 .steps { display: flex; gap: 8px; margin-bottom: 18px; }
@@ -168,7 +166,7 @@ body {
 .step-head h2 { font-size: 17px; }
 .step-head .step-sub { font-size: 12px; color: var(--sub); }
 
-/* ---------- 第 1 步：车型卡片网格 ---------- */
+
 .wz-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -215,7 +213,7 @@ body {
     box-shadow: 0 4px 14px rgba(91, 91, 214, .18);
 }
 
-/* 车型缩略图：占位色块（品牌渐变 + 车型首字）→ 真实图片接管 */
+
 .car-thumb {
     position: relative;
     width: 100%;
@@ -260,7 +258,7 @@ body {
 }
 .tag-dyn { background: #fff4e0; color: #b45309; }
 .tag-fixed { background: #e8f5ee; color: #15803d; }
-/* 选中后摘要条 */
+
 .car-summary {
     display: flex;
     align-items: center;
@@ -286,7 +284,7 @@ body {
 }
 .switch-btn:hover { background: var(--brand-soft); }
 
-/* ---------- 第 2 步：版本选择（flex 换行居中） ---------- */
+
 .ver-grid {
     display: flex;
     flex-wrap: wrap;
@@ -320,7 +318,7 @@ body {
     color: var(--brand-2);
     box-shadow: inset 0 0 0 1px var(--brand-2);
 }
-/* ---------- 口令区 ---------- */
+
 .pwd-area {
     margin-top: 10px;
     background: var(--card);
@@ -413,7 +411,7 @@ body {
 }
 #notes { font-size: 12px; color: var(--bad); }
 
-/* 序列号输入 */
+
 #serialNumberInput {
     display: flex;
     flex-direction: column;
@@ -458,7 +456,7 @@ body {
     text-align: center;
 }
 
-/* ---------- 验证密码悬浮窗 ---------- */
+
 .verify-overlay {
     position: fixed; inset: 0; z-index: 999;
     background: rgba(20, 24, 38, .55);
@@ -492,7 +490,7 @@ body {
 .vm-btn:disabled { opacity: .6; cursor: default; }
 .password-value.locked { cursor: pointer; }
 
-/* 口令复制轻提示（隐藏式复制：无复制按钮，点击口令文字后短暂提示） */
+
 .copy-toast {
     position: fixed;
     left: 50%;
@@ -514,7 +512,7 @@ body {
     transform: translate(-50%, 0);
 }
 
-/* 移动端适配 */
+
 @media (max-width: 420px) {
     .car-card { padding: 10px 10px 9px; }
     .car-name { font-size: 13px; }

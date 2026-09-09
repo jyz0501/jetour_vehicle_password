@@ -22,7 +22,7 @@ let step2Shown = false;
 const STORAGE_CAR = 'pw_last_car';
 const STORAGE_VER = 'pw_last_version';
 
-/* ---------- 口令拉取 ---------- */
+
 async function updatePasswords() {
     if (!step2Shown) return;
 
@@ -48,7 +48,7 @@ async function updatePasswords() {
     }
 }
 
-/* ---------- 向导状态机 ---------- */
+
 function ensureModelAvailable() {
     const keys = Object.keys(carModels);
     if (!keys.length) return false;
@@ -66,10 +66,10 @@ function persistSelection() {
     try {
         localStorage.setItem(STORAGE_CAR, currentCarModel);
         localStorage.setItem(STORAGE_VER, currentVersion);
-    } catch (e) { /* 忽略隐私模式等异常 */ }
+    } catch (e) {  }
 }
 
-/** 尝试恢复上次选择，返回是否命中 */
+
 function restoreSelection() {
     try {
         const savedCar = localStorage.getItem(STORAGE_CAR);
@@ -81,7 +81,7 @@ function restoreSelection() {
                 : carModels[savedCar].versions[0];
             return true;
         }
-    } catch (e) { /* 忽略 */ }
+    } catch (e) {  }
     return false;
 }
 
@@ -97,16 +97,16 @@ function showCarGridOnly() {
     document.getElementById('carSummary').hidden = true;
     document.getElementById('stepBar1').classList.add('on');
     document.getElementById('stepBar2').classList.remove('on');
-    // 首次进入不预高亮任何车型，引导用户主动选择
+    
     renderCarGrid(null);
 }
 
-/** 选中车型 → 折叠网格为摘要，进入第 2 步 */
+
 function enterStep2() {
     const model = carModels[currentCarModel];
     const tag = carModelTag(currentCarModel);
 
-    // 第 1 步：网格折叠为摘要
+    
     document.getElementById('carGridWrap').hidden = true;
     document.getElementById('carSummary').hidden = false;
     document.getElementById('sumName').textContent = model.name || currentCarModel;
@@ -114,7 +114,7 @@ function enterStep2() {
     badge.className = 'tag ' + tag.cls;
     badge.textContent = tag.txt;
 
-    // 第 2 步展开
+    
     step2Shown = true;
     document.getElementById('stepPick').hidden = false;
     document.getElementById('stepBar1').classList.add('on');
@@ -130,15 +130,15 @@ function enterStep2() {
 function chooseCar(carKey) {
     if (!carModels[carKey]) return;
     if (carKey === currentCarModel && step2Shown) {
-        // 已选中且处于第 2 步，直接回到口令区
+        
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     }
     currentCarModel = carKey;
     const versions = carModels[carKey].versions || [];
-    // 优先沿用该车型上次记忆的版本，其次用默认（常用）版本
+    
     let savedVer = null;
-    try { savedVer = localStorage.getItem(STORAGE_VER); } catch (e) { /* 忽略 */ }
+    try { savedVer = localStorage.getItem(STORAGE_VER); } catch (e) {  }
     currentVersion = (savedVer && versions.includes(savedVer)) ? savedVer : versions[0];
     enterStep2();
 }
@@ -154,9 +154,9 @@ function setVersion(version) {
     persistSelection();
 }
 
-/* ---------- 时区：跟随设备时区（不再提供手动切换） ---------- */
 
-/* ---------- 事件绑定 ---------- */
+
+
 function bindEvents() {
     const carGrid = document.getElementById('carGrid');
     carGrid.addEventListener('click', function (e) {
@@ -167,7 +167,7 @@ function bindEvents() {
     });
 
     document.getElementById('switchCarBtn').addEventListener('click', function () {
-        // 重新展开第 1 步网格（保留当前高亮与第 2 步内容，重选后自动刷新）
+        
         document.getElementById('carGridWrap').hidden = false;
         document.getElementById('carSummary').hidden = true;
         renderCarGrid(currentCarModel);
@@ -188,7 +188,7 @@ function bindEvents() {
     });
 }
 
-/* ---------- 启动 ---------- */
+
 async function init() {
     const remoteConfig = await fetchConfig();
     if (remoteConfig && applyServerConfig(remoteConfig)) {
@@ -198,7 +198,7 @@ async function init() {
     refreshStep1Visuals();
     bindEvents();
 
-    // 免责弹窗：未同意过才显示（HTML 已默认隐藏，确保 listener 绑好后才弹出，避免 await 期间被误点导致要点两次）
+    
     if (!localStorage.getItem('jp_disclaimer_agreed')) {
         const popup = document.getElementById('usagePopup');
         const closePopup = document.getElementById('closePopup');
@@ -211,7 +211,7 @@ async function init() {
         }
     }
 
-    // 有历史选择 → 直达第 2 步；新访客 → 从车型选择开始
+    
     if (restoreSelection()) {
         enterStep2();
     } else {
