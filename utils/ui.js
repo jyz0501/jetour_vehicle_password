@@ -3,7 +3,7 @@ import { fetchPasswordsWithRetry, fetchVerify, getVerifyToken } from './api.js?v
 import { getCountdownType } from './password.js?v=2';
 import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js?v=2';
 
-/* ===== 车型展示分组（静态 UI 元数据；key 需与服务端 carModels 一致，未知 key 自动归入“其他”） ===== */
+
 const CAR_BRAND_ORDER = ['纵横', '捷途', '奇瑞'];
 const CAR_MODEL_BRAND = {
     g700: '纵横', zonghengF700: '纵横',
@@ -17,10 +17,7 @@ function brandOf(carKey) {
     return CAR_MODEL_BRAND[carKey] || OTHER_BRAND;
 }
 
-/* ===== 车型占位图 =====
- * 每张卡片先显示“品牌渐变底 + 车型首字”的占位块；
- * 若存在 assets/cars/<车型key>.png 则加载成功后自动替换为真实车图。
- * 推荐图片：PNG/JPG，横版，建议 ≥ 400×200。 */
+
 const THUMB_BG = {
     '纵横': 'linear-gradient(135deg, #7c6cf0 0%, #4f5bd5 100%)',
     '捷途': 'linear-gradient(135deg, #ff9a3c 0%, #f5542f 100%)',
@@ -35,7 +32,7 @@ function thumbLetter(carKey, modelName) {
     return /[a-zA-Z0-9]/.test(ch) ? ch.toUpperCase() : ch;
 }
 
-/** 构建“占位色块 → 可被真实图片接管”的缩略图节点 */
+
 function buildCarThumb(carKey, modelName) {
     const thumb = document.createElement('div');
     thumb.className = 'car-thumb';
@@ -61,7 +58,7 @@ function buildCarThumb(carKey, modelName) {
     return thumb;
 }
 
-/** 判断车型是否含动态口令（任一版本非固定即算动态） */
+
 export function isCarModelDynamic(carKey) {
     const model = carModels[carKey];
     if (!model || !Array.isArray(model.versions) || !model.versions.length) {
@@ -70,17 +67,14 @@ export function isCarModelDynamic(carKey) {
     return model.versions.some(v => getCountdownType(carKey, v) !== 'none');
 }
 
-/** 车型类型徽标（网格卡片与摘要共用） */
+
 export function carModelTag(carKey) {
     return isCarModelDynamic(carKey)
         ? { cls: 'tag-dyn', txt: '每小时更新' }
         : { cls: 'tag-fixed', txt: '固定口令' };
 }
 
-/**
- * 渲染第 1 步的车型分组卡片网格
- * @param {string} selectedKey 当前选中车型 key（用于高亮）
- */
+
 export function renderCarGrid(selectedKey) {
     const grid = document.getElementById('carGrid');
     if (!grid) return;
@@ -126,7 +120,7 @@ export function renderCarGrid(selectedKey) {
     });
 }
 
-/** 渲染第 2 步的版本选择 chips（仅当前车型有效版本） */
+
 export function renderVersionButtons(currentCarModel, currentVersion) {
     const container = document.getElementById('versionChips');
     if (!container) return;
@@ -163,7 +157,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             </div>
             <div class="password-card">
                 <h2>2. ${adbCardTitle}</h2>
-                <div id="serialNumberInput" style="display: none; margin-bottom: 15px;">
+                <div id="serialNumberInput" style="display: none; margin-bottom: 15px; text-align: center; white-space: nowrap;">
                     <input type="text" id="serialNumber" maxlength="6" placeholder="------后六位">
                     <button id="calculateAdbButton" class="toggle-button">计算口令</button>
                 </div>
@@ -212,7 +206,7 @@ export function renderPasswordGroup(currentCarModel, currentVersion) {
             </div>
         `;
 
-        // 未验证时两张卡都置为待验证，点击任意一张即唤起悬浮窗（验证一次解锁全部）
+        
         if (isVerifyRequired(currentCarModel, currentVersion) && !getVerifyToken()) {
             markVerifyLocked('carPassword', currentCarModel, currentVersion);
             markVerifyLocked('adbPassword', currentCarModel, currentVersion);
@@ -427,11 +421,11 @@ export function updatePasswordsFromApi(result, currentCarModel, currentVersion) 
     }
 }
 
-/* ===== 验证密码悬浮窗：验证一次，同时解锁工程模式口令与 ADB 权限口令 ===== */
+
 let verifyModalShown = false;
 let verifyContext = { carModel: '', version: '' };
 
-/** 将口令位标记为「待验证」，点击即唤起悬浮窗 */
+
 function markVerifyLocked(elId, carModel, version) {
     const el = document.getElementById(elId);
     if (!el) return;
@@ -533,16 +527,16 @@ function fillVerifiedPasswords(data) {
     });
 }
 
-/* ===== 口令隐藏式点击复制（无可见复制按钮，点击口令文字即复制，仅轻提示） ===== */
 
-/** 取口令真实内容；占位符/待验证文案不参与复制 */
+
+
 function getRealPasswordText(el) {
     const text = (el.textContent || '').trim();
     if (!text || text === '--' || text === '点击验证密码') return '';
     return text;
 }
 
-/** 兼容旧浏览器/非 HTTPS 场景的降级复制 */
+
 function legacyCopyText(text) {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -550,7 +544,7 @@ function legacyCopyText(text) {
     ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand('copy'); } catch (e) { /* 忽略 */ }
+    try { document.execCommand('copy'); } catch (e) {  }
     document.body.removeChild(ta);
 }
 
@@ -575,11 +569,11 @@ async function copyPasswordText(text) {
             await navigator.clipboard.writeText(text);
             return;
         }
-    } catch (e) { /* 走降级方案 */ }
+    } catch (e) {  }
     legacyCopyText(text);
 }
 
-/** 口令区事件委托：仅处理真实口令，锁定(待验证)态交由验证浮窗处理 */
+
 function bindPasswordCopy() {
     const group = document.getElementById('passwordGroup');
     if (!group || group.dataset.copyBound) return;
@@ -598,7 +592,7 @@ function bindPasswordCopy() {
 
 bindPasswordCopy();
 
-/* ===== 「复制口令详情」：一键复制 车型/系统版本/口令详情/有效期/作者信息 ===== */
+
 const SHARE_AUTHOR_LINE = '更多车型口令持续更新，欢迎关注 抖音@大伦哥CDM';
 
 let shareCarKey = '';
@@ -608,7 +602,7 @@ function pad2(n) {
     return String(n).padStart(2, '0');
 }
 
-/** 将口令到期时刻格式化为本地墙钟文案，如 “今天 16:00” / “明天 00:00” */
+
 function formatExpiryWallText(target) {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -626,10 +620,7 @@ function getShareValidityLabel() {
     return formatExpiryWallText(new Date(Date.now() + diff));
 }
 
-/**
- * 汇总页面当前可见内容，生成复制文本。
- * @returns {string|null} 返回 null 表示口令待验证；返回 '' 表示暂无可复制口令；否则返回完整文本
- */
+
 function buildShareText() {
     const model = carModels[shareCarKey];
     if (!model) return '';
@@ -655,7 +646,7 @@ function buildShareText() {
         const value = valueEl ? valueEl.textContent.trim() : '';
         const instr = instrEl ? instrEl.textContent.trim() : '';
 
-        // 「使用说明」类卡片无口令值，仅收录说明文字
+        
         if (!value && title === '使用说明') {
             if (instr) lines.push(`使用说明：${instr}`);
             return;
