@@ -1,5 +1,5 @@
 const API_BASE_URL = 'https://api.qianxian.tech';
-const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
+const API_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
 
 export function fetchPasswords(carModel, version, serialNumber = '') {
     return new Promise((resolve) => {

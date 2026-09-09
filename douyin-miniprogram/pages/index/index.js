@@ -228,7 +228,7 @@ function getDefaultTimezoneIndex() {
   return closestIdx;
 }
 
-// 将口令到期时刻格式化为本地墙钟文案，如 “今天 16:00” / “明天 00:00”
+
 function formatExpiryWallText(target) {
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -239,13 +239,13 @@ function formatExpiryWallText(target) {
   return `${target.getMonth() + 1}月${target.getDate()}日 ${hm}`;
 }
 
-// 复制口令详情文本末尾的作者关注语（网页/小程序统一）
+
 const SHARE_AUTHOR_LINE = '更多车型口令持续更新，欢迎关注 抖音@大伦哥CDM';
 
 const API_BASE_URL = 'https://api.qianxian.tech';
-const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
+const API_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
 
-// 将服务端 /api/config 返回的配置转换为小程序本地格式
+
 function getShowSerialNumberInput(carModel, version) {
   const m = carModels[carModel];
   return !!(m && m.showSerialNumberInput && m.showSerialNumberInput[version]);
@@ -331,7 +331,7 @@ Page({
   },
 
   onLoad() {
-    // 时区跟随设备：取消手动切换入口后，按设备当前时区计算口令与有效期
+    
     const tzOffset = new Date().getTimezoneOffset();
     this.setData({
       timezoneOffset: tzOffset
@@ -402,7 +402,7 @@ Page({
     const tzLabel = formatTimezoneLabel(timezoneOffset);
 
     const API_BASE_URL = 'https://api.qianxian.tech';
-    const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
+    const API_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
 
     tt.request({
       url: `${API_BASE_URL}/api/password`,
@@ -667,13 +667,13 @@ Page({
       this.openVerifyModal();
       return;
     }
-    // 单击口令即复制（无复制按钮）；占位符/待验证文案不复制
+    
     const value = String((e && e.currentTarget && e.currentTarget.dataset.value) || '').trim();
     if (!value || value === '--' || value === '点击验证密码') return;
     tt.setClipboardData({
       data: value,
       success: () => {
-        // 平台自带“已设置剪切板内容”文案较长，隐藏后改为统一轻提示
+        
         tt.hideToast();
         tt.showToast({ title: '已复制', icon: 'none', duration: 1200 });
       }
@@ -691,7 +691,7 @@ Page({
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
-        'X-API-Key': '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f'
+        'X-API-Key': '7860be3779e8520826fa085203ef857ab561299afa7bb049'
       },
       data: {
         carModel: currentCarModel,
@@ -755,7 +755,7 @@ Page({
     });
   },
 
-  // 一键复制口令详情（车型/系统版本/口令/有效期/关注语）
+  
   onCopyShare() {
     const d = this.data;
     const config = carModels[d.currentCarModel];
@@ -802,7 +802,7 @@ Page({
     tt.setClipboardData({
       data: lines.join('\n'),
       success: () => {
-        // 平台自带“已设置剪切板内容”文案较长，隐藏后改为统一轻提示
+        
         tt.hideToast();
         tt.showToast({
           title: '已复制口令详情',
@@ -813,7 +813,7 @@ Page({
     });
   },
 
-  // 口令到期时刻：固定口令为长期有效；动态口令为下次更新的墙钟时间
+  
   getShareValidityLabel() {
     const type = this.getCountdownType(this.data.currentCarModel, this.data.currentVersion);
     if (type === 'none') return '长期（固定口令）';

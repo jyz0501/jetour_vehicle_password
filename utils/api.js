@@ -1,10 +1,10 @@
 import { currentTimezoneOffset } from '../config/timezones.js?v=2';
 
-// 后端地址集中管理：若 api.qianxian.tech 部署冲突，只需改这里（如 pwd-api.qianxian.tech）
-const API_BASE_URL = 'https://api.qianxian.tech';
-const API_KEY = '6c3dc45c96644bf08d0918e0966af662930aa2507ad8419692af2e8f39221c1f';
 
-// 验证凭证：一次验证成功后由服务端签发，本次浏览器会话内免重复验证
+const API_BASE_URL = 'https://api.qianxian.tech';
+const API_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
+
+
 const VERIFY_TOKEN_KEY = 'pw_verify_token';
 
 export function getVerifyToken() {
@@ -22,7 +22,7 @@ export function setVerifyToken(token) {
         } else {
             sessionStorage.removeItem(VERIFY_TOKEN_KEY);
         }
-    } catch (e) { /* 忽略存储不可用 */ }
+    } catch (e) {  }
 }
 
 export function clearVerifyToken() {
@@ -101,7 +101,7 @@ export async function fetchPasswordsWithRetry(carModel, version, serialNumber = 
     return null;
 }
 
-// G700 等需密码验证的车型：验证通过后返回口令
+
 export async function fetchVerify(carModel, version, password) {
     try {
         const response = await fetch(`${API_BASE_URL}/api/verify`, {
