@@ -139,7 +139,7 @@ douyin-miniprogram/.tmp/
 douyin-miniprogram/.log/
 
 # Cloudflare Wrangler
-server/.wrangler/
+API/.wrangler/
 .wrangler/
 
 # TRAE IDE
@@ -151,8 +151,8 @@ server/.wrangler/
 .DS_Store
 douyin-miniprogram/.DS_Store
 
-# 后台运行时配置（服务端生成、后台配置页维护）
-server/verify_config.json
+# 后台运行时配置（接口生成、后台配置页维护）
+API/verify_config.json
 
-# ===== 保密：server/ 服务端源码与口令算法，不随仓库公开分发 =====
-server/
+# ===== 保密：API/ 接口源码与口令算法，不随仓库公开分发 =====
+API/
