@@ -147,6 +147,17 @@ body {
 
 #stepPick { margin-top: 14px; }
 
+.step-placeholder {
+    background: #fbfaff;
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--sub);
+    line-height: 1.7;
+}
+
 .step-head {
     display: flex;
     align-items: baseline;

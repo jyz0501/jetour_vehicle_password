@@ -1,5 +1,5 @@
-import { carModels, applyServerConfig } from './config/store.js?v=10';
-import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=10';
+import { carModels, applyServerConfig } from './config/store.js?v=11';
+import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=11';
 import {
     renderCarGrid,
     renderVersionButtons,
@@ -8,12 +8,12 @@ import {
     updateCountdown,
     updatePasswordsFromApi,
     carModelTag
-} from './utils/ui.js?v=10';
+} from './utils/ui.js?v=11';
 import {
     formatTimezoneLabel,
     getSelectedLocalTime,
     currentTimezoneOffset
-} from './config/timezones.js?v=10';
+} from './config/timezones.js?v=11';
 
 let currentCarModel = 'traveler';
 let currentVersion = '0407';
@@ -90,13 +90,21 @@ function refreshStep1Visuals() {
     renderCarGrid(currentCarModel);
 }
 
+function setStep2Expanded(expanded) {
+    const body = document.getElementById('stepPickBody');
+    const placeholder = document.getElementById('stepPickPlaceholder');
+    if (body) body.hidden = !expanded;
+    if (placeholder) placeholder.hidden = !!expanded;
+    document.getElementById('stepBar2').classList.toggle('on', !!expanded);
+}
+
+
 function showCarGridOnly() {
     step2Shown = false;
-    document.getElementById('stepPick').hidden = true;
+    setStep2Expanded(false);
     document.getElementById('carGridWrap').hidden = false;
     document.getElementById('carSummary').hidden = true;
     document.getElementById('stepBar1').classList.add('on');
-    document.getElementById('stepBar2').classList.remove('on');
     
     renderCarGrid(null);
 }
@@ -116,9 +124,8 @@ function enterStep2() {
 
     
     step2Shown = true;
-    document.getElementById('stepPick').hidden = false;
+    setStep2Expanded(true);
     document.getElementById('stepBar1').classList.add('on');
-    document.getElementById('stepBar2').classList.add('on');
 
     renderVersionButtons(currentCarModel, currentVersion);
     renderPasswordGroup(currentCarModel, currentVersion);
@@ -168,6 +175,8 @@ function bindEvents() {
 
     document.getElementById('switchCarBtn').addEventListener('click', function () {
         
+        step2Shown = false;
+        setStep2Expanded(false);
         document.getElementById('carGridWrap').hidden = false;
         document.getElementById('carSummary').hidden = true;
         renderCarGrid(currentCarModel);

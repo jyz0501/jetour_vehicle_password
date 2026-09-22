@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>捷途密码箱——抖音@大伦哥CDM</title>
     <link rel="icon" href="icon.png" type="image/png">
-    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
     
@@ -30,7 +30,7 @@
             <div class="brand">
                 <div class="brand-line">
                     <span class="brand-dot"></span>
-                    <h1>捷途密码箱<span id="app-version" class="app-ver">v2.6.6</span></h1>
+                    <h1>捷途密码箱<span id="app-version" class="app-ver">v2.6.7</span></h1>
                 </div>
             </div>
             <div class="top-actions">
@@ -71,30 +71,36 @@
             </section>
 
             
-            <section id="stepPick" class="step" hidden>
+            <section id="stepPick" class="step">
                 <div class="step-head">
                     <span class="step-no">STEP 2</span>
                     <h2>确认系统版本</h2>
                 </div>
 
-                <div id="versionChips" class="ver-grid"></div>
+                <div id="stepPickPlaceholder" class="step-placeholder">
+                    请先在上方选择车型，选定后自动展开版本与口令
+                </div>
 
-                <div class="pwd-area">
-                    <div class="hour-indicator">
-                        <span class="hour-indicator-text">口令有效期：<span id="nextUpdateTime">--</span></span>
-                        <button type="button" id="copyShareBtn" class="share-copy-btn">复制口令详情</button>
-                    </div>
-                    <div class="password-group" id="passwordGroup">
-                        
-                    </div>
-                    <div class="update-info">
-                        最后更新时间：<span id="updateTime">--</span>
+                <div id="stepPickBody" hidden>
+                    <div id="versionChips" class="ver-grid"></div>
+
+                    <div class="pwd-area">
+                        <div class="hour-indicator">
+                            <span class="hour-indicator-text">口令有效期：<span id="nextUpdateTime">--</span></span>
+                            <button type="button" id="copyShareBtn" class="share-copy-btn">复制口令详情</button>
+                        </div>
+                        <div class="password-group" id="passwordGroup">
+                            
+                        </div>
+                        <div class="update-info">
+                            最后更新时间：<span id="updateTime">--</span>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
     </div>
 
-    <script src="app.js?v=10" type="module"></script>
+    <script src="app.js?v=11" type="module"></script>
 </body>
 </html>
