@@ -1,5 +1,5 @@
-import { carModels, applyServerConfig } from './config/store.js?v=7';
-import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=7';
+import { carModels, applyServerConfig } from './config/store.js?v=10';
+import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=10';
 import {
     renderCarGrid,
     renderVersionButtons,
@@ -8,12 +8,12 @@ import {
     updateCountdown,
     updatePasswordsFromApi,
     carModelTag
-} from './utils/ui.js?v=9';
+} from './utils/ui.js?v=10';
 import {
     formatTimezoneLabel,
     getSelectedLocalTime,
     currentTimezoneOffset
-} from './config/timezones.js?v=7';
+} from './config/timezones.js?v=10';
 
 let currentCarModel = 'traveler';
 let currentVersion = '0407';
@@ -189,14 +189,31 @@ function bindEvents() {
 }
 
 
-async function init() {
-    const remoteConfig = await fetchConfig();
-    if (remoteConfig && applyServerConfig(remoteConfig)) {
-        ensureModelAvailable();
-    }
+function applyRemoteConfigAndRefresh(remoteConfig) {
+    if (!remoteConfig || !applyServerConfig(remoteConfig)) return;
+    if (!ensureModelAvailable()) return;
 
+    if (step2Shown) {
+        const versions = carModels[currentCarModel].versions || [];
+        if (!versions.includes(currentVersion)) {
+            currentVersion = versions[0];
+        }
+        renderVersionButtons(currentCarModel, currentVersion);
+        renderPasswordGroup(currentCarModel, currentVersion);
+        updateCarInstructions(currentCarModel, currentVersion);
+    } else {
+        refreshStep1Visuals();
+    }
+}
+
+async function init() {
+    // 先用本地配置同步渲染首屏，避免等待远程接口导致页面卡住数秒
+    ensureModelAvailable();
     refreshStep1Visuals();
     bindEvents();
+
+    // 远程配置后台拉取，返回后再刷新界面
+    fetchConfig().then(applyRemoteConfigAndRefresh).catch(function () { });
 
     
     if (!localStorage.getItem('jp_disclaimer_agreed')) {
