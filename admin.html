@@ -107,9 +107,12 @@
     </div>
 </div>
 
+<script src="config.local.js"></script>
 <script>
-const DEFAULT_API = 'https://api.qianxian.tech';
-const DEFAULT_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
+const INJECTED = (window.__JTGJ_PW_CFG__ || {});
+const DEFAULT_API = INJECTED.API_BASE_URL || 'https://api.qianxian.tech';
+// 不再硬编码密钥：优先取注入值，其次取本地保存值
+const DEFAULT_KEY = INJECTED.API_KEY || '';
 const DEFAULT_VERIFY_MODELS = ['g700', 'zonghengF700'];
 
 const apiInput = document.getElementById('apiBase');

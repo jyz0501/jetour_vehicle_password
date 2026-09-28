@@ -156,3 +156,13 @@ API/verify_config.json
 
 # ===== 保密：API/ 接口源码与口令算法，不随仓库公开分发 =====
 API/
+
+# ===== 前端接口配置（含密钥，切勿提交）=====
+# 由 config.example.js 复制而来；CI 中从 GitHub Secret 生成
+config.local.js
+wechat-miniprogram/config.js
+douyin-miniprogram/config.js
+
+# ===== 构建 / 发布产物 =====
+_site/
+build/

@@ -242,8 +242,8 @@ function formatExpiryWallText(target) {
 
 const SHARE_AUTHOR_LINE = '更多车型口令持续更新，欢迎关注 抖音@大伦哥CDM';
 
-const API_BASE_URL = 'https://api.qianxian.tech';
-const API_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
+// 接口配置从 config.js 读取（该文件已 gitignore，含密钥，请勿提交）
+const { API_BASE_URL, API_KEY } = require('../../config.js');
 
 
 function getShowSerialNumberInput(carModel, version) {
@@ -544,7 +544,7 @@ Page({
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
-        'X-API-Key': '7860be3779e8520826fa085203ef857ab561299afa7bb049'
+        'X-API-Key': API_KEY
       },
       data: {
         carModel: currentCarModel,
@@ -670,9 +670,6 @@ Page({
     const { currentCarModel, currentVersion, serialNumber, timezoneOffset } = this.data;
     const localTime = getSelectedLocalTime(timezoneOffset);
     const tzLabel = formatTimezoneLabel(timezoneOffset);
-
-    const API_BASE_URL = 'https://api.qianxian.tech';
-    const API_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
 
     wx.request({
       url: `${API_BASE_URL}/api/password`,

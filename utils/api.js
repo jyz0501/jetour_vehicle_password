@@ -1,9 +1,41 @@
 import { currentTimezoneOffset } from '../config/timezones.js?v=2';
 
+// ---------------------------------------------------------------------------
+// 接口配置（密钥不硬编码在源码中）
+// ---------------------------------------------------------------------------
+// 取值优先级：
+//   1. window.__JTGJ_PW_CFG__ —— 由页面引入的 config.local.js 注入
+//   2. localStorage['pw_api_key'] —— 后台页输入框保存的值
+// config.local.js 已加入 .gitignore；Pages 部署时由工作流从 GitHub Secret 生成。
+// 本地开发：复制 config.example.js 为 config.local.js 并填入密钥。
+// ---------------------------------------------------------------------------
+const DEFAULT_API_BASE_URL = 'https://api.qianxian.tech';
 
-const API_BASE_URL = 'https://api.qianxian.tech';
-const API_KEY = '7860be3779e8520826fa085203ef857ab561299afa7bb049';
+function injectedConfig() {
+    try {
+        return window.__JTGJ_PW_CFG__ || {};
+    } catch (e) {
+        return {};
+    }
+}
 
+function readLocalStorage(key) {
+    try {
+        return localStorage.getItem(key) || '';
+    } catch (e) {
+        return '';
+    }
+}
+
+const API_BASE_URL = (injectedConfig().API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
+
+function apiKey() {
+    return String(injectedConfig().API_KEY || readLocalStorage('pw_api_key') || '').trim();
+}
+
+export function hasApiKey() {
+    return !!apiKey();
+}
 
 const VERIFY_TOKEN_KEY = 'pw_verify_token';
 
@@ -30,12 +62,16 @@ export function clearVerifyToken() {
 }
 
 export async function fetchPasswords(carModel, version, serialNumber = '') {
+    if (!apiKey()) {
+        console.error('[pw] 未配置接口密钥：请复制 config.example.js 为 config.local.js 并填入 API_KEY');
+        return null;
+    }
     try {
         const response = await fetch(`${API_BASE_URL}/api/password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': API_KEY
+                'X-API-Key': apiKey()
             },
             body: JSON.stringify({
                 carModel,
@@ -61,12 +97,16 @@ export async function fetchPasswords(carModel, version, serialNumber = '') {
 }
 
 export async function fetchConfig() {
+    if (!apiKey()) {
+        console.error('[pw] 未配置接口密钥：请复制 config.example.js 为 config.local.js 并填入 API_KEY');
+        return null;
+    }
     try {
         const response = await fetch(`${API_BASE_URL}/api/config`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': API_KEY
+                'X-API-Key': apiKey()
             }
         });
         
@@ -103,12 +143,15 @@ export async function fetchPasswordsWithRetry(carModel, version, serialNumber = 
 
 
 export async function fetchVerify(carModel, version, password) {
+    if (!apiKey()) {
+        return { success: false, verified: false, error: 'no_api_key' };
+    }
     try {
         const response = await fetch(`${API_BASE_URL}/api/verify`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': API_KEY
+                'X-API-Key': apiKey()
             },
             body: JSON.stringify({
                 carModel,

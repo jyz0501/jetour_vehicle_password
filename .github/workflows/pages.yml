@@ -26,11 +26,39 @@ jobs:
         run: |
           chmod +x ./update_version.sh
           ./update_version.sh
-      
+
+      # 密钥不落仓库：从 GitHub Secret 生成 config.local.js（该文件已 gitignore）
+      - name: 生成接口配置
+        env:
+          PW_API_KEY: ${{ secrets.PW_API_KEY }}
+        run: |
+          if [ -z "$PW_API_KEY" ]; then
+            echo "::warning::secrets.PW_API_KEY 未配置，部署后站点将无法调用接口"
+          fi
+          cat > config.local.js <<EOF
+          window.__JTGJ_PW_CFG__ = {
+            API_BASE_URL: 'https://api.qianxian.tech',
+            API_KEY: '${PW_API_KEY}'
+          };
+          EOF
+
+      # 只发布前端资源：避免把 Python 源码 / 后台配置 / 小程序工程一并公开
+      - name: 组装发布目录
+        run: |
+          set -euo pipefail
+          rm -rf _site && mkdir -p _site
+          for f in index.html style.css app.js admin.html icon.png config.local.js; do
+            cp "$f" _site/
+          done
+          cp -r utils config assets _site/
+          find _site -name '.DS_Store' -delete
+          echo "--- 发布内容 ---"
+          find _site -type f | sort
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
 
   deploy:
     environment:
