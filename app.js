@@ -1,5 +1,5 @@
-import { carModels, applyServerConfig } from './config/store.js?v=11';
-import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=11';
+import { carModels, applyServerConfig } from './config/store.js?v=12';
+import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=12';
 import {
     renderCarGrid,
     renderVersionButtons,
@@ -8,12 +8,12 @@ import {
     updateCountdown,
     updatePasswordsFromApi,
     carModelTag
-} from './utils/ui.js?v=11';
+} from './utils/ui.js?v=12';
 import {
     formatTimezoneLabel,
     getSelectedLocalTime,
     currentTimezoneOffset
-} from './config/timezones.js?v=11';
+} from './config/timezones.js?v=12';
 
 let currentCarModel = 'traveler';
 let currentVersion = '0407';
@@ -62,27 +62,12 @@ function ensureModelAvailable() {
     return true;
 }
 
-function persistSelection() {
-    try {
-        localStorage.setItem(STORAGE_CAR, currentCarModel);
-        localStorage.setItem(STORAGE_VER, currentVersion);
-    } catch (e) {  }
-}
 
-
-function restoreSelection() {
+function clearSavedSelection() {
     try {
-        const savedCar = localStorage.getItem(STORAGE_CAR);
-        if (savedCar && carModels[savedCar]) {
-            const savedVer = localStorage.getItem(STORAGE_VER);
-            currentCarModel = savedCar;
-            currentVersion = (savedVer && carModels[savedCar].versions.includes(savedVer))
-                ? savedVer
-                : carModels[savedCar].versions[0];
-            return true;
-        }
+        localStorage.removeItem(STORAGE_CAR);
+        localStorage.removeItem(STORAGE_VER);
     } catch (e) {  }
-    return false;
 }
 
 function refreshStep1Visuals() {
@@ -131,7 +116,6 @@ function enterStep2() {
     renderPasswordGroup(currentCarModel, currentVersion);
     updateCarInstructions(currentCarModel, currentVersion);
     updatePasswords();
-    persistSelection();
 }
 
 function chooseCar(carKey) {
@@ -143,10 +127,7 @@ function chooseCar(carKey) {
     }
     currentCarModel = carKey;
     const versions = carModels[carKey].versions || [];
-    
-    let savedVer = null;
-    try { savedVer = localStorage.getItem(STORAGE_VER); } catch (e) {  }
-    currentVersion = (savedVer && versions.includes(savedVer)) ? savedVer : versions[0];
+    currentVersion = versions[0];
     enterStep2();
 }
 
@@ -158,7 +139,6 @@ function setVersion(version) {
     renderPasswordGroup(currentCarModel, currentVersion);
     updateCarInstructions(currentCarModel, currentVersion);
     updatePasswords();
-    persistSelection();
 }
 
 
@@ -216,6 +196,9 @@ function applyRemoteConfigAndRefresh(remoteConfig) {
 }
 
 async function init() {
+    // 每次打开都重置为未选车型状态，同时清掉旧版本遗留的选择记录
+    clearSavedSelection();
+
     // 先用本地配置同步渲染首屏，避免等待远程接口导致页面卡住数秒
     ensureModelAvailable();
     refreshStep1Visuals();
@@ -238,12 +221,8 @@ async function init() {
     }
 
     
-    if (restoreSelection()) {
-        enterStep2();
-    } else {
-        ensureModelAvailable();
-        showCarGridOnly();
-    }
+    ensureModelAvailable();
+    showCarGridOnly();
 }
 
 init();
