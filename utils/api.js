@@ -1,7 +1,8 @@
 import { currentTimezoneOffset } from '../config/timezones.js?v=13';
 
-// 单次请求超时：源站偶发高延迟时不再无限等待，交给重试逻辑快速失败重试
-const REQUEST_TIMEOUT_MS = 8000;
+// 单次请求超时：源站偶发高延迟（实测 1s~9s 波动）时不再无限等待，
+// 交给重试逻辑快速失败重试；阈值取略高于实测峰值，避免误判为超时。
+const REQUEST_TIMEOUT_MS = 12000;
 
 // 最近一次失败原因，供界面提示：no_key / timeout / network / api / http
 let lastError = null;
