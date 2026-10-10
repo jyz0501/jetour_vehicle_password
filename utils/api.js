@@ -137,6 +137,32 @@ export async function fetchPasswords(carModel, version, serialNumber = '') {
     }
 }
 
+// 跨境链路偶发超时：保留最近一次成功结果作为兜底，失败时先展示旧口令并标注时间
+const CACHE_PREFIX = 'pw_cache_';
+const CACHE_TTL_MS = 30 * 60 * 1000;
+
+export function savePasswordCache(carModel, version, data) {
+    try {
+        localStorage.setItem(
+            CACHE_PREFIX + carModel + '_' + version,
+            JSON.stringify({ ts: Date.now(), data })
+        );
+    } catch (e) {  }
+}
+
+export function readPasswordCache(carModel, version) {
+    try {
+        const raw = localStorage.getItem(CACHE_PREFIX + carModel + '_' + version);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (!obj || !obj.ts || !obj.data) return null;
+        if (Date.now() - obj.ts > CACHE_TTL_MS) return null;
+        return obj;
+    } catch (e) {
+        return null;
+    }
+}
+
 export async function fetchConfig() {
     if (!apiKey()) {
         console.error('[pw] 未配置接口密钥：请复制 config.example.js 为 config.local.js 并填入 API_KEY');

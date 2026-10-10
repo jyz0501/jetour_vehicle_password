@@ -1,5 +1,11 @@
 import { carModels, applyServerConfig } from './config/store.js?v=13';
-import { fetchConfig, fetchPasswordsWithRetry, lastErrorMessage } from './utils/api.js?v=13';
+import {
+    fetchConfig,
+    fetchPasswordsWithRetry,
+    lastErrorMessage,
+    savePasswordCache,
+    readPasswordCache
+} from './utils/api.js?v=13';
 import {
     renderCarGrid,
     renderVersionButtons,
@@ -47,8 +53,18 @@ async function updatePasswords() {
     const result = await fetchPasswordsWithRetry(currentCarModel, currentVersion, serialNumber);
 
     if (result !== null) {
+        savePasswordCache(currentCarModel, currentVersion, result);
         setFetchState('ok');
         updatePasswordsFromApi(result, currentCarModel, currentVersion);
+        return;
+    }
+
+    const cached = readPasswordCache(currentCarModel, currentVersion);
+    if (cached) {
+        const t = new Date(cached.ts);
+        const hhmm = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+        updatePasswordsFromApi(cached.data, currentCarModel, currentVersion);
+        setFetchState('error', `${lastErrorMessage()}，当前显示 ${hhmm} 获取的口令（可能已过期），点击重试`);
     } else {
         setFetchState('error', lastErrorMessage() + '，口令暂不可用');
     }
