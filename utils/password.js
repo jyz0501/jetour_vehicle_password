@@ -1,4 +1,4 @@
-import { carModels, getAlgorithm } from '../config/store.js?v=2';
+import { carModels, getAlgorithm } from '../config/store.js?v=13';
 
 
 export function formatTimeUnit(unit) {

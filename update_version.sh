@@ -25,6 +25,15 @@ VERSION="v${MAJOR}.${MINOR}.${PATCH}"
 NEW_SPAN="<span id=\"app-version\" class=\"app-ver\">${VERSION}</span>"
 
 
+# 静态资源缓存串统一为提交次数：避免 index.html 与内部模块各自维护版本号导致
+# 同一文件被 ?v=12 / ?v=2 等不同 URL 重复加载（模块状态被复制成两份）
+for f in index.html app.js config/store.js utils/api.js utils/ui.js utils/password.js; do
+    if [ -f "$f" ]; then
+        sed -i.bak -E "s/\?v=[0-9]+/?v=${COMMIT_COUNT}/g" "$f"
+        rm -f "$f.bak"
+    fi
+done
+
 awk -v new_span="$NEW_SPAN" '
 {
     if ($0 ~ /<span id="app-version"/) {

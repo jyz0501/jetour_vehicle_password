@@ -43,11 +43,13 @@ jobs:
           EOF
 
       # 只发布前端资源：避免把 Python 源码 / 后台配置 / 小程序工程一并公开
+      # 注意：admin.html（验证开关后台）不再随站发布——页面里的接口密钥与
+      # /api/admin/verify 入口会对所有访客可见，需要改配置请在本地打开使用。
       - name: 组装发布目录
         run: |
           set -euo pipefail
           rm -rf _site && mkdir -p _site
-          for f in index.html style.css app.js admin.html icon.png config.local.js; do
+          for f in index.html style.css app.js icon.png config.local.js; do
             cp "$f" _site/
           done
           cp -r utils config assets _site/

@@ -1,5 +1,5 @@
-import { carModels, applyServerConfig } from './config/store.js?v=12';
-import { fetchConfig, fetchPasswordsWithRetry } from './utils/api.js?v=12';
+import { carModels, applyServerConfig } from './config/store.js?v=13';
+import { fetchConfig, fetchPasswordsWithRetry, lastErrorMessage } from './utils/api.js?v=13';
 import {
     renderCarGrid,
     renderVersionButtons,
@@ -7,13 +7,15 @@ import {
     updateCarInstructions,
     updateCountdown,
     updatePasswordsFromApi,
+    setFetchState,
+    closeVerifyModal,
     carModelTag
-} from './utils/ui.js?v=12';
+} from './utils/ui.js?v=13';
 import {
     formatTimezoneLabel,
     getSelectedLocalTime,
     currentTimezoneOffset
-} from './config/timezones.js?v=12';
+} from './config/timezones.js?v=13';
 
 let currentCarModel = 'traveler';
 let currentVersion = '0407';
@@ -41,10 +43,14 @@ async function updatePasswords() {
 
     const serialNumber = document.getElementById('serialNumber')?.value || '';
 
+    setFetchState('loading');
     const result = await fetchPasswordsWithRetry(currentCarModel, currentVersion, serialNumber);
 
     if (result !== null) {
+        setFetchState('ok');
         updatePasswordsFromApi(result, currentCarModel, currentVersion);
+    } else {
+        setFetchState('error', lastErrorMessage() + '，口令暂不可用');
     }
 }
 
@@ -80,6 +86,7 @@ function setStep2Expanded(expanded) {
     const placeholder = document.getElementById('stepPickPlaceholder');
     if (body) body.hidden = !expanded;
     if (placeholder) placeholder.hidden = !!expanded;
+    if (!expanded) setFetchState('ok');
     document.getElementById('stepBar2').classList.toggle('on', !!expanded);
 }
 
@@ -155,6 +162,7 @@ function bindEvents() {
 
     document.getElementById('switchCarBtn').addEventListener('click', function () {
         
+        closeVerifyModal();
         step2Shown = false;
         setStep2Expanded(false);
         document.getElementById('carGridWrap').hidden = false;
@@ -174,6 +182,10 @@ function bindEvents() {
         if (e.detail && e.detail.serialNumber) {
             updatePasswords();
         }
+    });
+
+    document.addEventListener('retryFetch', function () {
+        updatePasswords();
     });
 }
 

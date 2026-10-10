@@ -1,7 +1,7 @@
-import { carModels, isVerifyRequired } from '../config/store.js?v=2';
-import { fetchPasswordsWithRetry, fetchVerify, getVerifyToken } from './api.js?v=2';
-import { getCountdownType } from './password.js?v=2';
-import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js?v=2';
+import { carModels, isVerifyRequired } from '../config/store.js?v=13';
+import { fetchPasswordsWithRetry, fetchVerify, getVerifyToken, lastErrorMessage } from './api.js?v=13';
+import { getCountdownType } from './password.js?v=13';
+import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js?v=13';
 
 
 const CAR_BRAND_ORDER = ['纵横', '捷途', '奇瑞'];
@@ -321,6 +321,30 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
     adbInstructionsEl.textContent = adbInstructions;
 }
 
+export function setFetchState(state, message) {
+    const el = document.getElementById('fetchState');
+    if (!el) return;
+
+    if (state === 'ok') {
+        el.hidden = true;
+        el.className = 'fetch-state';
+        el.textContent = '';
+        el.onclick = null;
+        return;
+    }
+
+    el.hidden = false;
+    if (state === 'loading') {
+        el.className = 'fetch-state';
+        el.textContent = message || '口令获取中…';
+        el.onclick = null;
+    } else {
+        el.className = 'fetch-state error';
+        el.textContent = message || '口令获取失败';
+        el.onclick = () => document.dispatchEvent(new CustomEvent('retryFetch'));
+    }
+}
+
 export function updateCountdown(currentCarModel, currentVersion) {
     const countdownEl = document.getElementById('nextUpdateTime');
     if (!countdownEl) return;
@@ -467,7 +491,7 @@ function ensureVerifyModal() {
     });
 }
 
-function closeVerifyModal() {
+export function closeVerifyModal() {
     const overlay = document.getElementById('verifyOverlay');
     if (overlay) overlay.hidden = true;
 }

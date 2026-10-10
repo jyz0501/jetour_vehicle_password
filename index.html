@@ -7,6 +7,7 @@
     <title>捷途密码箱——抖音@大伦哥CDM</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="stylesheet" href="style.css?v=13">
+    <meta name="description" content="捷途/纵横/奇瑞车型车机工程模式与 ADB 动态口令计算器">
 </head>
 <body>
     
@@ -89,6 +90,7 @@
                             <span class="hour-indicator-text">口令有效期：<span id="nextUpdateTime">--</span></span>
                             <button type="button" id="copyShareBtn" class="share-copy-btn">复制口令详情</button>
                         </div>
+                        <div id="fetchState" class="fetch-state" hidden></div>
                         <div class="password-group" id="passwordGroup">
                             
                         </div>
@@ -103,6 +105,6 @@
 
     <!-- 接口配置（已 gitignore；部署时由工作流从 Secret 生成） -->
     <script src="config.local.js"></script>
-    <script src="app.js?v=12" type="module"></script>
+    <script src="app.js?v=13" type="module"></script>
 </body>
 </html>
