@@ -321,6 +321,24 @@ export function updateCarInstructions(currentCarModel, currentVersion) {
     adbInstructionsEl.textContent = adbInstructions;
 }
 
+// 无可用数据时清空展示，避免界面残留上一轮口令造成误导
+export function clearPasswordValues(carModel, version) {
+    const group = document.getElementById('passwordGroup');
+    if (!group) return;
+
+    const locked = isVerifyRequired(carModel, version) && !getVerifyToken();
+    group.querySelectorAll('.password-value').forEach(el => {
+        if (locked && el.id) {
+            markVerifyLocked(el.id, carModel, version);
+            return;
+        }
+        el.textContent = '--';
+        el.style.color = '';
+        el.classList.remove('locked');
+        el.onclick = null;
+    });
+}
+
 export function setFetchState(state, message) {
     const el = document.getElementById('fetchState');
     if (!el) return;

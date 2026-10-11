@@ -1,4 +1,5 @@
-import { currentTimezoneOffset } from '../config/timezones.js?v=13';
+import { currentTimezoneOffset, getSelectedLocalTime } from '../config/timezones.js?v=13';
+import { getCountdownType } from './password.js?v=13';
 
 // 单次请求超时：源站偶发高延迟（实测 1s~9s 波动）时不再无限等待，
 // 交给重试逻辑快速失败重试；阈值取略高于实测峰值，避免误判为超时。
@@ -137,26 +138,58 @@ export async function fetchPasswords(carModel, version, serialNumber = '') {
     }
 }
 
-// 跨境链路偶发超时：保留最近一次成功结果作为兜底，失败时先展示旧口令并标注时间
+// 跨境链路偶发超时：缓存最近一次成功结果作为兜底。
+// 关键约束——口令按小时/天轮转，缓存只在【当前口令周期内】才可信，
+// 一旦跨过轮转点就必须丢弃，绝不能拿上一周期的口令冒充当前口令。
 const CACHE_PREFIX = 'pw_cache_';
-const CACHE_TTL_MS = 30 * 60 * 1000;
 
-export function savePasswordCache(carModel, version, data) {
+// 当前口令周期的起点（epoch ms）：hourly→本整点，daily→本日 0 点，none→0（固定口令无周期）
+function currentPeriodStart(carModel, version) {
+    const type = getCountdownType(carModel, version);
+    if (type === 'none') return 0;
+
+    const t = getSelectedLocalTime(currentTimezoneOffset);
+    const base = (type === 'daily')
+        ? Date.UTC(t.getFullYear(), t.getMonth(), t.getDate())
+        : Date.UTC(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours());
+    return base + currentTimezoneOffset * 60000;
+}
+
+function cacheKey(carModel, version, serialNumber) {
+    return CACHE_PREFIX + carModel + '_' + version + '_' + (serialNumber || '-');
+}
+
+function hasRealPassword(data) {
+    if (!data) return false;
+    if (data.carPassword || data.adbPassword) return true;
+    return Array.isArray(data.passwords) && data.passwords.some(p => !!p);
+}
+
+export function savePasswordCache(carModel, version, serialNumber, data) {
+    // 需验证口令的车型返回空值，缓存它没有意义
+    if (!hasRealPassword(data)) return;
     try {
         localStorage.setItem(
-            CACHE_PREFIX + carModel + '_' + version,
+            cacheKey(carModel, version, serialNumber),
             JSON.stringify({ ts: Date.now(), data })
         );
     } catch (e) {  }
 }
 
-export function readPasswordCache(carModel, version) {
+export function readPasswordCache(carModel, version, serialNumber) {
     try {
-        const raw = localStorage.getItem(CACHE_PREFIX + carModel + '_' + version);
+        const raw = localStorage.getItem(cacheKey(carModel, version, serialNumber));
         if (!raw) return null;
         const obj = JSON.parse(raw);
         if (!obj || !obj.ts || !obj.data) return null;
-        if (Date.now() - obj.ts > CACHE_TTL_MS) return null;
+
+        // 缓存必须落在当前口令周期内，否则口令已轮转，不能展示
+        const periodStart = currentPeriodStart(carModel, version);
+        if (periodStart && obj.ts < periodStart) {
+            try { localStorage.removeItem(cacheKey(carModel, version, serialNumber)); } catch (e) {  }
+            return null;
+        }
+
         return obj;
     } catch (e) {
         return null;

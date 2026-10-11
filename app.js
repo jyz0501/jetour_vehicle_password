@@ -14,6 +14,7 @@ import {
     updateCountdown,
     updatePasswordsFromApi,
     setFetchState,
+    clearPasswordValues,
     closeVerifyModal,
     carModelTag
 } from './utils/ui.js?v=13';
@@ -53,20 +54,23 @@ async function updatePasswords() {
     const result = await fetchPasswordsWithRetry(currentCarModel, currentVersion, serialNumber);
 
     if (result !== null) {
-        savePasswordCache(currentCarModel, currentVersion, result);
+        savePasswordCache(currentCarModel, currentVersion, serialNumber, result);
         setFetchState('ok');
         updatePasswordsFromApi(result, currentCarModel, currentVersion);
         return;
     }
 
-    const cached = readPasswordCache(currentCarModel, currentVersion);
+    // 只有与当前处于同一口令周期（同一小时/同一天）的缓存才会被采用，
+    // 跨周期的旧口令一律丢弃，避免给出已经失效的口令
+    const cached = readPasswordCache(currentCarModel, currentVersion, serialNumber);
     if (cached) {
         const t = new Date(cached.ts);
         const hhmm = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
         updatePasswordsFromApi(cached.data, currentCarModel, currentVersion);
-        setFetchState('error', `${lastErrorMessage()}，当前显示 ${hhmm} 获取的口令（可能已过期），点击重试`);
+        setFetchState('error', `${lastErrorMessage()}，当前为本轮 ${hhmm} 获取的口令，点击重试`);
     } else {
-        setFetchState('error', lastErrorMessage() + '，口令暂不可用');
+        clearPasswordValues(currentCarModel, currentVersion);
+        setFetchState('error', `${lastErrorMessage()}，本轮口令获取失败（旧口令已失效，不再展示），点击重试`);
     }
 }
 
