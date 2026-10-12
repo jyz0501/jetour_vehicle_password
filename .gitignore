@@ -155,7 +155,8 @@ douyin-miniprogram/.DS_Store
 API/verify_config.json
 
 # ===== 保密：API/ 接口源码与口令算法，不随仓库公开分发 =====
-API/
+# 必须写成 /API/：裸写 API/ 会连带忽略 deploy/api/ 等任意同名目录
+/API/
 
 # ===== 前端接口配置（含密钥，切勿提交）=====
 # 由 config.example.js 复制而来；CI 中从 GitHub Secret 生成
