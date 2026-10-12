@@ -7,6 +7,7 @@ import { currentTimezoneOffset, getCountdownMs } from '../config/timezones.js?v=
 const CAR_BRAND_ORDER = ['纵横', '捷途', '奇瑞'];
 const CAR_MODEL_BRAND = {
     g700: '纵横', zonghengF700: '纵横',
+    traveler7: '捷途',
     traveler: '捷途', ziyouzhe: '捷途', shanhal7: '捷途', shanhal9: '捷途',
     x70plus: '捷途', x90plus: '捷途', x95: '捷途', dasheng: '捷途',
     fengyunA9: '奇瑞', hu8: '奇瑞'

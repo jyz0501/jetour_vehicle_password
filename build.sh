@@ -8,7 +8,9 @@ rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
 
 # 根目录静态文件
-for f in index.html style.css app.js admin.html icon.png; do
+# 注意：admin.html（后台配置页）不纳入产物——页面里的接口密钥与
+# /api/admin/verify 入口会对所有访客可见，与 pages.yml 的发布范围保持一致
+for f in index.html style.css app.js icon.png; do
     [ -f "$f" ] && cp "$f" "$OUT_DIR/"
 done
 

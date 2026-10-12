@@ -64,6 +64,11 @@ export const algorithms = {
         name: '动态算法（纵横F700车型）',
         countdown: 'hourly',
         showSerialNumberInput: false
+    },
+    traveler7Dynamic: {
+        name: '动态算法（旅行者7车型）',
+        countdown: 'hourly',
+        showSerialNumberInput: false
     }
 };
 

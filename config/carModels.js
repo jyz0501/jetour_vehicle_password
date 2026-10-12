@@ -19,6 +19,19 @@ export const carModels = {
             '04.0x-04.4x': false
         }
     },
+    traveler7: {
+        name: '旅行者7',
+        versions: ['000203'],
+        versionNames: {
+            '000203': '00.02.03'
+        },
+        algorithms: {
+            '000203': 'traveler7Dynamic'
+        },
+        encrypted: {
+            '000203': false
+        }
+    },
     traveler: {
         name: '旅行者/山海T2',
         versions: ['00x', '0406', '0407', 'cdm', 'other'],

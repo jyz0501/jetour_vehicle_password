@@ -59,7 +59,12 @@ function readLocalStorage(key) {
     }
 }
 
-const API_BASE_URL = (injectedConfig().API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
+// 空字符串表示“与页面同源”（前后端部署在同一台机器时），
+// 是合法取值，因此不能用 || 回落到默认值。
+const _injectedBase = injectedConfig().API_BASE_URL;
+const API_BASE_URL = (_injectedBase === undefined || _injectedBase === null
+    ? DEFAULT_API_BASE_URL
+    : _injectedBase).replace(/\/+$/, '');
 
 function apiKey() {
     return String(injectedConfig().API_KEY || readLocalStorage('pw_api_key') || '').trim();
