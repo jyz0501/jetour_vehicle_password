@@ -89,13 +89,14 @@
             <label>接口地址
                 <input type="text" id="apiBase" placeholder="https://api.qianxian.tech">
             </label>
-            <label>API Key（X-API-Key）
-                <input type="password" id="apiKey" placeholder="接口密钥">
+            <label>后台口令（ADMIN_TOKEN）
+                <input type="password" id="adminToken" placeholder="服务端 ADMIN_TOKEN">
             </label>
             <button class="btn" id="loadBtn">加载配置</button>
         </div>
         <p class="note" style="margin-top:10px;">
-            地址与密钥仅保存在本机浏览器（localStorage）。开关为「开」时，该车型该版本需输入验证密码后才显示口令；
+            口令仅用于向 /api/admin/login 换取后台票据，票据保存在本机 sessionStorage（关闭标签即失效），
+            不会写入 localStorage。开关为「开」时，该车型该版本需输入验证密码后才显示口令；
             为「关」时直接显示。保存后立即对所有端（网页 / 微信小程序 / 抖音小程序）生效。
         </p>
     </section>
@@ -113,12 +114,11 @@
 <script>
 const INJECTED = (window.__JTGJ_PW_CFG__ || {});
 const DEFAULT_API = INJECTED.API_BASE_URL || 'https://api.qianxian.tech';
-// 不再硬编码密钥：优先取注入值，其次取本地保存值
-const DEFAULT_KEY = INJECTED.API_KEY || '';
 const DEFAULT_VERIFY_MODELS = ['g700', 'zonghengF700'];
+const ADMIN_TICKET_KEY = 'pw_admin_ticket';
 
 const apiInput = document.getElementById('apiBase');
-const keyInput = document.getElementById('apiKey');
+const tokenInput = document.getElementById('adminToken');
 const listEl = document.getElementById('list');
 const msgEl = document.getElementById('msg');
 
@@ -126,23 +126,60 @@ let cfg = {};
 let carModels = {};
 
 apiInput.value = localStorage.getItem('admin_api_base') || DEFAULT_API;
-keyInput.value = localStorage.getItem('admin_api_key') || DEFAULT_KEY;
 
-[apiInput, keyInput].forEach((el) => {
-    el.addEventListener('change', () => {
-        localStorage.setItem('admin_api_base', apiInput.value.trim());
-        localStorage.setItem('admin_api_key', keyInput.value.trim());
-    });
+apiInput.addEventListener('change', () => {
+    localStorage.setItem('admin_api_base', apiInput.value.trim());
 });
 
 function baseUrl() {
     return (apiInput.value.trim() || DEFAULT_API).replace(/\/+$/, '');
 }
-function headers() {
-    return {
-        'Content-Type': 'application/json',
-        'X-API-Key': keyInput.value.trim() || DEFAULT_KEY
-    };
+
+function loadAdminTicket() {
+    try {
+        const raw = sessionStorage.getItem(ADMIN_TICKET_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (obj && obj.token && obj.expireAt) return obj;
+    } catch (e) {  }
+    return null;
+}
+
+// 用后台口令换取 admin 票据，避免每个请求都携带长期口令
+async function getAdminTicket(force = false) {
+    const cached = loadAdminTicket();
+    if (!force && cached && cached.expireAt - Date.now() > 60 * 1000) {
+        return cached.token;
+    }
+    const supplied = tokenInput.value.trim();
+    if (!supplied) {
+        throw new Error('请填写后台口令');
+    }
+    const res = await fetch(`${baseUrl()}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminToken: supplied })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ticket) {
+        throw new Error(res.status === 401 ? '后台口令不正确' : (data.error || res.status));
+    }
+    const ticket = { token: data.ticket, expireAt: (data.expireAt || 0) * 1000 };
+    try { sessionStorage.setItem(ADMIN_TICKET_KEY, JSON.stringify(ticket)); } catch (e) {  }
+    return ticket.token;
+}
+
+async function adminFetch(path, options = {}, allowRetry = true) {
+    const token = await getAdminTicket();
+    const res = await fetch(`${baseUrl()}${path}`, Object.assign({}, options, {
+        headers: Object.assign({}, options.headers, { 'X-Access-Ticket': token })
+    }));
+    // 票据过期时换新重试一次
+    if (res.status === 401 && allowRetry) {
+        await getAdminTicket(true);
+        return adminFetch(path, options, false);
+    }
+    return res;
 }
 function setMsg(text, isErr) {
     msgEl.textContent = text;
@@ -213,7 +250,7 @@ function render() {
 async function loadConfig() {
     setMsg('加载中…', false);
     try {
-        const res = await fetch(`${baseUrl()}/api/admin/verify`, { method: 'GET', headers: headers() });
+        const res = await adminFetch('/api/admin/verify', { method: 'GET' });
         const data = await res.json();
         if (!res.ok || !data.success) {
             setMsg(`加载失败：${data.error || res.status}`, true);
@@ -231,9 +268,9 @@ async function loadConfig() {
 async function saveConfig() {
     setMsg('保存中…', false);
     try {
-        const res = await fetch(`${baseUrl()}/api/admin/verify`, {
+        const res = await adminFetch('/api/admin/verify', {
             method: 'POST',
-            headers: headers(),
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ requireVerify: cfg })
         });
         const data = await res.json();
@@ -262,7 +299,12 @@ function resetDefault() {
 document.getElementById('loadBtn').onclick = loadConfig;
 document.getElementById('saveBtn').onclick = saveConfig;
 document.getElementById('resetBtn').onclick = resetDefault;
-loadConfig();
+// 已有有效票据才自动加载，否则等用户填写口令
+if (loadAdminTicket()) {
+    loadConfig();
+} else {
+    setMsg('请输入后台口令后点击「加载配置」', false);
+}
 </script>
 </body>
 </html>

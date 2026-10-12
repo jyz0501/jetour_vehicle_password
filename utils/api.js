@@ -14,7 +14,7 @@ export function getLastError() {
 
 export function lastErrorMessage() {
     switch (lastError) {
-        case 'no_key': return '未配置接口密钥，请联系站点维护者';
+        case 'no_ticket': return '接口授权失败，请刷新页面重试';
         case 'timeout': return '接口响应超时';
         case 'network': return '网络请求失败';
         case 'http': return '接口返回异常状态码';
@@ -33,13 +33,12 @@ async function fetchWithTimeout(url, options) {
 }
 
 // ---------------------------------------------------------------------------
-// 接口配置（密钥不硬编码在源码中）
+// 接口配置
 // ---------------------------------------------------------------------------
-// 取值优先级：
-//   1. window.__JTGJ_PW_CFG__ —— 由页面引入的 config.local.js 注入
-//   2. localStorage['pw_api_key'] —— 后台页输入框保存的值
-// config.local.js 已加入 .gitignore；Pages 部署时由工作流从 GitHub Secret 生成。
-// 本地开发：复制 config.example.js 为 config.local.js 并填入密钥。
+// 前端不再持有任何密钥。原先注入 config.local.js 的 API_KEY，任何人打开
+// DevTools 就能原样读到，等同于公开。现在改为向 /api/ticket 申请一张服务端
+// 签名的短期只读票据（默认 10 分钟），请求时放进 X-Access-Ticket 头。
+// 即便票据被抓包，也只能在有效期内使用，服务端换掉 SIGNING_SECRET 即可全部作废。
 // ---------------------------------------------------------------------------
 const DEFAULT_API_BASE_URL = 'https://api.qianxian.tech';
 
@@ -66,12 +65,84 @@ const API_BASE_URL = (_injectedBase === undefined || _injectedBase === null
     ? DEFAULT_API_BASE_URL
     : _injectedBase).replace(/\/+$/, '');
 
-function apiKey() {
-    return String(injectedConfig().API_KEY || readLocalStorage('pw_api_key') || '').trim();
+// ---------------------------------------------------------------------------
+// 访问票据
+// ---------------------------------------------------------------------------
+const TICKET_STORAGE_KEY = 'pw_access_ticket';
+// 续期余量：票据临期前主动换一张，避免请求打到已过期的票据上
+const TICKET_REFRESH_MARGIN_MS = 60 * 1000;
+
+let ticketInflight = null;
+
+function loadTicket() {
+    try {
+        const raw = sessionStorage.getItem(TICKET_STORAGE_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (obj && obj.token && obj.expireAt) return obj;
+    } catch (e) {  }
+    return null;
 }
 
-export function hasApiKey() {
-    return !!apiKey();
+function saveTicket(ticket) {
+    try {
+        if (ticket) {
+            sessionStorage.setItem(TICKET_STORAGE_KEY, JSON.stringify(ticket));
+        } else {
+            sessionStorage.removeItem(TICKET_STORAGE_KEY);
+        }
+    } catch (e) {  }
+}
+
+async function requestTicket() {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/ticket`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}'
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (!data || !data.ticket) return null;
+    const ticket = { token: data.ticket, expireAt: (data.expireAt || 0) * 1000 };
+    saveTicket(ticket);
+    return ticket;
+}
+
+// 取一张可用票据；force=true 时忽略本地缓存强制换新（票据失效后重试用）
+async function getTicket(force = false) {
+    if (!force) {
+        const cached = loadTicket();
+        if (cached && cached.expireAt - Date.now() > TICKET_REFRESH_MARGIN_MS) {
+            return cached.token;
+        }
+    }
+    // 并发去重：多个请求同时发现没有票据时，只发出一次申请
+    if (!ticketInflight) {
+        ticketInflight = requestTicket().finally(() => { ticketInflight = null; });
+    }
+    const ticket = await ticketInflight;
+    return ticket ? ticket.token : '';
+}
+
+// 统一发起带票据的请求，并在票据失效（401）时自动换新重试一次
+async function fetchWithTicket(path, options, allowRetry = true) {
+    const token = await getTicket();
+    if (!token) {
+        lastError = 'no_ticket';
+        return null;
+    }
+    const response = await fetchWithTimeout(`${API_BASE_URL}${path}`, Object.assign({}, options, {
+        headers: Object.assign({}, options.headers, { 'X-Access-Ticket': token })
+    }));
+    if (response.status === 401 && allowRetry) {
+        const fresh = await getTicket(true);
+        if (fresh) {
+            return fetchWithTicket(path, options, false);
+        }
+        lastError = 'no_ticket';
+        return null;
+    }
+    return response;
 }
 
 const VERIFY_TOKEN_KEY = 'pw_verify_token';
@@ -99,17 +170,11 @@ export function clearVerifyToken() {
 }
 
 export async function fetchPasswords(carModel, version, serialNumber = '') {
-    if (!apiKey()) {
-        console.error('[pw] 未配置接口密钥：请复制 config.example.js 为 config.local.js 并填入 API_KEY');
-        lastError = 'no_key';
-        return null;
-    }
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}/api/password`, {
+        const response = await fetchWithTicket('/api/password', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': apiKey()
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 carModel,
@@ -202,16 +267,11 @@ export function readPasswordCache(carModel, version, serialNumber) {
 }
 
 export async function fetchConfig() {
-    if (!apiKey()) {
-        console.error('[pw] 未配置接口密钥：请复制 config.example.js 为 config.local.js 并填入 API_KEY');
-        return null;
-    }
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}/api/config`, {
+        const response = await fetchWithTicket('/api/config', {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': apiKey()
+                'Content-Type': 'application/json'
             }
         });
         
@@ -238,8 +298,8 @@ export async function fetchPasswordsWithRetry(carModel, version, serialNumber = 
             return result;
         }
         
-        // 没配密钥时重试没有意义，直接失败
-        if (lastError === 'no_key') {
+        // 拿不到票据时重试没有意义，直接失败
+        if (lastError === 'no_ticket') {
             return null;
         }
         
@@ -253,15 +313,11 @@ export async function fetchPasswordsWithRetry(carModel, version, serialNumber = 
 
 
 export async function fetchVerify(carModel, version, password) {
-    if (!apiKey()) {
-        return { success: false, verified: false, error: 'no_api_key' };
-    }
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}/api/verify`, {
+        const response = await fetchWithTicket('/api/verify', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': apiKey()
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 carModel,

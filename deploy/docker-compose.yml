@@ -6,8 +6,11 @@ services:
     restart: always
     environment:
       # 密钥来自同目录 .env，不写进镜像
-      API_KEY: "${API_KEY:?请先在 deploy/.env 中设置 API_KEY}"
-      API_KEY_OLD: "${API_KEY_OLD:-}"
+      SIGNING_SECRET: "${SIGNING_SECRET:?请先在 deploy/.env 中设置 SIGNING_SECRET}"
+      ADMIN_TOKEN: "${ADMIN_TOKEN:-}"
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-}"
+      TICKET_TTL_MS: "${TICKET_TTL_MS:-600000}"
+      TICKET_BIND_IP: "${TICKET_BIND_IP:-0}"
       PORT: "8080"
       HOST: "0.0.0.0"
       DATA_DIR: "/app/data"

@@ -23,7 +23,7 @@ done
 if [ -f "config.local.js" ]; then
     cp config.local.js "$OUT_DIR/"
 else
-    echo "[warn] 缺少 config.local.js，已改用 config.example.js（请填入真实 API_KEY）"
+    echo "[warn] 缺少 config.local.js，已改用 config.example.js（接口地址将使用默认值）"
     cp config.example.js "$OUT_DIR/config.local.js"
 fi
 

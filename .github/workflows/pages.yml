@@ -27,18 +27,12 @@ jobs:
           chmod +x ./update_version.sh
           ./update_version.sh
 
-      # 密钥不落仓库：从 GitHub Secret 生成 config.local.js（该文件已 gitignore）
+      # 前端不再内置任何密钥：只注入接口地址，运行时向 /api/ticket 申请短期票据
       - name: 生成接口配置
-        env:
-          PW_API_KEY: ${{ secrets.PW_API_KEY }}
         run: |
-          if [ -z "$PW_API_KEY" ]; then
-            echo "::warning::secrets.PW_API_KEY 未配置，部署后站点将无法调用接口"
-          fi
           cat > config.local.js <<EOF
           window.__JTGJ_PW_CFG__ = {
-            API_BASE_URL: 'https://api.qianxian.tech',
-            API_KEY: '${PW_API_KEY}'
+            API_BASE_URL: 'https://api.qianxian.tech'
           };
           EOF
 

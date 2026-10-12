@@ -18,7 +18,7 @@ if [ ! -f "$ENV_FILE" ]; then
 fi
 
 set -a; . "$ENV_FILE"; set +a
-: "${API_KEY:?deploy/.env 中缺少 API_KEY}"
+: "${SIGNING_SECRET:?deploy/.env 中缺少 SIGNING_SECRET}"
 WEB_PORT="${WEB_PORT:-8080}"
 
 echo "==> 组装发布包"
@@ -35,11 +35,11 @@ cp "$ROOT/index.html" "$ROOT/style.css" "$ROOT/app.js" "$ROOT/icon.png" "$STAGE/
 cp -r "$ROOT/config" "$ROOT/utils" "$ROOT/assets" "$STAGE/web/html/"
 cp "$ROOT/deploy/web/Dockerfile" "$ROOT/deploy/web/nginx.conf" "$STAGE/web/"
 
-# 前后端同机同源部署：接口地址留空即走相对路径
+# 前后端同机同源部署：接口地址留空即走相对路径。
+# 前端不再需要任何密钥——运行时向 /api/ticket 申请短期票据。
 cat > "$STAGE/web/html/config.local.js" <<EOF
 window.__JTGJ_PW_CFG__ = {
-  API_BASE_URL: '',
-  API_KEY: '${API_KEY}'
+  API_BASE_URL: ''
 };
 EOF
 
